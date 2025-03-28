@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.GoNow" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariant</item>
+        <item name="backgroundColor">@color/support</item>
+        <item name="colorSurface">@color/general</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorOnBackground">#000000</item>
+        <item name="colorOnSurface">#000000</item>
+
+
+        <item name="shapeAppearanceSmallComponent">@style/RoundedButton</item>
+    </style>
+
+    <style name="Theme.GoNow" parent="Base.Theme.GoNow" />
+</resources>
+

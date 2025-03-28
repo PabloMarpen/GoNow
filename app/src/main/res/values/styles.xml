@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Forma redondeada -->
+    <style name="RoundedButton" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Activo -->
+    <style name="PrimaryButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/support</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Pulsado -->
+    <style name="PrimaryButtonPressed" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primaryVariant</item>
+        <item name="android:textColor">@color/support</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Inactivo -->
+    <style name="DisabledButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/general</item>
+        <item name="android:textColor">@color/support</item>
+        <item name="android:enabled">false</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Inicio sin sesion -->
+    <style name="SinSesion" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/supportVariant</item>
+        <item name="android:textColor">@color/support</item>
+        <item name="android:enabled">false</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Secundario -->
+    <style name="SecondaryButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="android:textColor">@color/general</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Secundario Pulsado -->
+    <style name="SecondaryButtonPressed" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/secondaryVariant</item>
+        <item name="android:textColor">@color/general</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+</resources>
+

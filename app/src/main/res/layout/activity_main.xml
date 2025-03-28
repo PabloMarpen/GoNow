@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@drawable/fondoinicio">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="53dp"
+        android:layout_marginEnd="183dp"
+        android:fontFamily="@font/poppinsextrabold"
+        android:text="Bienvenido a"
+        android:textColor="#1D799A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:textSize="40sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="432dp"
+        android:layout_height="269dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logogonowbig" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
+        android:fontFamily="@font/poppinsmedium"
+        android:text="@string/info1Pantalla1"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        style="@style/SecondaryButton"
+        android:id="@+id/buttonRegistrarme"
+        android:layout_width="219dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="212dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/registrarme"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/buttonIniciar"
+        android:layout_width="219dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="136dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/iniciar_sesion"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.534"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <Button
+        android:id="@+id/buttonIniciarSinCuenta"
+        style="@style/SinSesion"
+        android:layout_width="299dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="76dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/inicio_sinCuenta"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonRegistrarme"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="@+id/buttonRegistrarme"
+        app:layout_constraintTop_toBottomOf="@+id/buttonRegistrarme" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppinsmedium"
+        android:text="@string/info2Pantalla1"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonIniciarSinCuenta"
+        app:layout_constraintStart_toStartOf="@+id/buttonIniciarSinCuenta"
+        app:layout_constraintTop_toBottomOf="@+id/buttonIniciarSinCuenta" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
