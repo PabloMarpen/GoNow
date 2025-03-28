@@ -5,12 +5,6 @@
         <item name="cornerSize">23dp</item>
     </style>
 
-    <!-- Botón Activo -->
-    <style name="PrimaryButton" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/primary</item>
-        <item name="android:textColor">@color/support</item>
-        <item name="cornerSize">23dp</item>
-    </style>
 
     <!-- Botón Pulsado -->
     <style name="PrimaryButtonPressed" parent="Widget.Material3.Button">
@@ -30,7 +24,7 @@
     <!-- Botón Inicio sin sesion -->
     <style name="SinSesion" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/supportVariant</item>
-        <item name="android:textColor">@color/support</item>
+        <item name="android:textColor">@color/general</item>
         <item name="android:enabled">false</item>
         <item name="cornerSize">23dp</item>
     </style>
@@ -38,6 +32,13 @@
     <!-- Botón Secundario -->
     <style name="SecondaryButton" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/secondary</item>
+        <item name="android:textColor">@color/general</item>
+        <item name="cornerSize">23dp</item>
+    </style>
+
+    <!-- Botón Activo -->
+    <style name="PrimaryButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary</item>
         <item name="android:textColor">@color/general</item>
         <item name="cornerSize">23dp</item>
     </style>
