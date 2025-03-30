@@ -3,4 +3,10 @@
     <solid android:color="@color/support"/>
     <corners android:radius="23dp"/>
     <stroke android:width="3dp" android:color="@color/supportVariant"/>
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+
 </shape>

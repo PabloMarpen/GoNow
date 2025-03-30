@@ -1,6 +1,7 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
@@ -45,6 +46,21 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+
+        botonIniciar.setOnClickListener {
+            val intent = Intent(this, iniciarActivity::class.java)
+            intent.putExtra("abrirCuenta", true) // Pasar una señal para abrir el fragmento
+            startActivity(intent)
+        }
+
+
+        botonRegistrarme.setOnClickListener {
+            val intent = Intent(this, iniciarActivity::class.java)
+            intent.putExtra("abrirRegistro", true) // Pasar una señal para abrir el fragmento
+            startActivity(intent)
+        }
+
+
 
     }
 }
