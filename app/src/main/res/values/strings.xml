@@ -1,4 +1,5 @@
 <resources>
+    <!-- Pantalla inicio -->
     <string name="app_name">GoNow</string>
     <string name="iniciar_sesion">Ya tengo cuenta</string>
     <string name="registrarme">Registrarme</string>
@@ -6,5 +7,11 @@
     <string name="Bienvenida">Bienvenido a</string>
     <string name="info1Pantalla1">Los mejores urinarios cerca de tí.</string>
     <string name="info2Pantalla1">Acceder rápido y sin cuenta.</string>
+
+    <!-- Pantalla registro -->
+    <string name="crear_cuenta">Crear una cuenta</string>
+    <string name="olvidoContraseña">He olvidado mi contraseña</string>
+    <string name="preguntaCuenta">¿Ya tienes cuenta?</string>
+    <string name="inicia_sesión">Iniciar sesión</string>
 
 </resources>

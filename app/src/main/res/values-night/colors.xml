@@ -6,5 +6,6 @@
     <color name="secondaryVariant">#1D799A</color>
     <color name="support">#ECECEC</color>
     <color name="supportVariant">#929191</color>
+    <color name="supportVariantDark">#686868</color>
     <color name="general">#23232F</color> <!-- Color cambiado para el modo oscuro -->
 </resources>

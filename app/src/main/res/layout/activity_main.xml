@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".vista.MainActivity"
     android:background="@drawable/fondoinicio">
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_marginTop="60dp"
         android:fontFamily="@font/poppinsextrabold"
         android:text="@string/Bienvenida"
-        android:textColor="#1D799A"
+        android:textColor="#218FB6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
