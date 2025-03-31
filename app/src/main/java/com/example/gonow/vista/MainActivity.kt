@@ -60,6 +60,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        botonIniciarSinCuenta.setOnClickListener {
+            val intent = Intent(this, generalActivity::class.java)
+            intent.putExtra("abrirMapa", true) // Pasar una señal para abrir el fragmento
+            startActivity(intent)
+        }
+
+
 
 
     }

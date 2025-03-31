@@ -66,7 +66,7 @@
 
     <Button
         android:id="@+id/buttonIniciarSinCuenta"
-        style="@style/SinSesion"
+        style="@style/botonGris"
         android:layout_width="299dp"
         android:layout_height="68dp"
         android:layout_marginTop="76dp"

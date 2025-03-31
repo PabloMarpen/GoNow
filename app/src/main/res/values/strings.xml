@@ -19,5 +19,8 @@
     <string name="ya_tienes_cuenta">¿Ya tienes cuenta?</string>
     <string name="bienvenido_de_nuevo">Bienvenido de nuevo!</string>
     <string name="no_tienes_cuenta">¿No tienes cuenta?</string>
+    <string name="correo_de_recuperacion">Correo de recuperación</string>
+    <string name="enviar">Enviar</string>
+    <string name="volver">Volver</string>
 
 </resources>

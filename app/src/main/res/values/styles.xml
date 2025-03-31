@@ -22,7 +22,7 @@
     </style>
 
     <!-- Botón Inicio sin sesion -->
-    <style name="SinSesion" parent="Widget.Material3.Button">
+    <style name="botonGris" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/supportVariant</item>
         <item name="android:textColor">@color/general</item>
         <item name="shapeAppearanceOverlay">@style/RoundedButton</item>
