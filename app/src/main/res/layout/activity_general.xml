@@ -27,35 +27,36 @@
 
     <!-- Íconos dentro del menú -->
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:id="@+id/imageViewPlus"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"
         app:layout_constraintTop_toTopOf="@+id/overlayShape"
-        app:srcCompat="@drawable/anadir" />
+        app:srcCompat="@drawable/addcircle" />
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/imageViewMapa"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"
         app:layout_constraintTop_toTopOf="@+id/overlayShape"
-        app:srcCompat="@drawable/mapaico" />
+        app:srcCompat="@drawable/map" />
 
     <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/imageViewPersona"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintHorizontal_bias="0.855"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"
         app:layout_constraintTop_toTopOf="@+id/overlayShape"
-        app:srcCompat="@drawable/persona" />
+        app:srcCompat="@drawable/person" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
