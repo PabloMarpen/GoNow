@@ -24,12 +24,21 @@ class generalActivity : AppCompatActivity() {
                 .commit()
         }
 
+        // PARA EVITAR EL BUG DEL FRAGMENT QUE DESAPARECE
+        onBackPressedDispatcher.addCallback(this) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame, FragmentMapa())
+                .addToBackStack(null)
+                .commit()
+        }
 
         botonMapa.setOnClickListener {
+
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.frame, FragmentMapa())
                     .addToBackStack(null)
                     .commit()
+
         }
 
         botonPlus.setOnClickListener {
