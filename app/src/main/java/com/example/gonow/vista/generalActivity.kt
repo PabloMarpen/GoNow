@@ -24,17 +24,21 @@ class generalActivity : AppCompatActivity() {
                 .commit()
         }
 
-        // PARA EVITAR EL BUG DEL FRAGMENT QUE DESAPARECE
-        onBackPressedDispatcher.addCallback(this) {
-            finish()
-        }
 
         botonMapa.setOnClickListener {
-            Toast.makeText(this, "Mapa", Toast.LENGTH_SHORT).show()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame, FragmentMapa())
+                    .addToBackStack(null)
+                    .commit()
         }
 
         botonPlus.setOnClickListener {
-            Toast.makeText(this, "Añadir", Toast.LENGTH_SHORT).show()
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame, FragmentAniadir())
+                    .addToBackStack(null)
+                    .commit()
+
         }
 
         botonPersona.setOnClickListener {

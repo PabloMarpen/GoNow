@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
+    private lateinit var filtro: ImageView
     private lateinit var mapView: MapView
     private var googleMap: GoogleMap? = null
     private val posicion: FusedLocationProviderClient by lazy {
@@ -42,10 +44,15 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        filtro = view.findViewById(R.id.imageViewFiltro)
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
         mapView.getMapAsync(this)
+
+        filtro.setOnClickListener {
+            Toast.makeText(requireContext(), "Filtro", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {

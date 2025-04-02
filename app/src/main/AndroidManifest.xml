@@ -29,6 +29,7 @@
         <activity android:name=".vista.FragmentRecuperacion"/>
         <activity android:name=".vista.generalActivity"/>
         <activity android:name=".vista.FragmentMapa"/>
+        <activity android:name=".vista.FragmentAniadir"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
