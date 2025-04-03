@@ -51,7 +51,10 @@ class generalActivity : AppCompatActivity() {
         }
 
         botonPersona.setOnClickListener {
-            Toast.makeText(this, "Perfil", Toast.LENGTH_SHORT).show()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame, FragmentAjustes())
+                .addToBackStack(null)
+                .commit()
         }
     }
 }

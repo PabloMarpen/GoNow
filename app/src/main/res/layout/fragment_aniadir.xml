@@ -67,21 +67,22 @@
 
         <EditText
             android:id="@+id/EditTextDescripcion"
-            android:layout_width="270dp"
-            android:layout_height="69dp"
+            android:layout_width="277dp"
+            android:layout_height="122dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/forma_entrada_texto"
-            android:ems="10"
             android:fontFamily="@font/poppinsregular"
             android:hint="@string/descripci_n"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:textColor="#000000"
             android:textColorHint="@color/supportVariant"
-
-            android:textSize="24sp"
+            android:textSize="20sp"
+            android:gravity="top|start"
+            android:scrollbars="vertical"
             app:layout_constraintEnd_toEndOf="@+id/EditTextNombre"
             app:layout_constraintStart_toStartOf="@+id/EditTextNombre"
             app:layout_constraintTop_toBottomOf="@+id/EditTextNombre" />
+
 
         <ImageView
             android:id="@+id/imageView6"
@@ -237,12 +238,12 @@
         <Button
             android:id="@+id/botonUbicacion"
             style="@style/SecondaryButton"
-            android:layout_width="241dp"
-            android:layout_height="44dp"
+            android:layout_width="306dp"
+            android:layout_height="50dp"
             android:layout_marginTop="60dp"
             android:fontFamily="@font/poppinslight"
-            android:textSize="16sp"
             android:text="@string/elegir_tipo_de_ubicaci_n"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewGratis" />
@@ -250,12 +251,12 @@
         <Button
             android:id="@+id/botonHorario"
             style="@style/SecondaryButton"
-            android:layout_width="210dp"
-            android:layout_height="42dp"
+            android:layout_width="245dp"
+            android:layout_height="45dp"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/poppinslight"
             android:text="@string/a_adir_horario"
-            android:textSize="16sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/botonUbicacion" />
@@ -266,7 +267,7 @@
             android:layout_width="223dp"
             android:layout_height="61dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="85dp"
+            android:layout_marginBottom="90dp"
             android:fontFamily="@font/poppinssemibold"
             android:text="Publicar"
             android:textSize="24sp"

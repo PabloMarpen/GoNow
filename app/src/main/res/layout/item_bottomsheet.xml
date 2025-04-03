@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/forma_fondo_popup">
+
+    <TextView
+        android:id="@+id/textShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="@string/elige_el_tipo_de_ubicaci_n"
+        android:textColor="@color/secondary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewCambiar"
+        app:layout_constraintHorizontal_bias="0.551"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textShare"
+        app:srcCompat="@drawable/accessible" />
+
+    <CheckBox
+        android:id="@+id/switchAcesibilidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewCambiar"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/textShare"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <CheckBox
+        android:id="@+id/switchUnisex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/switchJabon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/switchJabon"
+        app:layout_constraintTop_toBottomOf="@+id/switchJabon"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <CheckBox
+        android:id="@+id/switchJabon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/switchAcesibilidad"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/switchAcesibilidad"
+        app:layout_constraintTop_toBottomOf="@+id/switchAcesibilidad"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <ImageView
+        android:id="@+id/imageViewAcesibilidad2"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6"
+        app:srcCompat="@drawable/soap" />
+
+    <ImageView
+        android:id="@+id/imageViewCambiar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="@+id/textShare"
+        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintStart_toStartOf="@+id/textShare"
+        app:layout_constraintTop_toBottomOf="@+id/textShare"
+        app:srcCompat="@drawable/baby" />
+
+    <ImageView
+        android:id="@+id/imageViewCambiar2"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewCambiar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageViewCambiar"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewCambiar"
+        app:srcCompat="@drawable/toiletpaper" />
+
+
+    <CheckBox
+        android:id="@+id/switchPapel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/switchCambiar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/switchCambiar"
+        app:layout_constraintTop_toBottomOf="@+id/switchCambiar"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <CheckBox
+        android:id="@+id/switchGratis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+
+        app:layout_constraintEnd_toEndOf="@+id/switchPapel"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/switchPapel"
+        app:layout_constraintTop_toBottomOf="@+id/switchPapel"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <CheckBox
+        android:id="@+id/switchCambiar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.148"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCambiar"
+        app:layout_constraintTop_toBottomOf="@+id/textShare"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <ImageView
+        android:id="@+id/textView7"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAcesibilidad2"
+        app:layout_constraintHorizontal_bias="0.35"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAcesibilidad2"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewAcesibilidad2"
+        app:srcCompat="@drawable/toiletpaper" />
+
+    <ImageView
+        android:id="@+id/textViewGratis"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        app:srcCompat="@drawable/toiletpaper"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewCambiar2"
+        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintStart_toStartOf="@+id/imageViewCambiar2"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewCambiar2" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

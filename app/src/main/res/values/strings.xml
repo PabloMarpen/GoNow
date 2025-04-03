@@ -30,5 +30,13 @@
     <string name="gratis">Gratis</string>
     <string name="elegir_tipo_de_ubicaci_n">Elegir tipo de ubicación</string>
     <string name="a_adir_horario">Añadir horario</string>
+    <string name="mi_perfil">Mi perfil</string>
+    <string name="total_de_ba_os_puntuados">Total de baños puntuados:</string>
+    <string name="cambiar_contrase_a">Cambiar contraseña</string>
+    <string name="cambiar_correo">Cambiar correo</string>
+    <string name="ayuda">Ayuda</string>
+    <string name="borrar_cuenta">Borrar cuenta</string>
+    <string name="cerrar_sesi_n">Cerrar sesión</string>
+    <string name="elige_el_tipo_de_ubicaci_n">Elige el tipo de ubicación</string>
 
 </resources>
