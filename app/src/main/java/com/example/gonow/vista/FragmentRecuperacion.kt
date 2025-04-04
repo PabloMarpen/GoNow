@@ -72,8 +72,8 @@ class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
                 Toast.makeText(requireContext(), "Enviar", Toast.LENGTH_SHORT).show()
 
                 val mensaje = "Se enviará un correo para restablecer la contraseña a ${correoRecu.text}"
-                val popup = PopupDialog.newInstance(mensaje)
-                popup.show(parentFragmentManager, "PopupDialog")
+                val popup = popUp.newInstance(mensaje)
+                popup.show(parentFragmentManager, "popUp")
             }
         }
 

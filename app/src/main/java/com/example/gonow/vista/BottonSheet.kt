@@ -17,8 +17,10 @@ class BottomSheet : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = ItemBottomsheetBinding.inflate(inflater, container, false)
 
+
         return binding.root
     }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext()).apply {
@@ -30,6 +32,7 @@ class BottomSheet : BottomSheetDialogFragment() {
                 }
             }
         }
+
     }
 
     override fun onDestroyView() {

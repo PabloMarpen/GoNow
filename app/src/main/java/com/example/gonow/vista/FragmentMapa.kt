@@ -2,6 +2,7 @@ package com.example.gonow.vista
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 
 class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
@@ -51,13 +53,32 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         filtro.setOnClickListener {
-            Toast.makeText(requireContext(), "Filtro", Toast.LENGTH_SHORT).show()
+            val mensaje = "Se enviará un correo para restablecer la contraseña a"
+            val popup = popUp.newInstance(mensaje)
+            popup.show(parentFragmentManager, "popUp")
         }
+
+
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = false
+
+
+
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_night));
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_white));
+            }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_white));
+            }
+        }
+
 
         obtenerUbicacionActual()
     }
@@ -89,10 +110,5 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
     }
 }

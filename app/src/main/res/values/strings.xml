@@ -38,5 +38,11 @@
     <string name="borrar_cuenta">Borrar cuenta</string>
     <string name="cerrar_sesi_n">Cerrar sesión</string>
     <string name="elige_el_tipo_de_ubicaci_n">Elige el tipo de ubicación</string>
+    <string name="ba_o_publico">Baño publico</string>
+    <string name="bar">Bar</string>
+    <string name="tienda">Tienda</string>
+    <string name="restaurante">Restaurante</string>
+    <string name="gasolinera">Gasolinera</string>
+    <string name="otro">Otro</string>
 
 </resources>
