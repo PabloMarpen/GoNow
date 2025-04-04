@@ -44,5 +44,6 @@
     <string name="restaurante">Restaurante</string>
     <string name="gasolinera">Gasolinera</string>
     <string name="otro">Otro</string>
+    <string name="puntuaci_n">Puntuación</string>
 
 </resources>

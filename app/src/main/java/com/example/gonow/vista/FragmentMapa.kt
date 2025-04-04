@@ -53,8 +53,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         filtro.setOnClickListener {
-            val mensaje = "Se enviará un correo para restablecer la contraseña a"
-            val popup = popUp.newInstance(mensaje)
+
+            //cargamos el popup seleccionando nuestra interfaz
+            val fragmento = FragmentPopUpFiltro()
+            val popup = popUpContenidoGeneral.newInstance(fragmento)
             popup.show(parentFragmentManager, "popUp")
         }
 

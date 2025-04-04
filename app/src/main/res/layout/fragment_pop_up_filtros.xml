@@ -1,31 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
-        android:layout_marginTop="77dp"
-        android:layout_marginEnd="164dp"
-        android:text="PASA PTA"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
+        android:id="@+id/tituloFiltros"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="Filtros"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="171dp"
-        android:layout_marginTop="42dp"
-        android:layout_marginEnd="182dp"
-        android:text="lolololololo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:fontFamily="@font/poppinsregular"
+        android:text="Discapacitados"
+        android:textColor="@color/secondary"
+        android:textSize="20sp" />
+
+    <Switch
+        android:id="@+id/switchFavoritos"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppinsregular"
+        android:text="Favoritos"
+        android:textColor="@color/secondary"
+        android:textSize="20sp" />
+
+    <Switch
+        android:id="@+id/switchGratis"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppinsregular"
+        android:text="Gratis"
+        android:textColor="@color/secondary"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/botonUbicacion"
+        style="@style/SecondaryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="33dp"
+        android:fontFamily="@font/poppinslight"
+        android:text="@string/elegir_tipo_de_ubicaci_n"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textViewPuntuacion"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/puntuaci_n"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/buttonIniciar"
+        style="@style/PrimaryButton"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="Guardar"
+        android:textSize="20sp" />
+
+
+</LinearLayout>
