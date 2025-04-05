@@ -47,6 +47,15 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             bottomSheet.show(parentFragmentManager, BottomSheet.TAG)
         }
 
+        botonAñadirHorario.setOnClickListener{
+            //cargamos el popup seleccionando nuestra interfaz
+            val fragmento = FragmentPopUpHorario()
+            val popup = popUpContenidoGeneral.newInstance(fragmento)
+            popup.show(parentFragmentManager, "popUp")
+        }
+
+
+
 
 
 

@@ -22,6 +22,7 @@
         style="@style/PrimaryButton"
         android:fontFamily="@font/poppinsextrabold"
         android:text="SI"
+        android:textSize="24dp"
         android:layout_marginTop="10dp" />
     <Button
         android:id="@+id/btnNo"
@@ -30,5 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="NO"
+        android:textSize="24dp"
         android:layout_marginTop="10dp" />
 </LinearLayout>

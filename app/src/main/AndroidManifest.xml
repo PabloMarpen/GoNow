@@ -31,7 +31,7 @@
         <activity android:name=".vista.FragmentMapa"/>
         <activity android:name=".vista.FragmentAniadir"/>
         <activity android:name=".vista.FragmentPopUpFiltro"/>
-
+        <activity android:name=".vista.popUpContenidoGeneral"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD_-gB0Qn9fkv5kTLA8dKkvq4zvJSe4B90" />

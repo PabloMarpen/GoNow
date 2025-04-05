@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/titulo"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="Cambiar contraseña"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+
+    <EditText
+        android:id="@+id/ContraseñaAntigua"
+        android:layout_width="270dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/forma_entrada_texto"
+        android:ems="10"
+        android:fontFamily="@font/poppinsregular"
+        android:hint="Contraseña antigua"
+        android:inputType="textPassword"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:textColorHint="@color/supportVariant"
+        />
+
+    <EditText
+        android:id="@+id/ContraseñaNueva"
+        android:layout_width="270dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/forma_entrada_texto"
+        android:ems="10"
+        android:fontFamily="@font/poppinsregular"
+        android:hint="Contraseña nueva"
+        android:inputType="textPassword"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:textColorHint="@color/supportVariant"
+        />
+
+    <Button
+        android:id="@+id/ButtonAceptar"
+        style="@style/PrimaryButton"
+        android:layout_width="252dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:fontFamily="@font/poppinsextrabold"
+        android:text="Aceptar"
+        android:textSize="24dp" />
+
+    <Button
+        android:id="@+id/ButtonCancelar"
+        style="@style/botonGris"
+        android:layout_width="252dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppinsextrabold"
+        android:text="Cancelar"
+        android:textSize="24dp" />
+
+</LinearLayout>

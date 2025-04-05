@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tituloHorario"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="Calificar"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        />
+
+
+    <Button
+        android:id="@+id/buttonIniciar"
+        style="@style/SecondaryButton"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="Guardar"
+        android:textSize="16sp" />
+
+
+
+</LinearLayout>

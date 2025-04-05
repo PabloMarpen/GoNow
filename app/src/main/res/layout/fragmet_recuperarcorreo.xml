@@ -31,7 +31,7 @@
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
         android:hint="@string/correo"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:textColor="#000000"
         android:textColorHint="@color/supportVariant"
         android:textSize="24dp"

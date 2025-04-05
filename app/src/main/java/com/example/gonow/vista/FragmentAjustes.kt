@@ -46,6 +46,34 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
             botonAyuda
         ).forEach { it.setOnTouchListener(touchListener) }
 
+        botonBorrarCuenta.setOnClickListener {
+            val mensaje = "¿Seguro que quieres BORRAR LA CUENTA?"
+            val popup = popUp.newInstance(mensaje)
+            popup.show(parentFragmentManager, "popUp")
+        }
+
+        botonCerrarSesion.setOnClickListener {
+            val mensaje = "¿Seguro que quieres cerrar sesión?"
+            val popup = popUp.newInstance(mensaje)
+            popup.show(parentFragmentManager, "popUp")
+        }
+
+        botonCambiarCorreo.setOnClickListener {
+            //cargamos el popup seleccionando nuestra interfaz
+            val fragmento = fragmentPopUpCambiarCorreo()
+            val popup = popUpContenidoGeneral.newInstance(fragmento)
+            popup.show(parentFragmentManager, "popUp")
+        }
+
+        botonCambiarContrasena.setOnClickListener {
+            //cargamos el popup seleccionando nuestra interfaz
+            val fragmento = fragmentPopUpCambiarContraseña()
+            val popup = popUpContenidoGeneral.newInstance(fragmento)
+            popup.show(parentFragmentManager, "popUp")
+        }
+
+
+
 
     }
 }
