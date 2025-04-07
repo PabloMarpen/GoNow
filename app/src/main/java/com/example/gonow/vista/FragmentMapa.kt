@@ -1,19 +1,34 @@
 package com.example.gonow.vista
 
+// Permisos y utilidades del sistema
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+
+//  Componentes de AndroidX
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+
+//  Recursos del proyecto
 import com.example.gonow.R
+
+// API de ubicación de Google
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
+
+//  API de Google Maps
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -22,15 +37,24 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 
+
 class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
     private lateinit var filtro: ImageView
     private lateinit var mapView: MapView
+    private lateinit var ubicacionActual: LatLng
     private var googleMap: GoogleMap? = null
+    private var ubicacionActualMostrada = false
+    private lateinit var locationCallback: LocationCallback
+    private var locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
+    .setMinUpdateIntervalMillis(2000L)
+    .build()
+
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
+    // para los permisos de ubicación
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
@@ -54,7 +78,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         filtro.setOnClickListener {
 
-            //cargamos el popup seleccionando nuestra interfaz
             val fragmento = FragmentPopUpFiltro()
             val popup = popUpContenidoGeneral.newInstance(fragmento)
             popup.show(parentFragmentManager, "popUp")
@@ -66,7 +89,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = false
-
+        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
 
 
         when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
@@ -83,6 +106,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
 
         obtenerUbicacionActual()
+        iniciarActualizacionesUbicacion()
+
     }
 
     private fun obtenerUbicacionActual() {
@@ -109,8 +134,42 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun iniciarActualizacionesUbicacion() {
+        googleMap?.isMyLocationEnabled = true
+
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
+            .setMinUpdateIntervalMillis(2000L)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation ?: return
+                ubicacionActual = LatLng(location.latitude, location.longitude)
+
+                googleMap?.clear()
+
+                if (!ubicacionActualMostrada){
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 17f))
+                    ubicacionActualMostrada = true
+                }
+
+            }
+
+        }
+
+        posicion.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
+    }
+
+
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
+        if (::locationCallback.isInitialized) {
+            posicion.removeLocationUpdates(locationCallback)
+        }
     }
 }

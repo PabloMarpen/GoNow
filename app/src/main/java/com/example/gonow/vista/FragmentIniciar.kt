@@ -3,6 +3,7 @@ package com.example.gonow.vista
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +14,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
+import com.example.gonow.vista.BottomSheet.Companion.TAG
+import com.google.firebase.auth.FirebaseAuth
 
 class FragmentIniciar : Fragment(R.layout.fragment_login) {
 
@@ -26,6 +29,7 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         val textoRegistrarme = view.findViewById<TextView>(R.id.textViewRegistrarme)
         val correo = view.findViewById<EditText>(R.id.Correo)
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
+        val auth = FirebaseAuth.getInstance()
 
         botonIniciar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -44,10 +48,41 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         }
 
         botonIniciar.setOnClickListener {
-            if (!correo.text.toString().isValidEmail()) {
+            val email = correo.text.toString()
+            val contraseña = contraseña.text.toString()
+
+
+            if (!email.isValidEmail()) {
                 Toast.makeText(requireContext(), "Correo no válido", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Iniciando sesión...", Toast.LENGTH_SHORT).show()
+            }
+            else if(contraseña.isEmpty()) {
+                Toast.makeText(requireContext(), "Contraseña vacia", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                //fuente https://firebase.google.com/docs/auth/android/password-auth?hl=es-419
+                // esto es para iniciar sesion en google auth en firebase
+                auth.signInWithEmailAndPassword(email, contraseña)
+                    .addOnCompleteListener(requireActivity()) { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success")
+                            auth.currentUser
+
+                            val intent = Intent(requireContext(), generalActivity::class.java)
+                            intent.putExtra("abrirMapa", true) // Pasar una señal para abrir el fragmento
+                            startActivity(intent)
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.exception)
+                            Toast.makeText(
+                                requireContext(),
+                                "Authentication failed.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+
+                        }
+                    }
             }
         }
 

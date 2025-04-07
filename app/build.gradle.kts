@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") // Plugin de Google Services
 }
 
 android {
@@ -46,8 +47,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    //google maps y location
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+
+    implementation(platform(libs.firebase.bom))
+
+    // Firebase módulos específicos
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.analytics.ktx)
+
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)

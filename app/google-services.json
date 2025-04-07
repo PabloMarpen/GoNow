@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "673531485692",
+    "project_id": "gonow-c2c7d",
+    "storage_bucket": "gonow-c2c7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673531485692:android:6cc5d730eadfea7dd82679",
+        "android_client_info": {
+          "package_name": "com.example.gonow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYuE29_V9GfjYQf6ghqqmmO_URBtTmLl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

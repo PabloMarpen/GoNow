@@ -1,6 +1,7 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
+import com.google.firebase.auth.FirebaseAuth
 
 class FragmentRegistro : Fragment(R.layout.fragment_registro){
 
@@ -25,6 +27,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         val correo = view.findViewById<EditText>(R.id.Correo)
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
         val contraseña2 = view.findViewById<EditText>(R.id.contraseña)
+        val auth = FirebaseAuth.getInstance()
 
         botonRegistrar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -42,7 +45,30 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
                 if(contraseña.text.toString() != contraseña2.text.toString()){
                     Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(requireContext(), "Registrandose...", Toast.LENGTH_SHORT).show()
+
+                    auth.createUserWithEmailAndPassword(correo.text.toString(), contraseña.text.toString())
+                        .addOnCompleteListener(requireActivity()) { task ->
+                            if (task.isSuccessful) {
+                                // Sign in success, update UI with the signed-in user's information
+                                val user = auth.currentUser
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Authentication success.",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+
+                                val intent = Intent(requireContext(), generalActivity::class.java)
+                                intent.putExtra("abrirMapa", true) // Pasar una señal para abrir el fragmento
+                                startActivity(intent)
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Authentication failed.",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                        }
                 }
             }
         }
