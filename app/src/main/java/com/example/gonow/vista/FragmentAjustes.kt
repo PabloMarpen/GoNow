@@ -1,6 +1,7 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
@@ -12,6 +13,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
     @SuppressLint("ClickableViewAccessibility")
@@ -55,7 +58,25 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         botonCerrarSesion.setOnClickListener {
             val mensaje = "¿Seguro que quieres cerrar sesión?"
             val popup = popUp.newInstance(mensaje)
+            popup.setOnAcceptListener { isConfirmed ->
+                if (isConfirmed) {
+
+                    FirebaseAuth.getInstance().signOut()
+
+                    FirebaseDatabase.getInstance().goOffline()
+
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+
+
+                    // Cerrar todas las actividades y evitar que el usuario regrese a la actividad anterior
+                    requireActivity().finishAffinity()
+                }
+            }
             popup.show(parentFragmentManager, "popUp")
+
+
         }
 
         botonCambiarCorreo.setOnClickListener {

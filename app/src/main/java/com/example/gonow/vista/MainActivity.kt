@@ -8,12 +8,16 @@ import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.gonow.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +73,19 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+
+                val intent = Intent(this, generalActivity::class.java)
+                intent.putExtra("abrirMapa", true)
+                startActivity(intent)
+            }
 
     }
 

@@ -26,9 +26,9 @@ class popUp : DialogFragment() {
         }
     }
 
-    private var listener: (() -> Unit)? = null
+    private var listener: ((Boolean) -> Unit)? = null
 
-    fun setOnAcceptListener(callback: () -> Unit) {
+    fun setOnAcceptListener(callback: (Boolean) -> Unit) {
         listener = callback
     }
 
@@ -45,12 +45,12 @@ class popUp : DialogFragment() {
         texto.text = message
 
         btnAceptar.setOnClickListener {
-            listener?.invoke()
+            listener?.invoke(true)
             dismiss()
         }
 
         btnNop.setOnClickListener {
-            listener?.invoke()
+            listener?.invoke(false)
             dismiss()
         }
 

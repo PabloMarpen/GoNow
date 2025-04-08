@@ -118,7 +118,7 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonRegistrarme" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/imageViewGoogle"
         android:layout_width="101dp"
         android:layout_height="43dp"
         android:layout_marginTop="60dp"
