@@ -3,7 +3,6 @@ package com.example.gonow.vista
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.credentials.GetCredentialRequest
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
@@ -17,14 +16,21 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.gonow.R
 import com.example.gonow.viewModel.AuthenticationState
 import com.example.gonow.viewModel.userViewModel
+import com.google.firebase.auth.FirebaseAuth
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import com.example.gonow.viewModel.GoogleSignInUtils
+
 
 class FragmentRegistro : Fragment(R.layout.fragment_registro){
 
     private val userViewModel: userViewModel by activityViewModels()
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,8 +43,20 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
         val contraseña2 = view.findViewById<EditText>(R.id.contraseña)
         val googleIdButton = view.findViewById<ImageView>(R.id.imageViewGoogle)
+        firebaseAuth = FirebaseAuth.getInstance()
 
-
+        googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                GoogleSignInUtils.doGoogleSignIn(
+                    context = requireContext(),
+                    scope = lifecycleScope,
+                    launcher = null,
+                    login = {
+                        Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
 
         userViewModel.authenticationState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -66,8 +84,19 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         }
 
         googleIdButton.setOnClickListener {
-            Toast.makeText(requireContext(), "no va aun", Toast.LENGTH_SHORT).show()
+
+            GoogleSignInUtils.doGoogleSignIn(
+                context = requireContext(),
+                scope = lifecycleScope,
+                launcher = googleSignInLauncher,
+                login = {
+                    Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                }
+            )
+
         }
+
+
 
         botonRegistrar.setOnClickListener {
             if (correo.text.isNotEmpty() && contraseña.text.isNotEmpty() && contraseña2.text.isNotEmpty() && contraseña2.text.toString() == contraseña.text.toString()) {
@@ -93,5 +122,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
     }
 
     fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
+
 
 }

@@ -46,6 +46,7 @@
     <string name="otro">Otro</string>
     <string name="puntuaci_n">Puntuación</string>
 
-    <!-- Google -->
-    <string name="default_web_client_id">1:673531485692:android:6cc5d730eadfea7dd82679.apps.googleusercontent.com</string>
+    <!-- Google 673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com-->
+    <string name="default_web_client_id">673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com</string>
+
 </resources>

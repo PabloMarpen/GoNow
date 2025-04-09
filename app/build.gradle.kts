@@ -56,8 +56,13 @@ dependencies {
     // Firebase módulos específicos
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.analytics.ktx)
-    implementation(libs.play.services.auth)
+
+    //chatty
+
+
     implementation(libs.googleid)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
 
     // Si usas ViewModel compartido entre actividad y fragmentos
     implementation(libs.androidx.fragment.ktx)
@@ -66,6 +71,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.googleid)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.activity.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
