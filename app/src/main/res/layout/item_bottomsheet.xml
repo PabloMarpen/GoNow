@@ -11,20 +11,22 @@
         android:id="@+id/textShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="44dp"
         android:fontFamily="@font/poppinssemibold"
         android:text="@string/elige_el_tipo_de_ubicaci_n"
         android:textColor="@color/secondary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="241dp"
         android:layout_height="309dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textShare"
@@ -33,7 +35,7 @@
         app:layout_constraintVertical_bias="0.425">
 
         <RadioButton
-            android:id="@+id/radioButton"
+            android:id="@+id/radioButtonBanioPublico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
@@ -42,7 +44,7 @@
             android:textSize="20sp" />
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/radioButtonBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
@@ -51,7 +53,7 @@
             android:textSize="20sp" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/radioButtonTienda"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
@@ -60,7 +62,7 @@
             android:textSize="20sp" />
 
         <RadioButton
-            android:id="@+id/radioButton4"
+            android:id="@+id/radioButtonRestaurante"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
@@ -69,7 +71,7 @@
             android:textSize="20sp" />
 
         <RadioButton
-            android:id="@+id/radioButton5"
+            android:id="@+id/radioButtonGasolinera"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
@@ -78,7 +80,7 @@
             android:textSize="20sp" />
 
         <RadioButton
-            android:id="@+id/radioButton6"
+            android:id="@+id/radioButtonOtro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"

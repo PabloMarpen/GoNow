@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gonow.R
+import com.google.firebase.auth.FirebaseAuth
 
 class generalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,9 @@ class generalActivity : AppCompatActivity() {
         val botonMapa = findViewById<ImageView>(R.id.imageViewMapa)
         val botonPlus = findViewById<ImageView>(R.id.imageViewPlus)
         val botonPersona = findViewById<ImageView>(R.id.imageViewPersona)
+
+
+
 
         if (intent.getBooleanExtra("abrirMapa", false)) {
             supportFragmentManager.beginTransaction()
@@ -42,13 +46,20 @@ class generalActivity : AppCompatActivity() {
         }
 
         botonPlus.setOnClickListener {
-
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null){
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.frame, FragmentAniadir())
                     .addToBackStack(null)
                     .commit()
+            }else{
+                Toast.makeText(this, "Debes iniciar sesión para usar esta función", Toast.LENGTH_SHORT).show()
+            }
+
+                
 
         }
+
 
         botonPersona.setOnClickListener {
             supportFragmentManager.beginTransaction()

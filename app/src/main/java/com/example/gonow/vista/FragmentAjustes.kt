@@ -17,6 +17,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
+
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser?.uid
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +31,9 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val botonCambiarCorreo = view.findViewById<Button>(R.id.buttonCambiarCorreo)
         val botonCambiarContrasena = view.findViewById<Button>(R.id.buttonCambiarContraseña)
         val botonAyuda = view.findViewById<Button>(R.id.buttonAyuda)
+        val correoUsuario = view.findViewById<TextView>(R.id.textViewNombre)
 
+        correoUsuario.text = auth.currentUser?.email
 
         val touchListener = View.OnTouchListener { v, event ->
             when (event.action) {

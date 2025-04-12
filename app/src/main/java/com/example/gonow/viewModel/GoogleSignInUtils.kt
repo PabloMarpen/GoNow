@@ -4,6 +4,8 @@ package com.example.gonow.viewModel
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialOption
@@ -44,19 +46,27 @@ class GoogleSignInUtils {
                                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
                                 val googleTokenId = googleIdTokenCredential.idToken
                                 val authCredential = GoogleAuthProvider.getCredential(googleTokenId,null)
-                                val user = Firebase.auth.signInWithCredential(authCredential).await().user
-                                user?.let {
-                                    if(it.isAnonymous.not()){
-                                        login.invoke()
+                                try {
+                                    val user = Firebase.auth.signInWithCredential(authCredential).await().user
+                                    user?.let {
+                                        if (!it.isAnonymous) {
+                                            login.invoke()
+                                        }
                                     }
+                                } catch (e: Exception) {
+                                    Log.e("GoogleSignIn", "Error al hacer signInWithCredential: ${e.message}")
+                                    Toast.makeText(context, "Error de autenticación", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                         else ->{
-
+                            Toast.makeText(context, "No se pudo obtener credencial de Google", Toast.LENGTH_SHORT).show()
+                            Log.d("GoogleSignIn", "Credencial inesperada: ${result.credential}")
                         }
                     }
                 }catch (e:NoCredentialException){
+                    Log.e("GoogleSignIn", "NoCredentialException lanzada: ${e.message}")
+                    Toast.makeText(context, "Lanzando selección de cuenta", Toast.LENGTH_SHORT).show()
                     launcher?.launch(getIntent())
                 }catch (e:GetCredentialException){
                     e.printStackTrace()

@@ -90,7 +90,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
                 scope = lifecycleScope,
                 launcher = googleSignInLauncher,
                 login = {
-                    Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                 }
             )
 
