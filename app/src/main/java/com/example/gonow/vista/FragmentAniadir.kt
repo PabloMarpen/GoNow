@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import android.os.Handler
+import android.os.Looper
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
@@ -61,7 +63,15 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var abiertoSiempre : Boolean = true
     var cerradoSiempre : Boolean = false
     var tieneHorario : Boolean = false
+    var tipoUbiSeleccionado : String? = null
     val auth = FirebaseAuth.getInstance()
+    private val loadingTimeoutMillis = 60000L // 1 minuto
+    private var loadingTimeoutHandler: Handler? = null
+    private val loadingTimeoutRunnable = Runnable {
+        ocultarCarga()
+        Toast.makeText(requireContext(), "La operación tardó demasiado", Toast.LENGTH_SHORT).show()
+    }
+    private var loadingDialog: LoadingDialog? = null
     val currentUser = auth.currentUser?.uid
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -77,12 +87,16 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             val cerradoSiempre = bundle.getBoolean("cerradoSiempre")
             val tieneHorario = bundle.getBoolean("tieneHorario")
 
-            Toast.makeText(requireContext(), "Horario guardado", Toast.LENGTH_SHORT).show()
             this.horaApertura = horaApertura.toString()
             this.horaCierre = horaCierre.toString()
             this.abiertoSiempre = abiertoSiempre
             this.cerradoSiempre = cerradoSiempre
             this.tieneHorario = tieneHorario
+        }
+        requireActivity().supportFragmentManager.setFragmentResultListener("ubicacion", this) { _, bundle ->
+            val tipoUbiSeleccionado = bundle.getString("tipo_ubicacion")
+
+            this.tipoUbiSeleccionado = tipoUbiSeleccionado.toString()
         }
 
     }
@@ -90,6 +104,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     @SuppressLint("ClickableViewAccessibility", "UseSwitchCompatOrMaterialCode")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         botonPublicar = view.findViewById(R.id.botonPublicar)
         botonTipoUbicacion = view.findViewById(R.id.botonUbicacion)
@@ -106,7 +122,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchPapel = view.findViewById(R.id.switchPapel)
         switchGratis = view.findViewById(R.id.switchGratis)
         switchCambiar = view.findViewById(R.id.switchCambiar)
-        val tipoUbi = "Baño publico"
         ubicacionActual = LatLng(0.0, 0.0)
 
 
@@ -121,6 +136,9 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
             return
         }
+
+        mostrarCarga()
+
         posicion.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
                 ubicacionActual = LatLng(it.latitude, it.longitude)
@@ -132,10 +150,14 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
                 textoNombre.setText("${getString(R.string.banio)}"+ " " +"$calle" + " " + "$numero" + " " + "$ciudad")
 
-
+                ocultarCarga()
+            }.run {
+                ocultarCarga()
             }
+        }.addOnFailureListener { e ->
+            ocultarCarga()
+            Toast.makeText(requireContext(), "Error al obtener ubicación", Toast.LENGTH_SHORT).show()
         }
-
 
         botonPublicar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -155,10 +177,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         botonTipoUbicacion.setOnClickListener{
 
-            val bottomSheet = BottomSheet()
-
-            // Mostrar el Bottom Sheet
-            bottomSheet.show(parentFragmentManager, BottomSheet.TAG)
+            val tipoUbicacionFragmento = FragmentPopUpTipoUbicacion.nuevaInstancia(
+                tipoSeleccionado = tipoUbiSeleccionado
+            )
+            popUpContenidoGeneral.newInstance(tipoUbicacionFragmento).show(parentFragmentManager, "popUp")
         }
 
         botonAñadirHorario.setOnClickListener {
@@ -177,53 +199,63 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         botonPublicar.setOnClickListener {
             if (validarCampos()) {
+                mostrarCarga()
                 Toast.makeText(requireContext(), "Publicando...", Toast.LENGTH_SHORT).show()
 
-                // 1. Preparar datos
                 val horario = mapOf(
-                    "apertura" to (horaApertura ?: "08:00"),
-                    "cierre" to (horaCierre ?: "20:00")
+                    "apertura" to horaApertura,
+                    "cierre" to horaCierre
+                )
+
+                val etiquetas = mutableListOf<String>(
+                    if (switchAcesibilidad.isChecked) "accesible" else "no accesible",
+                    if (switchUnisex.isChecked) "unisex" else "no unisex",
+                    if (switchJabon.isChecked) "jabon" else "no jabon",
+                    if (switchPapel.isChecked) "papel" else "no papel",
+                    if (switchGratis.isChecked) "gratis" else "de pago",
+                    if (switchCambiar.isChecked) "zona bebes" else "no zona bebes",
                 )
 
 
-                // 2. Crear objeto Urinario
                 val banio = Urinario(
+                    nombre = textoNombre.text.toString(),
+                    sinhorario = if(horaApertura != null && horaCierre != null){
+                        if(abiertoSiempre){
+                            "abierto 24/7"
+                        }else{
+                            "baño cerrado"
+                        }
+                    }else{
+                        null
+                    },
                     creador = FirebaseAuth.getInstance().currentUser?.uid ?: "",
                     descripcion = textoDescripcion.text.toString(),
-                    etiquetas = listOf("público", "accesible"),
+                    etiquetas = etiquetas,
                     foto = null,
                     horario = horario,
                     localizacion = GeoPoint(ubicacionActual.latitude, ubicacionActual.longitude),
-                    tipoUbi = tipoUbi,
+                    tipoUbi = tipoUbiSeleccionado,
                     puntuacion = ratingBar.rating.toDouble(),
                 )
 
-                // 3. Subir a Firestore
                 FirebaseFirestore.getInstance().collection("urinarios")
                     .add(banio)
                     .addOnSuccessListener { documentReference ->
-                        // Éxito
-                        val mensajeExito = "¡Publicado con éxito! ID: ${documentReference.id}"
-                        Toast.makeText(requireContext(), mensajeExito, Toast.LENGTH_SHORT).show()
 
-                        // Debug (opcional)
-                        val debugMessage = """
-                    ${ratingBar.rating} estrellas
-                    Nombre: ${textoNombre.text}
-                    Descripción: ${textoDescripcion.text}
-                    Horario: ${horaApertura ?: "08:00"} - ${horaCierre ?: "20:00"}
-                   }
-                """.trimIndent()
-
-                        popUp.newInstance(debugMessage).show(parentFragmentManager, "popUp")
+                        ocultarCarga()
+                        Toast.makeText(requireContext(), "¡Publicado con éxito!", Toast.LENGTH_SHORT).show()
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.frame, FragmentMapa())
+                            .addToBackStack(null)
+                            .commit()
                     }
                     .addOnFailureListener { e ->
                         // Error
-                        Toast.makeText(requireContext(), "Error al publicar: ${e.message}", Toast.LENGTH_SHORT).show()
+                        ocultarCarga()
+                        Toast.makeText(requireContext(), "Error al publicar", Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error al publicar", e)
                     }
             }
-
 
         }
 
@@ -248,8 +280,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
     private fun validarCampos(): Boolean {
         return when {
-            textoDescripcion.text.isNullOrEmpty() -> {
-                Toast.makeText(context, "Ingresa una descripción", Toast.LENGTH_SHORT).show()
+            textoNombre.text.toString().isEmpty() -> {
+                Toast.makeText(context, "Añade un nombre", Toast.LENGTH_SHORT).show()
                 false
             }
             ratingBar.rating < 0.5 -> {
@@ -260,10 +292,29 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Toast.makeText(context, "Añade un horario", Toast.LENGTH_SHORT).show()
                 false
             }
+            tipoUbiSeleccionado == null ->{
+                Toast.makeText(context, "Añade un tipo de ubicación", Toast.LENGTH_SHORT).show()
+                false
+            }
 
 
             else -> true
         }
+    }
+
+    fun mostrarCarga() {
+        loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
+
+        loadingDialog = LoadingDialog()
+        loadingDialog?.show(parentFragmentManager, "loading")
+
+        loadingTimeoutHandler = Handler(Looper.getMainLooper())
+        loadingTimeoutHandler?.postDelayed(loadingTimeoutRunnable, loadingTimeoutMillis)
+    }
+
+    fun ocultarCarga() {
+        loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
+        loadingDialog?.dismiss()
     }
 
 }

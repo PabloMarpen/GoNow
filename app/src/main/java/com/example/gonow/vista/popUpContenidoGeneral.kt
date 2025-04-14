@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
@@ -31,6 +32,11 @@ class popUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFrag
         childFragmentManager.beginTransaction()
             .replace(R.id.contenedor_fragmento, fragmentoInterno)
             .commit()
+
+        val botonCerrar = view.findViewById<ImageButton>(R.id.botonCerrar)
+        botonCerrar.setOnClickListener {
+            dismiss()
+        }
 
         return view
     }

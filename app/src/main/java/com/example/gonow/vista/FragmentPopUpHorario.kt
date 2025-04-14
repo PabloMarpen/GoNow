@@ -115,8 +115,14 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
             }else {
                 // enviar el horario para manejar los datos en el otro fragment
                 val result = Bundle().apply {
-                    putString("hora_apertura", botonHorarioAbrir.text.toString())
-                    putString("hora_cierre", botonHorarioCerrar.text.toString())
+                    if(switchTieneHorario.isChecked){
+                        putString("hora_apertura", botonHorarioAbrir.text.toString())
+                        putString("hora_cierre", botonHorarioCerrar.text.toString())
+                    }else{
+                        putString("hora_apertura", null)
+                        putString("hora_cierre", null)
+                    }
+
 
                     putBoolean("abiertoSiempre", switchAbierto.isChecked)
                     putBoolean("cerradoSiempre", switchCerrado.isChecked)
