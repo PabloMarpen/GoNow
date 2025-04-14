@@ -87,9 +87,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
         botonCambiarCorreo.setOnClickListener {
             //cargamos el popup seleccionando nuestra interfaz
-            val fragmento = fragmentPopUpCambiarCorreo()
-            val popup = popUpContenidoGeneral.newInstance(fragmento)
-            popup.show(parentFragmentManager, "popUp")
+            popUpContenidoGeneral.newInstance(fragmentPopUpCambiarCorreo()).show(parentFragmentManager, "popUp")
         }
 
         botonCambiarContrasena.setOnClickListener {

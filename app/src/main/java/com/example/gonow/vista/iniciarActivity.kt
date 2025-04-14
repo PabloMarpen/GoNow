@@ -12,7 +12,6 @@ class iniciarActivity : AppCompatActivity() {
         setContentView(R.layout.activity_iniciar)
 
 
-        // Verifica si se envió el extra para abrir el fragmento de registro
         if (intent.getBooleanExtra("abrirRegistro", false)) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.frame, FragmentRegistro())
@@ -20,7 +19,6 @@ class iniciarActivity : AppCompatActivity() {
                 .commit()
         }
 
-        // Verifica si se envió el extra para abrir el fragmento de registro
         if (intent.getBooleanExtra("abrirCuenta", false)) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.frame, FragmentIniciar())

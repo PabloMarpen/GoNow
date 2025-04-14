@@ -17,7 +17,7 @@ class generalActivity : AppCompatActivity() {
         val botonMapa = findViewById<ImageView>(R.id.imageViewMapa)
         val botonPlus = findViewById<ImageView>(R.id.imageViewPlus)
         val botonPersona = findViewById<ImageView>(R.id.imageViewPersona)
-
+        val currentUser = FirebaseAuth.getInstance().currentUser
 
 
 
@@ -46,26 +46,34 @@ class generalActivity : AppCompatActivity() {
         }
 
         botonPlus.setOnClickListener {
-            val currentUser = FirebaseAuth.getInstance().currentUser
+
             if (currentUser != null){
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.frame, FragmentAniadir())
                     .addToBackStack(null)
                     .commit()
             }else{
-                Toast.makeText(this, "Debes iniciar sesión para usar esta función", Toast.LENGTH_SHORT).show()
+                popUpContenidoGeneral.newInstance(fragmentPopUpSpam()).show(supportFragmentManager, "popUp")
+
             }
 
                 
 
         }
 
-
         botonPersona.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.frame, FragmentAjustes())
-                .addToBackStack(null)
-                .commit()
+            if (currentUser != null){
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame, FragmentAjustes())
+                    .addToBackStack(null)
+                    .commit()
+            }else{
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frame, fragmentAjustesAnonimo())
+                    .addToBackStack(null)
+                    .commit()
+            }
+
         }
     }
 }

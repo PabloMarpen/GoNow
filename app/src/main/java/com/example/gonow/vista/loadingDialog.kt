@@ -11,13 +11,17 @@ import com.example.gonow.R
 
 class LoadingDialog : DialogFragment() {
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.frame_carga, container, false)
     }
+
 
     override fun onStart() {
         super.onStart()

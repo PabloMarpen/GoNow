@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tituloHorario"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="@string/reg_strate"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+    <!-- Aquí metemos los dos botones en línea -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/tituloHorario2"
+        android:layout_width="237dp"
+        android:layout_height="115dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/poppinsmedium"
+        android:text="@string/quiere_tener_acceso_completo"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/comentario"
+        android:layout_width="311dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/poppinslight"
+        android:text="Regístrate en segundos para:\n✅ Añadir nuevos baños 🏛️\n✅ Calificar y dejar reseñas ⭐\n\n¡Únete y mejora la experiencia para todos! 🙌"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/buttonRegistrarme"
+        style="@style/PrimaryButton"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/registrarme"
+        android:textSize="20sp" />
+
+</LinearLayout>

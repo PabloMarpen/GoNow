@@ -5,6 +5,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -175,13 +177,15 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         val location = banio.localizacion
         location?.let { geoPoint ->
             val latLng = LatLng(geoPoint.latitude, geoPoint.longitude)
+            val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.ubicacionpoint)
+            val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 100, 130, false) // ancho, alto en píxeles
 
             googleMap?.addMarker(
                 MarkerOptions()
                     .position(latLng)
                     .title(banio.descripcion)
                     .snippet("Tipo: ${banio.tipoUbi}")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    .icon(BitmapDescriptorFactory.fromBitmap(scaledBitmap))
             )
         } ?: run {
 
