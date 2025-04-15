@@ -3,6 +3,7 @@ package com.example.gonow.modelo
 import com.google.firebase.firestore.GeoPoint
 
 data class Urinario(
+    // Modelo de datos para los banios
     val nombre : String? = "",
     val creador: String? = "",
     val descripcion: String? = "",

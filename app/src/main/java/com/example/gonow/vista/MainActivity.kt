@@ -13,10 +13,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.gonow.R
+import com.example.gonow.data.AuthSingleton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
+
+    val auth = AuthSingleton.auth
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         val botonIniciar = findViewById<Button>(R.id.buttonIniciar)
         val botonRegistrarme = findViewById<Button>(R.id.buttonRegistrarme)
         val botonIniciarSinCuenta = findViewById<Button>(R.id.buttonIniciarSinCuenta)
+
 
         botonIniciar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -79,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-            val currentUser = FirebaseAuth.getInstance().currentUser
+            val currentUser = auth.currentUser
             if (currentUser != null) {
 
                 val intent = Intent(this, generalActivity::class.java)

@@ -1,13 +1,18 @@
 package com.example.gonow.vista
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.text.DecimalFormat
 import kotlin.math.asin
 import kotlin.math.atan2
@@ -23,7 +28,8 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
     companion object {
         private const val ARG_NOMBRE = "nombre"
         private const val ARG_DESCRIPCION = "descripcion"
-        private const val ARG_HORARIO = "horario"
+        private const val ARG_HORACIERRE = "horaCierre"
+        private const val ARG_HORAPERTURA = "horaApertura"
         private const val ARG_PUNTUACION = "puntuacion"
         private const val ARG_SINHORARIO = "sinhorario"
         private const val ARG_ETIQUETAS = "etiquetas"
@@ -35,7 +41,17 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             val args = Bundle()
             args.putString(ARG_NOMBRE, nombre)
             args.putString(ARG_DESCRIPCION, descripcion)
-            args.putString(ARG_HORARIO, horario?.toString() ?: "")
+            val horaApertura = horario?.let {
+                val Apertura = it["apertura"] ?: "No disponible"
+                Apertura
+            } ?: ""
+            val horaCierre = horario?.let {
+                val Cierre = it["cierre"] ?: "No disponible"
+                Cierre
+            } ?: ""
+
+            args.putString(ARG_HORAPERTURA, horaApertura)
+            args.putString(ARG_HORACIERRE, horaCierre)
             args.putDouble(ARG_PUNTUACION, puntuacion)
             args.putString(ARG_SINHORARIO, sinhorario)
             args.putStringArrayList(ARG_ETIQUETAS, ArrayList(etiquetas))
@@ -53,18 +69,56 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val textViewDescripcion = view.findViewById<TextView>(R.id.textViewTextoDescripcion)
         val textViewHorario = view.findViewById<TextView>(R.id.textViewTextoHorario)
         val Puntuacion = view.findViewById<RatingBar>(R.id.ratingBar)
-        val textViewEtiquetas = view.findViewById<TextView>(R.id.textViewTextoEtiquetas)
         val textViewDistancia = view.findViewById<TextView>(R.id.textViewDistanciaNum)
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupEtiquetas)
+        val etiquetas = arguments?.getStringArrayList(ARG_ETIQUETAS)
 
         textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: "Nombre no disponible"
-        textViewDescripcion.text = arguments?.getString(ARG_DESCRIPCION) ?: "Descripción no disponible"
-        if(arguments?.getString(ARG_HORARIO) == "{cierre=null, apertura=null}"){
+        if(arguments?.getString(ARG_DESCRIPCION) == ""){
+            textViewDescripcion.text = "Sin descripción"
+        }else{
+            textViewDescripcion.text = arguments?.getString(ARG_DESCRIPCION)
+        }
+        if(arguments?.getString(ARG_HORACIERRE) == "null" && arguments?.getString(ARG_HORAPERTURA) == "null"){
             textViewHorario.text = arguments?.getString(ARG_SINHORARIO) ?: ""
         }else{
-            textViewHorario.text = arguments?.getString(ARG_HORARIO) ?: ""
+            val horaApertura = arguments?.getString(ARG_HORAPERTURA) ?: "No disponible"
+            val horaCierre = arguments?.getString(ARG_HORACIERRE) ?: "No disponible"
+            textViewHorario.text = "$horaApertura - $horaCierre"
+
         }
         Puntuacion.rating = (arguments?.getDouble(ARG_PUNTUACION) ?: 0.0).toFloat()
-        textViewEtiquetas.text = arguments?.getStringArrayList(ARG_ETIQUETAS)?.joinToString(", ") ?: "Etiquetas no disponibles"
+
+        if (etiquetas != null && etiquetas.isNotEmpty()) {
+            chipGroup.removeAllViews()
+            for (etiqueta in etiquetas) {
+                val chip = Chip(requireContext()).apply {
+                    text = etiqueta
+                    isClickable = false
+                    isCheckable = false
+
+                }
+                chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+                chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                chip.chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+                chip.chipStrokeWidth = 0f
+                chipGroup.addView(chip)
+
+            }
+        } else {
+            val chip = Chip(requireContext()).apply {
+                text = "Etiquetas no disponibles"
+                isClickable = false
+                isCheckable = false
+
+            }
+            chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+            chip.chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+            chip.chipStrokeWidth = 0f
+            chipGroup.addView(chip)
+        }
+
         textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
 
 

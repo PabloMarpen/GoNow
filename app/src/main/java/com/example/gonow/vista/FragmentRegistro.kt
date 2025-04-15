@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import com.example.gonow.data.AuthSingleton
 import com.example.gonow.viewModel.GoogleSignInUtils
 
 
@@ -43,7 +44,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
         val contraseña2 = view.findViewById<EditText>(R.id.contraseña)
         val googleIdButton = view.findViewById<ImageView>(R.id.imageViewGoogle)
-        firebaseAuth = FirebaseAuth.getInstance()
+        firebaseAuth = AuthSingleton.auth
 
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {

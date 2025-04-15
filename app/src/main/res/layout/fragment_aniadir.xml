@@ -59,7 +59,7 @@
             android:inputType="text"
             android:textColor="#000000"
             android:textColorHint="@color/supportVariant"
-
+            android:maxLength="50"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@+id/ratingBar"
             app:layout_constraintStart_toStartOf="@+id/ratingBar"
@@ -79,6 +79,7 @@
             android:textSize="20sp"
             android:gravity="top|start"
             android:scrollbars="vertical"
+            android:maxLength="150"
             app:layout_constraintEnd_toEndOf="@+id/EditTextNombre"
             app:layout_constraintStart_toStartOf="@+id/EditTextNombre"
             app:layout_constraintTop_toBottomOf="@+id/EditTextNombre" />

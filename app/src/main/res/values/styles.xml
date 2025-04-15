@@ -49,6 +49,14 @@
         <item name="shapeAppearanceOverlay">@style/RoundedButton</item>
     </style>
 
+    <!-- patata -->
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Entry">
+        <item name="chipBackgroundColor">@color/secondary</item>
+        <item name="android:textColor">@color/general</item>
+        <item name="chipStrokeColor">@android:color/transparent</item>
+        <item name="chipStrokeWidth">0dp</item>
+    </style>
+
 
 
 </resources>

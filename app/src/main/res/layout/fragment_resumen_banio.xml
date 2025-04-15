@@ -17,15 +17,17 @@
             android:id="@+id/textViewNombre"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="baño nombre"
-            android:textColor="@color/secondary"
-            android:fontFamily="@font/poppinsextrabold"
-            android:textSize="36sp"
-            android:maxLines="2"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="12dp"
             android:ellipsize="end"
+            android:fontFamily="@font/poppinsextrabold"
+            android:maxLines="4"
             android:scrollHorizontally="false"
+            android:text="baño nombre"
             android:textAlignment="center"
+            android:textColor="@color/secondary"
+            android:textSize="36sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,38 +86,16 @@
             app:layout_constraintStart_toEndOf="@+id/textViewDistancia"
             app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
-        <TextView
-            android:id="@+id/textViewEtiquetas"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginHorizontal="16dp"
-            android:fontFamily="@font/poppinsmedium"
-            android:text="Etiquetas"
-            android:textAlignment="viewStart"
-            android:textColor="@color/secondary"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDistancia" />
 
-        <TextView
-            android:id="@+id/textViewTextoEtiquetas"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="16dp"
-            android:fontFamily="@font/poppinsregular"
-            android:text="ejemplo"
-            android:textColor="@color/secondary"
-            android:textSize="20sp"
-            android:textAlignment="viewStart"
-            android:maxLines="4"
-            android:ellipsize="end"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupEtiquetas"
+            android:layout_width="293dp"
+            android:layout_height="112dp"
+            app:chipSpacing="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewEtiquetas" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewDistancia"
+            app:singleLine="false" />
 
         <TextView
             android:id="@+id/textViewDescripcion"
@@ -131,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTextoEtiquetas" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupEtiquetas" />
 
         <TextView
             android:id="@+id/textViewTextoDescripcion"
@@ -144,7 +124,7 @@
             android:textColor="@color/secondary"
             android:textSize="20sp"
             android:textAlignment="viewStart"
-            android:maxLines="4"
+            android:maxLines="7"
             android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

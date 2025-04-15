@@ -35,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import android.os.Handler
 import android.os.Looper
+import com.example.gonow.data.AuthSingleton
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
@@ -64,7 +65,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var cerradoSiempre : Boolean = false
     var tieneHorario : Boolean = false
     var tipoUbiSeleccionado : String? = null
-    val auth = FirebaseAuth.getInstance()
+    val auth = AuthSingleton.auth
+    // Tiempo de espera para ocultar la carga
     private val loadingTimeoutMillis = 60000L // 1 minuto
     private var loadingTimeoutHandler: Handler? = null
     private val loadingTimeoutRunnable = Runnable {
@@ -81,6 +83,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         super.onCreate(savedInstanceState)
 
         requireActivity().supportFragmentManager.setFragmentResultListener("horario", this) { _, bundle ->
+            // Recibimos los datos del fragmento y los asignamos a las variables
             val horaApertura = bundle.getString("hora_apertura")
             val horaCierre = bundle.getString("hora_cierre")
             val abiertoSiempre = bundle.getBoolean("abiertoSiempre")
@@ -124,7 +127,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
-
+        // Obtener la ubicación actual
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -138,7 +141,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
 
         mostrarCarga()
-
+//        Obtener la ubicación actual con Geolocalización por nombre de la calle
         posicion.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
                 ubicacionActual = LatLng(it.latitude, it.longitude)
@@ -176,7 +179,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
 
         botonTipoUbicacion.setOnClickListener{
-
+            // cargamos el popup seleccionando nuestra interfaz y pasamos los datos
             val tipoUbicacionFragmento = FragmentPopUpTipoUbicacion.nuevaInstancia(
                 tipoSeleccionado = tipoUbiSeleccionado
             )
@@ -184,7 +187,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
 
         botonAñadirHorario.setOnClickListener {
-
+            // le pasamos los datos al fragment del horario si ya se habian guardado previamente
             val horarioFragment = FragmentPopUpHorario.nuevaInstancia(
                 switchAbierto = abiertoSiempre,
                 switchCerrado = cerradoSiempre,
@@ -201,22 +204,22 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             if (validarCampos()) {
                 mostrarCarga()
                 Toast.makeText(requireContext(), "Publicando...", Toast.LENGTH_SHORT).show()
-
+                // Crear el objeto horario
                 val horario = mapOf(
                     "apertura" to horaApertura,
                     "cierre" to horaCierre
                 )
-
+                // Crear la lista de etiquetas
                 val etiquetas = mutableListOf<String>(
-                    if (switchAcesibilidad.isChecked) "accesible" else "no accesible",
-                    if (switchUnisex.isChecked) "unisex" else "no unisex",
-                    if (switchJabon.isChecked) "jabon" else "no jabon",
-                    if (switchPapel.isChecked) "papel" else "no papel",
-                    if (switchGratis.isChecked) "gratis" else "de pago",
-                    if (switchCambiar.isChecked) "zona bebes" else "no zona bebes",
+                    if (switchAcesibilidad.isChecked) "Accesible" else "No accesible",
+                    if (switchUnisex.isChecked) "Unisex" else "No unisex",
+                    if (switchJabon.isChecked) "Con jabón" else "Sin jabón",
+                    if (switchPapel.isChecked) "Con papel" else "Sin papel",
+                    if (switchGratis.isChecked) "Gratis" else "De pago",
+                    if (switchCambiar.isChecked) "Con zona bebé" else "Sin zona bebé"
                 )
 
-
+                // Crear el objeto banio
                 val banio = Urinario(
                     nombre = textoNombre.text.toString(),
                     sinhorario = if(horaApertura != null && horaCierre != null){
@@ -237,7 +240,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     tipoUbi = tipoUbiSeleccionado,
                     puntuacion = ratingBar.rating.toDouble(),
                 )
-
+                // Guardar en Firestore con el UID del usuario como ID
                 FirebaseFirestore.getInstance().collection("urinarios")
                     .add(banio)
                     .addOnSuccessListener { documentReference ->
@@ -262,6 +265,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
     fun getFullAddress(context: Context, lat: Double, lng: Double): Map<String, String> {
+        // Geocodificación inversa para obtener la dirección
         return try {
             val geocoder = Geocoder(context, Locale.getDefault())
             val addresses = geocoder.getFromLocation(lat, lng, 1)
@@ -302,17 +306,20 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
     }
 
+    // Funciones de carga de pantalla
     fun mostrarCarga() {
+        // Cancelamos el temporizador si ya estaba activo
         loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
-
+//        Mostramos el diálogo de carga
         loadingDialog = LoadingDialog()
         loadingDialog?.show(parentFragmentManager, "loading")
-
+//        Iniciamos el temporizador
         loadingTimeoutHandler = Handler(Looper.getMainLooper())
         loadingTimeoutHandler?.postDelayed(loadingTimeoutRunnable, loadingTimeoutMillis)
     }
 
     fun ocultarCarga() {
+        // Cancelamos el temporizador
         loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
         loadingDialog?.dismiss()
     }

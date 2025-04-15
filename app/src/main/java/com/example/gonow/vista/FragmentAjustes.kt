@@ -13,12 +13,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
+import com.example.gonow.data.AuthSingleton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
-    val auth = FirebaseAuth.getInstance()
+    val auth = AuthSingleton.auth
     val currentUser = auth.currentUser?.uid
 
     @SuppressLint("ClickableViewAccessibility")

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 
 //  Recursos del proyecto
 import com.example.gonow.R
+import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Urinario
 
 // API de ubicación de Google
@@ -47,7 +48,7 @@ import com.google.firebase.firestore.GeoPoint
 
 class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db = FirestoreSingleton.db
     private lateinit var filtro: ImageView
     private lateinit var mapView: MapView
     private lateinit var ubicacionActual: LatLng
@@ -71,6 +72,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
             if (fineLocationGranted || coarseLocationGranted) {
                 obtenerUbicacionActual()
+                iniciarActualizacionesUbicacion()
+                ocultarCarga()
             } else {
                 Toast.makeText(requireContext(), "Permisos de ubicación denegados", Toast.LENGTH_SHORT).show()
             }
@@ -117,10 +120,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
-        mostrarCarga()
-        obtenerYMostrarBanios()
-        obtenerUbicacionActual()
-        iniciarActualizacionesUbicacion()
+        mostrarCarga() // para la carga
+        obtenerYMostrarBanios() // para los baños
+        obtenerUbicacionActual() // para la ubicación actual
+        iniciarActualizacionesUbicacion()// para la ubicación actual
     }
 
     private fun mostrarDatosBanio(marker: Marker) {
@@ -178,7 +181,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         location?.let { geoPoint ->
             val latLng = LatLng(geoPoint.latitude, geoPoint.longitude)
             val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.ubicacionpoint)
-            val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 100, 130, false) // ancho, alto en píxeles
+            val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 140, 170, false) // ancho, alto en píxeles
 
             googleMap?.addMarker(
                 MarkerOptions()
@@ -241,7 +244,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
 
                 if (!ubicacionActualMostrada){
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 17f))
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
                     ubicacionActualMostrada = true
                     ocultarCarga()
                 }
@@ -252,8 +255,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         posicion.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
-
-
 
 
     override fun onDestroyView() {

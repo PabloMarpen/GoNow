@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class GoogleSignInUtils {
-
+// Clase para gestionar la autenticación con Google
     companion object {
         fun doGoogleSignIn(
             context: Context,
@@ -61,7 +61,7 @@ class GoogleSignInUtils {
                         }
                         else ->{
                             Toast.makeText(context, "No se pudo obtener credencial de Google", Toast.LENGTH_SHORT).show()
-                            Log.d("GoogleSignIn", "Credencial inesperada: ${result.credential}")
+                            Log.d("GoogleSignIn", "Credencial inesperada")
                         }
                     }
                 }catch (e:NoCredentialException){
