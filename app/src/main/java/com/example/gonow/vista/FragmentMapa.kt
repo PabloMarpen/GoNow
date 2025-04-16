@@ -50,6 +50,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
     private val db = FirestoreSingleton.db
     private lateinit var filtro: ImageView
+    private lateinit var localizar: ImageView
     private lateinit var mapView: MapView
     private lateinit var ubicacionActual: LatLng
     private var googleMap: GoogleMap? = null
@@ -85,6 +86,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         filtro = view.findViewById(R.id.imageViewFiltro)
         mapView = view.findViewById(R.id.mapView)
+        localizar = view.findViewById(R.id.imageViewUbi)
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
         mapView.getMapAsync(this)
@@ -96,6 +98,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             popup.show(parentFragmentManager, "popUp")
         }
 
+        localizar.setOnClickListener {
+            obtenerUbicacionActual()
+        }
 
     }
 

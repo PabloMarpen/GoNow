@@ -219,20 +219,31 @@
             android:id="@+id/botonPuntuar"
             style="@style/SecondaryButton"
             android:layout_width="245dp"
-            android:layout_height="45dp"
+            android:layout_height="52dp"
             android:layout_marginTop="70dp"
-            android:layout_marginBottom="90dp"
             android:fontFamily="@font/poppinslight"
             android:text="@string/puntuar_ba_o"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.524"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewHorario" />
 
-
-
+        <Button
+            android:id="@+id/botonLlegar"
+            style="@style/SecondaryButton"
+            android:layout_width="245dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="90dp"
+            android:fontFamily="@font/poppinslight"
+            android:text="@string/como_llegar"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/botonPuntuar"
+            app:layout_constraintStart_toStartOf="@+id/botonPuntuar"
+            app:layout_constraintTop_toBottomOf="@+id/botonPuntuar"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

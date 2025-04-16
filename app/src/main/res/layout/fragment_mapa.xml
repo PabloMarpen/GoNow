@@ -58,12 +58,33 @@
     <!-- Ícono de filtro dentro del círculo -->
     <ImageView
         android:id="@+id/imageViewFiltro"
-        android:layout_width="50dp"
-        android:layout_height="47dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView5"
         app:layout_constraintEnd_toEndOf="@+id/imageView5"
         app:layout_constraintStart_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="@+id/imageView5"
         app:srcCompat="@drawable/filter" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="63dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/forma_circulo2"
+        app:layout_constraintEnd_toEndOf="@+id/imageView5"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView5"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+    <ImageView
+        android:id="@+id/imageViewUbi"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+        app:layout_constraintEnd_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toStartOf="@+id/imageView6"
+        app:layout_constraintTop_toTopOf="@+id/imageView6"
+        app:srcCompat="@drawable/miubi" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

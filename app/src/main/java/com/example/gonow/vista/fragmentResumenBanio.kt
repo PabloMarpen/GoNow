@@ -1,13 +1,16 @@
 package com.example.gonow.vista
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.text.DecimalFormat
 import kotlin.math.asin
 import kotlin.math.atan2
@@ -90,6 +94,7 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val tarjetaEditar = view.findViewById<androidx.cardview.widget.CardView>(R.id.tarjeta)
         val botonBorrar = view.findViewById<ImageView>(R.id.imageBorrar)
         val botonEditar = view.findViewById<ImageView>(R.id.imageEditar)
+        val botonLlegar = view.findViewById<Button>(R.id.botonLlegar)
 
         if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
             tarjetaEditar.visibility = View.VISIBLE
@@ -153,19 +158,27 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         botonBorrar.setOnClickListener {
             val docId = arguments?.getString(ARG_ID_DOCUMENTO)
             if (docId != null) {
-                FirestoreSingleton.db
-                    .collection("urinarios")
-                    .document(docId)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "Baño borrado", Toast.LENGTH_SHORT).show()
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(R.id.frame, FragmentMapa())
-                            .commit()
+                val mensaje = "¿Seguro que quieres borrar este baño?"
+                val popup = popUp.newInstance(mensaje)
+                popup.setOnAcceptListener { isConfirmed ->
+                    if (isConfirmed) {
+                        FirestoreSingleton.db
+                            .collection("urinarios")
+                            .document(docId)
+                            .delete()
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Baño borrado", Toast.LENGTH_SHORT).show()
+                                requireActivity().supportFragmentManager.beginTransaction()
+                                    .replace(R.id.frame, FragmentMapa())
+                                    .commit()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Error al borrar", Toast.LENGTH_SHORT).show()
+                            }
                     }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), "Error al borrar", Toast.LENGTH_SHORT).show()
-                    }
+                }
+                popup.show(parentFragmentManager, "popUp")
+
             } else {
                 Toast.makeText(requireContext(), "ID de documento no disponible", Toast.LENGTH_SHORT).show()
             }
@@ -173,6 +186,22 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         botonEditar.setOnClickListener {
 
         }
+
+        botonLlegar.setOnClickListener {
+                val coordenadas = arguments?.getParcelable<LatLng>(ARG_CORDENADAS)
+                val latitud = coordenadas?.latitude ?: 0.0
+                val longitud = coordenadas?.longitude ?: 0.0
+                    val gmmIntentUri = Uri.parse("geo:$latitud,$longitud?q=$latitud,$longitud")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+
+                    if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
+                        startActivity(mapIntent)
+                    } else {
+                        Toast.makeText(context, "Google Maps no está instalado", Toast.LENGTH_SHORT).show()
+                    }
+        }
+
 
     }
 
