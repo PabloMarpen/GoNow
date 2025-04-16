@@ -27,25 +27,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageViewAñadirImagen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="193dp"
+            android:layout_height="193dp"
             android:layout_marginTop="20dp"
+            app:cardCornerRadius="47dp"
+            app:cardBackgroundColor="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="@+id/textView5"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="@+id/textView5"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
-            app:srcCompat="@drawable/aniadirimagen" />
+            app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+            <ImageView
+                android:id="@+id/imageViewAñadirImagen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/aniadirimagen" />
+        </androidx.cardview.widget.CardView>
 
         <RatingBar
             android:id="@+id/ratingBar"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewAñadirImagen"
-            app:layout_constraintStart_toStartOf="@+id/imageViewAñadirImagen"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewAñadirImagen" />
+            app:layout_constraintEnd_toEndOf="@+id/cardView"
+            app:layout_constraintStart_toStartOf="@+id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         <EditText
             android:id="@+id/EditTextNombre"

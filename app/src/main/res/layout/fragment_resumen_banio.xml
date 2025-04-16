@@ -13,6 +13,49 @@
         android:layout_height="match_parent"
         android:background="@color/general">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tarjeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:backgroundTint="@color/support"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewNombre"
+            app:layout_constraintStart_toStartOf="@+id/textViewNombre"
+            app:layout_constraintTop_toBottomOf="@+id/textViewNombre">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:id="@+id/imageEditar"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="Editar"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit" />
+
+                <ImageView
+                    android:id="@+id/imageBorrar"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="12dp"
+                    android:contentDescription="Borrar"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/borrar" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
         <TextView
             android:id="@+id/textViewNombre"
             android:layout_width="0dp"
@@ -34,16 +77,26 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <ImageView
-            android:id="@+id/imageViewAñadirImagen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="@+id/textViewNombre"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="193dp"
+            android:layout_height="193dp"
+            android:layout_marginTop="23dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="47dp"
+            app:layout_constraintEnd_toEndOf="@+id/tarjeta"
             app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="@+id/textViewNombre"
-            app:layout_constraintTop_toBottomOf="@+id/textViewNombre"
-            app:srcCompat="@drawable/aniadirimagen" />
+            app:layout_constraintStart_toStartOf="@+id/tarjeta"
+            app:layout_constraintTop_toBottomOf="@+id/tarjeta">
+
+            <ImageView
+                android:id="@+id/imageViewAñadirImagenResu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/aniadirimagen" />
+        </androidx.cardview.widget.CardView>
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -52,9 +105,9 @@
             android:layout_marginTop="20dp"
             android:isIndicator="true"
             android:focusable="false"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewAñadirImagen"
-            app:layout_constraintStart_toStartOf="@+id/imageViewAñadirImagen"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewAñadirImagen" />
+            app:layout_constraintEnd_toEndOf="@+id/cardView"
+            app:layout_constraintStart_toStartOf="@+id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         <TextView
         android:id="@+id/textViewDistancia"
@@ -177,6 +230,10 @@
             app:layout_constraintHorizontal_bias="0.524"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewHorario" />
+
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

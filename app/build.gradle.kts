@@ -67,12 +67,14 @@ dependencies {
     // Si usas ViewModel compartido entre actividad y fragmentos
     implementation(libs.androidx.fragment.ktx)
 
+
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.googleid)
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

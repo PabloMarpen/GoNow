@@ -76,6 +76,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 ocultarCarga()
             } else {
                 Toast.makeText(requireContext(), "Permisos de ubicación denegados", Toast.LENGTH_SHORT).show()
+                ocultarCarga()
             }
         }
 
@@ -144,7 +145,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                             sinhorario = it.sinhorario,
                             etiquetas = it.etiquetas ?: emptyList(),
                             cordenadasbanio = LatLng(it.localizacion?.latitude ?: 0.0, it.localizacion?.longitude ?: 0.0),
-                            ubicacionUsuario = ubicacionActual
+                            ubicacionUsuario = ubicacionActual,
+                            imagen = it.foto,
+                            creador = it.creador,
+                            idDocumento = documents.documents[0].id
                         )
 
                         requireActivity().supportFragmentManager.beginTransaction()

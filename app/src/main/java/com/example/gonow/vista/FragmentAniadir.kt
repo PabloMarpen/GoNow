@@ -2,8 +2,12 @@ package com.example.gonow.vista
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
@@ -22,6 +26,8 @@ import com.example.gonow.modelo.Urinario
 import java.util.Locale
 import android.location.Geocoder
 import android.location.Location
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.example.gonow.viewModel.userViewModel
@@ -35,7 +41,17 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import com.example.gonow.data.AuthSingleton
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.UUID
+import android.util.Base64
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
@@ -57,6 +73,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     private lateinit var switchGratis: Switch
     private lateinit var switchCambiar: Switch
 
+    //imagen
+    private lateinit var photoUri: Uri
+    private lateinit var photoFile: File
+    private val CAMERA_REQUEST_CODE = 100
     lateinit var banio : Urinario
     lateinit var ubicacionActual : LatLng
     var horaApertura : String? = null
@@ -77,6 +97,12 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     val currentUser = auth.currentUser?.uid
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success && photoUri != null) {
+            // Mostrar imagen en el ImageView
+            botonAñadirImagen.setImageURI(photoUri)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,6 +153,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
+
         // Obtener la ubicación actual
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -160,6 +187,16 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }.addOnFailureListener { e ->
             ocultarCarga()
             Toast.makeText(requireContext(), "Error al obtener ubicación", Toast.LENGTH_SHORT).show()
+        }
+
+        botonAñadirImagen.setOnClickListener {
+            photoFile = createImageFile()
+            photoUri = FileProvider.getUriForFile(
+                requireContext(),
+                "com.example.gonow.fileprovider",
+                photoFile
+            )
+            cameraLauncher.launch(photoUri)
         }
 
         botonPublicar.setOnTouchListener { v, event ->
@@ -220,6 +257,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 )
 
                 // Crear el objeto banio
+                val encodedImage = compressAndEncodeImageToBase64(photoFile, 1048487)
                 val banio = Urinario(
                     nombre = textoNombre.text.toString(),
                     sinhorario = if(horaApertura != null && horaCierre != null){
@@ -231,10 +269,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     }else{
                         null
                     },
-                    creador = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                    creador = AuthSingleton.auth.currentUser?.uid ?: "",
                     descripcion = textoDescripcion.text.toString(),
                     etiquetas = etiquetas,
-                    foto = null,
+                    foto = encodedImage,
                     horario = horario,
                     localizacion = GeoPoint(ubicacionActual.latitude, ubicacionActual.longitude),
                     tipoUbi = tipoUbiSeleccionado,
@@ -253,9 +291,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                             .commit()
                     }
                     .addOnFailureListener { e ->
-                        // Error
                         ocultarCarga()
-                        Toast.makeText(requireContext(), "Error al publicar", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Error al publicar: ${e.message}", Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error al publicar", e)
                     }
             }
@@ -322,6 +359,50 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         // Cancelamos el temporizador
         loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
         loadingDialog?.dismiss()
+    }
+
+
+    private fun createImageFile(): File {
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("IMG_$timestamp", ".jpg", storageDir)
+    }
+
+
+    fun compressAndEncodeImageToBase64(file: File, maxSize: Int): String {
+        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+
+        // Redimensionar la imagen si es demasiado grande
+        val width = bitmap.width
+        val height = bitmap.height
+        val ratio = width.toFloat() / height.toFloat()
+
+        var newWidth = 800 // Ancho máximo
+        var newHeight = (newWidth / ratio).toInt()
+
+        if (width > height) {
+            newHeight = (newWidth / ratio).toInt()
+        } else {
+            newWidth = (newHeight * ratio).toInt()
+        }
+
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+
+        // Comprimir la imagen con calidad baja
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        var quality = 80 // Calidad inicial de compresión
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+
+        // Si la imagen sigue siendo demasiado grande, reducimos la calidad aún más
+        while (byteArrayOutputStream.size() > maxSize) {
+            byteArrayOutputStream.reset() // Limpiar el flujo de bytes
+            quality -= 10 // Disminuir la calidad
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+        }
+
+        // Convertir a Base64
+        val byteArray = byteArrayOutputStream.toByteArray()
+        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
     }
 
 }

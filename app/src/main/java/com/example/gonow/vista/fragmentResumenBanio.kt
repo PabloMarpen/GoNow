@@ -1,18 +1,26 @@
 package com.example.gonow.vista
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.gonow.R
+import com.example.gonow.data.AuthSingleton
+import com.example.gonow.data.FirestoreSingleton
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.firebase.auth.FirebaseAuth
 import java.text.DecimalFormat
 import kotlin.math.asin
 import kotlin.math.atan2
@@ -35,8 +43,11 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         private const val ARG_ETIQUETAS = "etiquetas"
         private const val ARG_CORDENADAS = "cordenadasbanio"
         private const val ARG_UBICACION_USUARIO = "ubicacionUsuario"
+        private const val ARG_IMAGEN = "imagen"
+        private const val ARG_CREADOR = "creador"
+        private const val ARG_ID_DOCUMENTO = "idDocumento"
 
-        fun newInstance(nombre: String, descripcion: String, horario: Map<String, String?>?, puntuacion: Double, sinhorario: String?, etiquetas: List<String>, cordenadasbanio: LatLng, ubicacionUsuario: LatLng): fragmentResumenBanio {
+        fun newInstance(nombre: String, descripcion: String, horario: Map<String, String?>?, puntuacion: Double, sinhorario: String?, etiquetas: List<String>, cordenadasbanio: LatLng, ubicacionUsuario: LatLng, imagen: String?, creador: String?, idDocumento: String?): fragmentResumenBanio {
             val fragment = fragmentResumenBanio()
             val args = Bundle()
             args.putString(ARG_NOMBRE, nombre)
@@ -57,6 +68,9 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             args.putStringArrayList(ARG_ETIQUETAS, ArrayList(etiquetas))
             args.putParcelable(ARG_CORDENADAS, cordenadasbanio)
             args.putParcelable(ARG_UBICACION_USUARIO, ubicacionUsuario)
+            args.putString(ARG_IMAGEN, imagen)
+            args.putString(ARG_CREADOR, creador)
+            args.putString(ARG_ID_DOCUMENTO, idDocumento)
             fragment.arguments = args
             return fragment
         }
@@ -72,6 +86,21 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val textViewDistancia = view.findViewById<TextView>(R.id.textViewDistanciaNum)
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupEtiquetas)
         val etiquetas = arguments?.getStringArrayList(ARG_ETIQUETAS)
+        val imageView = view.findViewById<ImageView>(R.id.imageViewAñadirImagenResu)
+        val tarjetaEditar = view.findViewById<androidx.cardview.widget.CardView>(R.id.tarjeta)
+        val botonBorrar = view.findViewById<ImageView>(R.id.imageBorrar)
+        val botonEditar = view.findViewById<ImageView>(R.id.imageEditar)
+
+        if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
+            tarjetaEditar.visibility = View.VISIBLE
+        }else{
+            tarjetaEditar.visibility = View.GONE
+        }
+
+        if(arguments?.getString(ARG_IMAGEN) != null){
+            val decodedBitmap = decodeBase64ToBitmap(arguments?.getString(ARG_IMAGEN)!!)  // encodedImage es tu cadena base64
+            imageView.setImageBitmap(decodedBitmap)
+        }
 
         textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: "Nombre no disponible"
         if(arguments?.getString(ARG_DESCRIPCION) == ""){
@@ -121,7 +150,29 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
         textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
 
+        botonBorrar.setOnClickListener {
+            val docId = arguments?.getString(ARG_ID_DOCUMENTO)
+            if (docId != null) {
+                FirestoreSingleton.db
+                    .collection("urinarios")
+                    .document(docId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Baño borrado", Toast.LENGTH_SHORT).show()
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.frame, FragmentMapa())
+                            .commit()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Error al borrar", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(requireContext(), "ID de documento no disponible", Toast.LENGTH_SHORT).show()
+            }
+        }
+        botonEditar.setOnClickListener {
 
+        }
 
     }
 
@@ -155,5 +206,10 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 "${distanceKm.roundToInt()} km"
             }
         }
+    }
+
+    fun decodeBase64ToBitmap(base64String: String): Bitmap {
+        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }
