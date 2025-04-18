@@ -7,7 +7,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
 
 class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicacion){

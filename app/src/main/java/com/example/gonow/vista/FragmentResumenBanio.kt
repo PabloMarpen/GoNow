@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -17,16 +16,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import java.text.DecimalFormat
-import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -35,7 +30,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 
-class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
+class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
     companion object {
         private const val ARG_NOMBRE = "nombre"
@@ -50,9 +45,10 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         private const val ARG_IMAGEN = "imagen"
         private const val ARG_CREADOR = "creador"
         private const val ARG_ID_DOCUMENTO = "idDocumento"
+        private const val ARG_ID_TIPO = "tipo"
 
-        fun newInstance(nombre: String, descripcion: String, horario: Map<String, String?>?, puntuacion: Double, sinhorario: String?, etiquetas: List<String>, cordenadasbanio: LatLng, ubicacionUsuario: LatLng, imagen: String?, creador: String?, idDocumento: String?): fragmentResumenBanio {
-            val fragment = fragmentResumenBanio()
+        fun newInstance(nombre: String,tipo : String, descripcion: String, horario: Map<String, String?>?, puntuacion: Double, sinhorario: String?, etiquetas: List<String>, cordenadasbanio: LatLng, ubicacionUsuario: LatLng, imagen: String?, creador: String?, idDocumento: String?): FragmentResumenBanio {
+            val fragment = FragmentResumenBanio()
             val args = Bundle()
             args.putString(ARG_NOMBRE, nombre)
             args.putString(ARG_DESCRIPCION, descripcion)
@@ -75,6 +71,7 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             args.putString(ARG_IMAGEN, imagen)
             args.putString(ARG_CREADOR, creador)
             args.putString(ARG_ID_DOCUMENTO, idDocumento)
+            args.putString(ARG_ID_TIPO, tipo)
             fragment.arguments = args
             return fragment
         }
@@ -90,29 +87,70 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val textViewDistancia = view.findViewById<TextView>(R.id.textViewDistanciaNum)
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroupEtiquetas)
         val etiquetas = arguments?.getStringArrayList(ARG_ETIQUETAS)
+        val tipoDeBanio = arguments?.getString(ARG_ID_TIPO)
         val imageView = view.findViewById<ImageView>(R.id.imageViewAñadirImagenResu)
         val tarjetaEditar = view.findViewById<androidx.cardview.widget.CardView>(R.id.tarjeta)
         val botonBorrar = view.findViewById<ImageView>(R.id.imageBorrar)
         val botonEditar = view.findViewById<ImageView>(R.id.imageEditar)
         val botonLlegar = view.findViewById<Button>(R.id.botonLlegar)
+        val botonPuntuar = view.findViewById<Button>(R.id.botonPuntuar)
 
+        val idBanio = arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
+        val idUsuario = AuthSingleton.auth.currentUser?.uid ?: ""
+        // mostrar la puntuacion
+        Puntuacion.rating = (arguments?.getDouble(ARG_PUNTUACION) ?: 0.0).toFloat()
+
+        FirestoreSingleton.db.collection("calificaciones")
+            .whereEqualTo("idBanio", idBanio)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    var sumaPuntuaciones = 0.0
+                    var cantidadCalificaciones = 0
+
+                    // Iterar sobre todas las calificaciones para sumarlas
+                    for (document in querySnapshot.documents) {
+                        val puntuacion = document.getDouble("puntuacion") ?: 0.0
+                        sumaPuntuaciones += puntuacion
+                        cantidadCalificaciones++
+                    }
+
+                    // Calcular la media de las puntuaciones
+                    val mediaPuntuacion = if (cantidadCalificaciones > 0) {
+                        sumaPuntuaciones / cantidadCalificaciones
+                    } else {
+                        0.0
+                    }
+
+                    // Mostrar la puntuación media en el RatingBar
+                    Puntuacion.rating = mediaPuntuacion.toFloat()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error al obtener las calificaciones.", Toast.LENGTH_SHORT).show()
+            }
+
+        // mostrar o no el boton de editar si eres el creador
         if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
             tarjetaEditar.visibility = View.VISIBLE
         }else{
             tarjetaEditar.visibility = View.GONE
         }
 
-        if(arguments?.getString(ARG_IMAGEN) != null){
+        // mostrar la imagen si no es null o vacio
+        if(arguments?.getString(ARG_IMAGEN) != null && arguments?.getString(ARG_IMAGEN) != ""){
             val decodedBitmap = decodeBase64ToBitmap(arguments?.getString(ARG_IMAGEN)!!)  // encodedImage es tu cadena base64
             imageView.setImageBitmap(decodedBitmap)
         }
-
+        // mostrar el nombre
         textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: "Nombre no disponible"
+        // mostrar la descripcion
         if(arguments?.getString(ARG_DESCRIPCION) == ""){
             textViewDescripcion.text = "Sin descripción"
         }else{
             textViewDescripcion.text = arguments?.getString(ARG_DESCRIPCION)
         }
+        // mostrar el horario
         if(arguments?.getString(ARG_HORACIERRE) == "null" && arguments?.getString(ARG_HORAPERTURA) == "null"){
             textViewHorario.text = arguments?.getString(ARG_SINHORARIO) ?: ""
         }else{
@@ -121,8 +159,9 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             textViewHorario.text = "$horaApertura - $horaCierre"
 
         }
-        Puntuacion.rating = (arguments?.getDouble(ARG_PUNTUACION) ?: 0.0).toFloat()
 
+
+        // mostrar las etiquetas en chips
         if (etiquetas != null && etiquetas.isNotEmpty()) {
             chipGroup.removeAllViews()
             for (etiqueta in etiquetas) {
@@ -130,15 +169,32 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                     text = etiqueta
                     isClickable = false
                     isCheckable = false
+                    if(etiqueta == "Accesible" || etiqueta == "Con jabón" || etiqueta == "Con papel" || etiqueta == "Gratis" || etiqueta == "Con zona bebé" || etiqueta == "No unisex"){
+                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary))
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                        chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+                        chipStrokeWidth = 0f
+                    }else{
+                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                        chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+                        chipStrokeWidth = 0f
+                    }
 
                 }
-                chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
-                chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
-                chip.chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
-                chip.chipStrokeWidth = 0f
                 chipGroup.addView(chip)
 
             }
+            val tipo = Chip(requireContext()).apply {
+                text = tipoDeBanio
+                isClickable = false
+                isCheckable = false
+                chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+                chipStrokeWidth = 0f
+            }
+            chipGroup.addView(tipo)
         } else {
             val chip = Chip(requireContext()).apply {
                 text = "Etiquetas no disponibles"
@@ -152,14 +208,20 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             chip.chipStrokeWidth = 0f
             chipGroup.addView(chip)
         }
-
+        // mostrar la distancia
         textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
 
+        botonPuntuar.setOnClickListener {
+            val calificarFragmento = FragmentPopUpCalificar.newInstance(
+                arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
+            )
+            PopUpContenidoGeneral.newInstance(calificarFragmento).show(parentFragmentManager, "popUp")
+        }
         botonBorrar.setOnClickListener {
             val docId = arguments?.getString(ARG_ID_DOCUMENTO)
             if (docId != null) {
                 val mensaje = "¿Seguro que quieres borrar este baño?"
-                val popup = popUp.newInstance(mensaje)
+                val popup = PopUp.newInstance(mensaje)
                 popup.setOnAcceptListener { isConfirmed ->
                     if (isConfirmed) {
                         FirestoreSingleton.db
@@ -237,6 +299,7 @@ class fragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
     }
 
+    // Funciones para decodificar la imagen base64
     fun decodeBase64ToBitmap(base64String: String): Bitmap {
         val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)

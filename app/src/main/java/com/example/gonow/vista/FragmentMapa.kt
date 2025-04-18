@@ -2,7 +2,6 @@ package com.example.gonow.vista
 
 // Permisos y utilidades del sistema
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -20,7 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 
 //  Recursos del proyecto
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Urinario
 
@@ -42,7 +41,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 
 
@@ -53,10 +51,11 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private lateinit var localizar: ImageView
     private lateinit var mapView: MapView
     private lateinit var ubicacionActual: LatLng
+    private lateinit var manejoCarga: ManejoDeCarga
     private var googleMap: GoogleMap? = null
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
-    private var loadingDialog: LoadingDialog? = null
+
     private var locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
     .setMinUpdateIntervalMillis(2000L)
     .build()
@@ -74,10 +73,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             if (fineLocationGranted || coarseLocationGranted) {
                 obtenerUbicacionActual()
                 iniciarActualizacionesUbicacion()
-                ocultarCarga()
+                manejoCarga.ocultarCarga()
             } else {
                 Toast.makeText(requireContext(), "Permisos de ubicación denegados", Toast.LENGTH_SHORT).show()
-                ocultarCarga()
+                manejoCarga.ocultarCarga()
             }
         }
 
@@ -91,10 +90,18 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         mapView.onResume()
         mapView.getMapAsync(this)
 
+        //manejo de la carga
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        ) {
+            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+        }
+
         filtro.setOnClickListener {
 
             val fragmento = FragmentPopUpFiltro()
-            val popup = popUpContenidoGeneral.newInstance(fragmento)
+            val popup = PopUpContenidoGeneral.newInstance(fragmento)
             popup.show(parentFragmentManager, "popUp")
         }
 
@@ -126,13 +133,14 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
-        mostrarCarga() // para la carga
+        manejoCarga.mostrarCarga() // para la carga
         obtenerYMostrarBanios() // para los baños
         obtenerUbicacionActual() // para la ubicación actual
         iniciarActualizacionesUbicacion()// para la ubicación actual
     }
 
     private fun mostrarDatosBanio(marker: Marker) {
+        manejoCarga.mostrarCarga()
         // Versión con consulta a Firestore
         db.collection("urinarios")
             .whereEqualTo("descripcion", marker.title)
@@ -142,7 +150,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 if (!documents.isEmpty) {
                     val banio = documents.documents[0].toObject(Urinario::class.java)
                     banio?.let {
-                        val fragment = fragmentResumenBanio.newInstance(
+                        val fragment = FragmentResumenBanio.newInstance(
                             nombre = it.nombre ?: "Sin nombre",
                             descripcion = it.descripcion ?: "Sin descripción",
                             horario = it.horario,
@@ -153,13 +161,15 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                             ubicacionUsuario = ubicacionActual,
                             imagen = it.foto,
                             creador = it.creador,
-                            idDocumento = documents.documents[0].id
+                            idDocumento = documents.documents[0].id,
+                            tipo = it.tipoUbi ?: "Sin tipo"
                         )
 
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.frame, fragment)
                             .addToBackStack("resumen_banio")
                             .commit()
+                        manejoCarga.ocultarCarga()
                     }
                 }
             }
@@ -255,7 +265,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 if (!ubicacionActualMostrada){
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
                     ubicacionActualMostrada = true
-                    ocultarCarga()
+                    manejoCarga.ocultarCarga()
                 }
 
             }
@@ -268,20 +278,13 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        manejoCarga.ocultarCarga()
         mapView.onDestroy()
         if (::locationCallback.isInitialized) {
             posicion.removeLocationUpdates(locationCallback)
         }
     }
 
-    fun mostrarCarga() {
-        if (loadingDialog?.isAdded != true) {
-            loadingDialog = LoadingDialog()
-            loadingDialog?.show(parentFragmentManager, "loading")
-        }
-    }
 
-    fun ocultarCarga() {
-        loadingDialog?.dismiss()
-    }
+
 }

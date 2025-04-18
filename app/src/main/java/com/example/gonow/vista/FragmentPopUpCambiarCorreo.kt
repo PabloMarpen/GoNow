@@ -5,9 +5,9 @@ import android.view.View
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
-class fragmentPopUpCambiarCorreo : Fragment(R.layout.fragment_pop_up_cambiar_correo){
+class FragmentPopUpCambiarCorreo : Fragment(R.layout.fragment_pop_up_cambiar_correo){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

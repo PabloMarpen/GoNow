@@ -3,10 +3,10 @@ package com.example.gonow.vista
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import androidx.activity.addCallback
 
-class iniciarActivity : AppCompatActivity() {
+class IniciarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_iniciar)

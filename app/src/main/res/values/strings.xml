@@ -56,5 +56,8 @@
     <string name="quiere_tener_acceso_completo">¿Quiere tener acceso completo?</string>
     <string name="registrate_o_inicia_sesi_n">Registrate o inicia sesión</string>
     <string name="como_llegar">Como llegar</string>
+    <string name="guardar">Guardar</string>
+    <string name="calificar">Calificar</string>
+    <string name="total_de_ba_os_creados">Total de baños creados:</string>
 
 </resources>

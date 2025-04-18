@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
-class fragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
+class FragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -18,7 +18,7 @@ class fragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
         val botonAyuda = view.findViewById<Button>(R.id.buttonAyudaAnonimo)
 
         botonRegistro.setOnClickListener {
-            val intent = Intent(requireContext(), iniciarActivity::class.java)
+            val intent = Intent(requireContext(), IniciarActivity::class.java)
             intent.putExtra("abrirRegistro", true) // Pasar una señal para abrir el fragmento
             startActivity(intent)
 
@@ -26,7 +26,7 @@ class fragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
         }
 
         botonIniciarSesion.setOnClickListener {
-            val intent = Intent(requireContext(), iniciarActivity::class.java)
+            val intent = Intent(requireContext(), IniciarActivity::class.java)
             intent.putExtra("abrirCuenta", true) // Pasar una señal para abrir el fragmento
             startActivity(intent)
         }

@@ -1,29 +1,38 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.example.gonow.viewModel.AuthenticationState
 import com.example.gonow.viewModel.userViewModel
-
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 class FragmentIniciar : Fragment(R.layout.fragment_login) {
 
     private val userViewModel: userViewModel by activityViewModels()
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,11 +44,20 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         val textoRegistrarme = view.findViewById<TextView>(R.id.textViewRegistrarme)
         val correo = view.findViewById<EditText>(R.id.Correo)
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
+        val botonGoogle = view.findViewById<ImageView>(R.id.imageViewGoogle)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(requireContext() , gso)
+
+        firebaseAuth = FirebaseAuth.getInstance()
 
         userViewModel.authenticationState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is AuthenticationState.Loading -> {
-                    Toast.makeText(requireContext(), "cargando...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Cargando...", Toast.LENGTH_SHORT).show()
                 }
                 is AuthenticationState.Success -> {
                     val user = state.user
@@ -47,20 +65,21 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
                     iniciarMapa()
                 }
                 is AuthenticationState.Error -> {
-                    Toast.makeText(requireContext(), "Error: ${state.errorMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error credenciales incorrectas", Toast.LENGTH_SHORT).show()
                 }
             }
         })
 
+
+        botonGoogle.setOnClickListener {
+            signInGoogle()
+        }
+
         botonIniciar.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.primaryVariant
-                    )
+                    ContextCompat.getColor(requireContext(), R.color.primaryVariant)
                 )
-
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
                     ContextCompat.getColor(requireContext(), R.color.primary)
                 )
@@ -69,17 +88,13 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         }
 
         botonIniciar.setOnClickListener {
-
-
             if (!correo.text.toString().isValidEmail()) {
                 Toast.makeText(requireContext(), "Correo no válido", Toast.LENGTH_SHORT).show()
-            }
-            else if(contraseña.text.toString().isEmpty()) {
-                Toast.makeText(requireContext(), "Contraseña vacia", Toast.LENGTH_SHORT).show()
-            } else{
+            } else if (contraseña.text.toString().isEmpty()) {
+                Toast.makeText(requireContext(), "Contraseña vacía", Toast.LENGTH_SHORT).show()
+            } else {
                 userViewModel.signInWithEmailAndPassword(correo.text.toString(), contraseña.text.toString())
             }
-
         }
 
         textoOlvidoContrasena.setOnClickListener {
@@ -88,6 +103,7 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
                 .addToBackStack(null)
                 .commit()
         }
+
         textoRegistrarme.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.frame, FragmentRegistro())
@@ -96,9 +112,51 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         }
     }
 
+    private fun signInGoogle(){
+        val signInIntent = googleSignInClient.signInIntent
+        launcher.launch(signInIntent)
+    }
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            result ->
+        if (result.resultCode == Activity.RESULT_OK){
+
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            handleResults(task)
+        }
+    }
+
+    private fun handleResults(task: Task<GoogleSignInAccount>) {
+        if (task.isSuccessful){
+            val account : GoogleSignInAccount? = task.result
+            if (account != null){
+                updateUI(account)
+            }
+        }else{
+            Toast.makeText(requireContext(), task.exception.toString() , Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateUI(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken , null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful){
+                iniciarMapa()
+            }else{
+                Toast.makeText(requireContext(), it.exception.toString() , Toast.LENGTH_SHORT).show()
+
+            }
+        }
+    }
+
+
     private fun iniciarMapa() {
-        val intent = Intent(requireContext(), generalActivity::class.java)
+        val intent = Intent(requireContext(), GeneralActivity::class.java)
         intent.putExtra("abrirMapa", true)
         startActivity(intent)
+    }
+
+    companion object {
+        private const val RC_SIGN_IN = 9001
     }
 }

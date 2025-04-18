@@ -95,7 +95,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/aniadirimagen" />
+                app:srcCompat="@drawable/noimage" />
         </androidx.cardview.widget.CardView>
 
         <RatingBar
@@ -140,15 +140,27 @@
             app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupEtiquetas"
-            android:layout_width="293dp"
-            android:layout_height="112dp"
-            app:chipSpacing="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+        <FrameLayout
+            android:id="@+id/chipGroupContenedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/textViewDistancia"
-            app:singleLine="false" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupEtiquetas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:chipSpacing="8dp"
+                app:singleLine="false" />
+        </FrameLayout>
+
 
         <TextView
             android:id="@+id/textViewDescripcion"
@@ -164,7 +176,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chipGroupEtiquetas" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupContenedor" />
 
         <TextView
             android:id="@+id/textViewTextoDescripcion"

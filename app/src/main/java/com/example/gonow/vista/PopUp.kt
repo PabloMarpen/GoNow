@@ -5,20 +5,19 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
 
-class popUp : DialogFragment() {
+class PopUp : DialogFragment() {
 
     companion object {
         private const val ARG_MESSAGE = "message"
 
-        fun newInstance(message: String): popUp {
-            val fragment = popUp()
+        fun newInstance(message: String): PopUp {
+            val fragment = PopUp()
             val args = Bundle()
             args.putString(ARG_MESSAGE, message)
             fragment.arguments = args

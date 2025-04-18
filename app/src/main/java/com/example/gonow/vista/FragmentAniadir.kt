@@ -2,14 +2,11 @@ package com.example.gonow.vista
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -20,8 +17,7 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.example.gonow.modelo.Urinario
 import java.util.Locale
 import android.location.Geocoder
@@ -30,28 +26,19 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.gonow.viewModel.userViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-import android.os.Handler
-import android.os.Looper
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import com.example.gonow.data.AuthSingleton
-import com.google.firebase.storage.FirebaseStorage
+import com.example.gonow.data.FirestoreSingleton
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.UUID
-import android.util.Base64
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
@@ -76,8 +63,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     //imagen
     private lateinit var photoUri: Uri
     private lateinit var photoFile: File
-    private val CAMERA_REQUEST_CODE = 100
-    lateinit var banio : Urinario
+    private var esFotoAniadida = false
+    private lateinit var encodedImage : String
     lateinit var ubicacionActual : LatLng
     var horaApertura : String? = null
     var horaCierre : String? = null
@@ -85,23 +72,24 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var cerradoSiempre : Boolean = false
     var tieneHorario : Boolean = false
     var tipoUbiSeleccionado : String? = null
-    val auth = AuthSingleton.auth
-    // Tiempo de espera para ocultar la carga
-    private val loadingTimeoutMillis = 60000L // 1 minuto
-    private var loadingTimeoutHandler: Handler? = null
-    private val loadingTimeoutRunnable = Runnable {
-        ocultarCarga()
-        Toast.makeText(requireContext(), "La operación tardó demasiado", Toast.LENGTH_SHORT).show()
-    }
-    private var loadingDialog: LoadingDialog? = null
-    val currentUser = auth.currentUser?.uid
+    private lateinit var manejoCarga: ManejoDeCarga
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success && photoUri != null) {
+        if (success) {
             // Mostrar imagen en el ImageView
             botonAñadirImagen.setImageURI(photoUri)
+        }
+    }
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            lanzarCamara()
+        } else {
+            Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -135,7 +123,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         super.onViewCreated(view, savedInstanceState)
 
 
-
         botonPublicar = view.findViewById(R.id.botonPublicar)
         botonTipoUbicacion = view.findViewById(R.id.botonUbicacion)
         botonAñadirHorario = view.findViewById(R.id.botonHorario)
@@ -153,6 +140,12 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        ) {
+            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+        }
 
         // Obtener la ubicación actual
         if (ActivityCompat.checkSelfPermission(
@@ -167,37 +160,44 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             return
         }
 
-        mostrarCarga()
-//        Obtener la ubicación actual con Geolocalización por nombre de la calle
+
+        manejoCarga.mostrarCarga()
+       //Obtener la ubicación actual con Geolocalización por nombre de la calle
         posicion.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
                 ubicacionActual = LatLng(it.latitude, it.longitude)
 
                 val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
-                val calle = direccion["calle"]
-                val numero = direccion["numero"]
-                val ciudad = direccion["ciudad"]
+                val calle = direccion["calle"] ?: ""
+                val numero = direccion["numero"] ?: ""
+                val ciudad = direccion["ciudad"] ?: ""
 
-                textoNombre.setText("${getString(R.string.banio)}"+ " " +"$calle" + " " + "$numero" + " " + "$ciudad")
+                val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
+                textoNombre.setText(nombre.trim())
 
-                ocultarCarga()
-            }.run {
-                ocultarCarga()
+                manejoCarga.ocultarCarga()
+            } ?: run {
+                manejoCarga.ocultarCarga()
+                textoNombre.setText(getString(R.string.banio))
+                Toast.makeText(requireContext(), "No se pudo obtener la ubicación", Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener { e ->
-            ocultarCarga()
+            manejoCarga.ocultarCarga()
+            textoNombre.setText(getString(R.string.banio))
             Toast.makeText(requireContext(), "Error al obtener ubicación", Toast.LENGTH_SHORT).show()
         }
 
         botonAñadirImagen.setOnClickListener {
-            photoFile = createImageFile()
-            photoUri = FileProvider.getUriForFile(
-                requireContext(),
-                "com.example.gonow.fileprovider",
-                photoFile
-            )
-            cameraLauncher.launch(photoUri)
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            } else {
+                lanzarCamara()
+            }
         }
+
+
 
         botonPublicar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -220,7 +220,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             val tipoUbicacionFragmento = FragmentPopUpTipoUbicacion.nuevaInstancia(
                 tipoSeleccionado = tipoUbiSeleccionado
             )
-            popUpContenidoGeneral.newInstance(tipoUbicacionFragmento).show(parentFragmentManager, "popUp")
+            PopUpContenidoGeneral.newInstance(tipoUbicacionFragmento).show(parentFragmentManager, "popUp")
         }
 
         botonAñadirHorario.setOnClickListener {
@@ -233,13 +233,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 horaCierre = horaCierre
             )
 
-            popUpContenidoGeneral.newInstance(horarioFragment).show(parentFragmentManager, "popUp")
+            PopUpContenidoGeneral.newInstance(horarioFragment).show(parentFragmentManager, "popUp")
 
         }
 
         botonPublicar.setOnClickListener {
             if (validarCampos()) {
-                mostrarCarga()
+                manejoCarga.mostrarCarga()
                 Toast.makeText(requireContext(), "Publicando...", Toast.LENGTH_SHORT).show()
                 // Crear el objeto horario
                 val horario = mapOf(
@@ -257,7 +257,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 )
 
                 // Crear el objeto banio
-                val encodedImage = compressAndEncodeImageToBase64(photoFile, 1048487)
+
+               if(esFotoAniadida){
+                   encodedImage = compressAndEncodeImageToBase64(photoFile, 1048487)
+               }else{
+                   encodedImage = ""
+               }
+
                 val banio = Urinario(
                     nombre = textoNombre.text.toString(),
                     sinhorario = if(horaApertura != null && horaCierre != null){
@@ -279,11 +285,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     puntuacion = ratingBar.rating.toDouble(),
                 )
                 // Guardar en Firestore con el UID del usuario como ID
-                FirebaseFirestore.getInstance().collection("urinarios")
+                FirestoreSingleton.db.collection("urinarios")
                     .add(banio)
                     .addOnSuccessListener { documentReference ->
 
-                        ocultarCarga()
+                        manejoCarga.ocultarCarga()
                         Toast.makeText(requireContext(), "¡Publicado con éxito!", Toast.LENGTH_SHORT).show()
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.frame, FragmentMapa())
@@ -291,7 +297,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                             .commit()
                     }
                     .addOnFailureListener { e ->
-                        ocultarCarga()
+                        manejoCarga.ocultarCarga()
                         Toast.makeText(requireContext(), "Error al publicar: ${e.message}", Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error al publicar", e)
                     }
@@ -343,29 +349,27 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
     }
 
-    // Funciones de carga de pantalla
-    fun mostrarCarga() {
-        // Cancelamos el temporizador si ya estaba activo
-        loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
-//        Mostramos el diálogo de carga
-        loadingDialog = LoadingDialog()
-        loadingDialog?.show(parentFragmentManager, "loading")
-//        Iniciamos el temporizador
-        loadingTimeoutHandler = Handler(Looper.getMainLooper())
-        loadingTimeoutHandler?.postDelayed(loadingTimeoutRunnable, loadingTimeoutMillis)
-    }
-
-    fun ocultarCarga() {
-        // Cancelamos el temporizador
-        loadingTimeoutHandler?.removeCallbacks(loadingTimeoutRunnable)
-        loadingDialog?.dismiss()
-    }
-
 
     private fun createImageFile(): File {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("IMG_$timestamp", ".jpg", storageDir)
+    }
+
+    private fun lanzarCamara() {
+        esFotoAniadida = true
+        photoFile = createImageFile()
+        photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "com.example.gonow.fileprovider",
+            photoFile
+        )
+        cameraLauncher.launch(photoUri)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        manejoCarga.ocultarCarga()
     }
 
 

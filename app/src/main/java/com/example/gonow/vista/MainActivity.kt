@@ -4,18 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.example.gonow.data.AuthSingleton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,20 +51,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         botonIniciar.setOnClickListener {
-            val intent = Intent(this, iniciarActivity::class.java)
+            val intent = Intent(this, IniciarActivity::class.java)
             intent.putExtra("abrirCuenta", true) // Pasar una señal para abrir el fragmento
             startActivity(intent)
         }
 
 
         botonRegistrarme.setOnClickListener {
-            val intent = Intent(this, iniciarActivity::class.java)
+            val intent = Intent(this, IniciarActivity::class.java)
             intent.putExtra("abrirRegistro", true) // Pasar una señal para abrir el fragmento
             startActivity(intent)
         }
 
         botonIniciarSinCuenta.setOnClickListener {
-            val intent = Intent(this, generalActivity::class.java)
+            val intent = Intent(this, GeneralActivity::class.java)
             intent.putExtra("abrirMapa", true) // Pasar una señal para abrir el fragmento
             startActivity(intent)
         }
@@ -86,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             val currentUser = auth.currentUser
             if (currentUser != null) {
 
-                val intent = Intent(this, generalActivity::class.java)
+                val intent = Intent(this, GeneralActivity::class.java)
                 intent.putExtra("abrirMapa", true)
                 startActivity(intent)
             }

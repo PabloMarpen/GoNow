@@ -1,18 +1,32 @@
 {
   "project_info": {
     "project_number": "673531485692",
+    "firebase_url": "https://gonow-c2c7d-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "gonow-c2c7d",
     "storage_bucket": "gonow-c2c7d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:673531485692:android:6cc5d730eadfea7dd82679",
+        "mobilesdk_app_id": "1:673531485692:android:20792e0aad93d110d82679",
         "android_client_info": {
-          "package_name": "com.example.gonow"
+          "package_name": "com.example.gonow.tfg"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "673531485692-mmhle3okp7l5l32lgmim6hk66kqu3k00.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gonow.tfg",
+            "certificate_hash": "84798e3d1d4f41d666c5f22ed7f2f2419f0bb65f"
+          }
+        },
+        {
+          "client_id": "673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDYuE29_V9GfjYQf6ghqqmmO_URBtTmLl4"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

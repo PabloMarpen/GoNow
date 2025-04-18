@@ -11,9 +11,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.contentValuesOf
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
 class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
 
@@ -72,7 +71,7 @@ class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
                 Toast.makeText(requireContext(), "Enviar", Toast.LENGTH_SHORT).show()
 
                 val mensaje = "Se enviará un correo para restablecer la contraseña a ${correoRecu.text}"
-                val popup = popUp.newInstance(mensaje)
+                val popup = PopUp.newInstance(mensaje)
                 popup.show(parentFragmentManager, "popUp")
             }
         }

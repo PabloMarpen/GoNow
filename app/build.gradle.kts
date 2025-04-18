@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gonow"
+    namespace = "com.example.gonow.tfg"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.gonow"
+        applicationId = "com.example.gonow.tfg"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -59,18 +59,17 @@ dependencies {
 
     //chatty
 
-
+    implementation(libs.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
 
     // Si usas ViewModel compartido entre actividad y fragmentos
     implementation(libs.androidx.fragment.ktx)
-
+    implementation (libs.androidx.swiperefreshlayout)
 
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
-    implementation(libs.googleid)
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.firebase.firestore.ktx)

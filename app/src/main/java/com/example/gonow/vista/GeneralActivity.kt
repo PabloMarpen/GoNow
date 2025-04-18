@@ -2,13 +2,13 @@ package com.example.gonow.vista
 
 import android.os.Bundle
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 import com.google.firebase.auth.FirebaseAuth
 
-class generalActivity : AppCompatActivity() {
+class GeneralActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_general)
@@ -37,7 +37,6 @@ class generalActivity : AppCompatActivity() {
         }
 
         botonMapa.setOnClickListener {
-
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.frame, FragmentMapa())
                     .addToBackStack(null)
@@ -46,14 +45,13 @@ class generalActivity : AppCompatActivity() {
         }
 
         botonPlus.setOnClickListener {
-
             if (currentUser != null){
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.frame, FragmentAniadir())
                     .addToBackStack(null)
                     .commit()
             }else{
-                popUpContenidoGeneral.newInstance(fragmentPopUpSpam()).show(supportFragmentManager, "popUp")
+                PopUpContenidoGeneral.newInstance(FragmentPopUpSpam()).show(supportFragmentManager, "popUp")
 
             }
 
@@ -69,11 +67,14 @@ class generalActivity : AppCompatActivity() {
                     .commit()
             }else{
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, fragmentAjustesAnonimo())
+                    .replace(R.id.frame, FragmentAjustesAnonimo())
                     .addToBackStack(null)
                     .commit()
             }
 
         }
+
     }
+
+
 }

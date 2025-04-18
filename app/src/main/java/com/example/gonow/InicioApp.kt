@@ -3,7 +3,7 @@ package com.example.gonow
 import android.app.Application
 import com.google.firebase.database.FirebaseDatabase
 
-class inicioApp : Application() {
+class InicioApp : Application() {
 
     override fun onCreate() {
         super.onCreate()

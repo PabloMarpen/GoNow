@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
 class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 

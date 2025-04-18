@@ -1,24 +1,21 @@
 package com.example.gonow.vista
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import com.example.gonow.tfg.R
 
-class popUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFragment() {
+class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFragment() {
 
     companion object {
-        fun newInstance(fragmento: Fragment): popUpContenidoGeneral {
-            return popUpContenidoGeneral(fragmento)
+        fun newInstance(fragmento: Fragment): PopUpContenidoGeneral {
+            return PopUpContenidoGeneral(fragmento)
         }
     }
 

@@ -18,7 +18,7 @@
         android:textSize="24sp" />
 
     <RatingBar
-        android:id="@+id/ratingBar"
+        android:id="@+id/ratingBarCalificar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -26,13 +26,13 @@
 
 
     <Button
-        android:id="@+id/buttonIniciar"
+        android:id="@+id/buttonEnviar"
         style="@style/SecondaryButton"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/poppinsregular"
-        android:text="Guardar"
+        android:text="@string/enviar"
         android:textSize="16sp" />
 
 

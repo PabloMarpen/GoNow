@@ -35,7 +35,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
-            android:name=".vista.MainActivity"
+            android:name="com.example.gonow.vista.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -45,20 +45,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".vista.iniciarActivity"
+        <activity android:name="com.example.gonow.vista.IniciarActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".vista.FragmentRegistro"/>
-        <activity android:name=".vista.FragmentIniciar"/>
-        <activity android:name=".vista.FragmentRecuperacion"/>
-        <activity android:name=".vista.generalActivity"
+        <activity android:name="com.example.gonow.vista.GeneralActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".vista.FragmentMapa"/>
-        <activity android:name=".vista.FragmentAniadir"/>
-        <activity android:name=".vista.FragmentPopUpFiltro"/>
-        <activity android:name=".vista.popUpContenidoGeneral"/>
-        <activity android:name="inicioApp"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD_-gB0Qn9fkv5kTLA8dKkvq4zvJSe4B90" />

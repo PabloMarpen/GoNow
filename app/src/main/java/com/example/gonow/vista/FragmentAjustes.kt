@@ -1,19 +1,21 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.gonow.R
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gonow.data.AuthSingleton
+import com.example.gonow.data.FirestoreSingleton
+import com.example.gonow.tfg.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -21,6 +23,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
     val auth = AuthSingleton.auth
     val currentUser = auth.currentUser?.uid
+    val idUsuario = auth.currentUser?.uid
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,6 +36,47 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val botonCambiarContrasena = view.findViewById<Button>(R.id.buttonCambiarContraseña)
         val botonAyuda = view.findViewById<Button>(R.id.buttonAyuda)
         val correoUsuario = view.findViewById<TextView>(R.id.textViewNombre)
+        val textViewTotalBaños = view.findViewById<TextView>(R.id.textViewTotalBaños)
+        val textViewTotalBañosCreados = view.findViewById<TextView>(R.id.textViewTotalBañosCreados)
+        // pal refresh
+        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+        val sharedPrefs = requireContext().getSharedPreferences("refreshPrefs", Context.MODE_PRIVATE)
+        val lastRefreshTime = sharedPrefs.getLong("lastRefresh", 0L)
+        val tiempoActual = System.currentTimeMillis()
+        val tiempoMinimoEntreRefresh = 60 * 1000 // 1 minuto
+
+        val prefs = requireContext().getSharedPreferences("estadisticas", Context.MODE_PRIVATE)
+        val yaGuardadoPuntuados = prefs.getInt("totalPuntuados", -1)
+        val yaGuardadoCreados = prefs.getInt("totalCreados", -1)
+
+        if (yaGuardadoPuntuados != -1) {
+            textViewTotalBaños.text = yaGuardadoPuntuados.toString()
+        } else {
+            recargarEstadisticas {
+                swipeRefresh.isRefreshing = false
+            }
+        }
+
+        if (yaGuardadoCreados != -1) {
+            textViewTotalBañosCreados.text = yaGuardadoCreados.toString()
+        } else {
+            recargarEstadisticas {
+                swipeRefresh.isRefreshing = false
+            }
+        }
+
+        swipeRefresh.setOnRefreshListener {
+            if (tiempoActual - lastRefreshTime > tiempoMinimoEntreRefresh) {
+
+                recargarEstadisticas {
+                    swipeRefresh.isRefreshing = false
+                }
+                sharedPrefs.edit().putLong("lastRefresh", tiempoActual).apply()
+            } else {
+                Toast.makeText(requireContext(), "Espera un poco antes de refrescar", Toast.LENGTH_SHORT).show()
+                swipeRefresh.isRefreshing = false
+            }
+        }
 
         correoUsuario.text = auth.currentUser?.email
 
@@ -58,13 +102,13 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
         botonBorrarCuenta.setOnClickListener {
             val mensaje = "¿Seguro que quieres BORRAR LA CUENTA?"
-            val popup = popUp.newInstance(mensaje)
+            val popup = PopUp.newInstance(mensaje)
             popup.show(parentFragmentManager, "popUp")
         }
 
         botonCerrarSesion.setOnClickListener {
             val mensaje = "¿Seguro que quieres cerrar sesión?"
-            val popup = popUp.newInstance(mensaje)
+            val popup = PopUp.newInstance(mensaje)
             popup.setOnAcceptListener { isConfirmed ->
                 if (isConfirmed) {
 
@@ -88,18 +132,60 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
         botonCambiarCorreo.setOnClickListener {
             //cargamos el popup seleccionando nuestra interfaz
-            popUpContenidoGeneral.newInstance(fragmentPopUpCambiarCorreo()).show(parentFragmentManager, "popUp")
+            PopUpContenidoGeneral.newInstance(FragmentPopUpCambiarCorreo()).show(parentFragmentManager, "popUp")
         }
 
         botonCambiarContrasena.setOnClickListener {
             //cargamos el popup seleccionando nuestra interfaz
-            val fragmento = fragmentPopUpCambiarContraseña()
-            val popup = popUpContenidoGeneral.newInstance(fragmento)
+            val fragmento = FragmentPopUpCambiarContraseña()
+            val popup = PopUpContenidoGeneral.newInstance(fragmento)
             popup.show(parentFragmentManager, "popUp")
         }
 
 
 
 
+    }
+
+    private fun recargarEstadisticas(onFinish: () -> Unit) {
+        val prefs = requireContext().getSharedPreferences("estadisticas", Context.MODE_PRIVATE)
+        var consultasPendientes = 2
+
+        val onConsultaTermina: () -> Unit = {
+            consultasPendientes--
+            if (consultasPendientes == 0) {
+                onFinish()
+            }
+        }
+
+        // Consultar calificaciones
+        FirestoreSingleton.db.collection("calificaciones")
+            .whereEqualTo("idUsuario", idUsuario)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val totalPuntuados = querySnapshot.size()
+                prefs.edit().putInt("totalPuntuados", totalPuntuados).apply()
+                view?.findViewById<TextView>(R.id.textViewTotalBaños)?.text = totalPuntuados.toString()
+                onConsultaTermina() // Llamar al método cuando termine la consulta
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al obtener las calificaciones", Toast.LENGTH_SHORT).show()
+                onConsultaTermina() // Llamar al método cuando termine la consulta (aunque falle)
+            }
+
+        // Consultar urinarios
+        FirestoreSingleton.db.collection("urinarios")
+            .whereEqualTo("creador", idUsuario)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val totalCreados = querySnapshot.size()
+                prefs.edit().putInt("totalCreados", totalCreados).apply()
+                view?.findViewById<TextView>(R.id.textViewTotalBañosCreados)?.text = totalCreados.toString()
+                onConsultaTermina() // Llamar al método cuando termine la consulta
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error al obtener los urinarios creados", Toast.LENGTH_SHORT).show()
+                onConsultaTermina() // Llamar al método cuando termine la consulta (aunque falle)
+            }
     }
 }
