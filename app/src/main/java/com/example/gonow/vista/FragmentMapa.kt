@@ -48,17 +48,25 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
     private val db = FirestoreSingleton.db
     private lateinit var filtro: ImageView
-    private lateinit var localizar: ImageView
+    private lateinit var botonUbiEstado: ImageView
     private lateinit var mapView: MapView
+    private lateinit var rastrear: ImageView
+    private lateinit var localizar: ImageView
     private lateinit var ubicacionActual: LatLng
     private lateinit var manejoCarga: ManejoDeCarga
     private var googleMap: GoogleMap? = null
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
+    private var esCamaraEnMovimiento = false
 
-    private var locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
-    .setMinUpdateIntervalMillis(2000L)
-    .build()
+    private var locationRequest = LocationRequest.Builder(
+        Priority.PRIORITY_HIGH_ACCURACY,
+        2000L // Cada 2 segundos
+    )
+        .setMinUpdateIntervalMillis(1000L) // Cada 1 segundo si hay nueva ubicación
+        .setWaitForAccurateLocation(true) // Espera a que la ubicación sea precisa
+        .setMaxUpdateDelayMillis(4000L) // No más de 4 segundos entre updates
+        .build()
 
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -85,7 +93,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         filtro = view.findViewById(R.id.imageViewFiltro)
         mapView = view.findViewById(R.id.mapView)
+        botonUbiEstado = view.findViewById(R.id.imageViewBotonUbi)
+        rastrear = view.findViewById(R.id.imageViewUbiOn)
         localizar = view.findViewById(R.id.imageViewUbi)
+
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
         mapView.getMapAsync(this)
@@ -105,8 +116,23 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             popup.show(parentFragmentManager, "popUp")
         }
 
-        localizar.setOnClickListener {
-            obtenerUbicacionActual()
+        //boton de localizacion
+        rastrear.visibility = View.GONE
+        localizar.visibility = View.VISIBLE
+        botonUbiEstado.setOnClickListener {
+            if(esCamaraEnMovimiento){
+                rastrear.visibility = View.GONE
+                localizar.visibility = View.VISIBLE
+                esCamaraEnMovimiento = false
+                Toast.makeText(requireContext(), "Modo libre", Toast.LENGTH_SHORT).show()
+                obtenerUbicacionActual()
+            }else{
+                rastrear.visibility = View.VISIBLE
+                localizar.visibility = View.GONE
+                esCamaraEnMovimiento = true
+                Toast.makeText(requireContext(), "Siguiendo al usuario", Toast.LENGTH_SHORT).show()
+                obtenerUbicacionActual()
+            }
         }
 
     }
@@ -252,21 +278,23 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
         googleMap?.isMyLocationEnabled = true
 
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
-            .setMinUpdateIntervalMillis(2000L)
-            .build()
-
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val location = locationResult.lastLocation ?: return
                 ubicacionActual = LatLng(location.latitude, location.longitude)
 
-
-                if (!ubicacionActualMostrada){
+                if(esCamaraEnMovimiento){
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
                     ubicacionActualMostrada = true
                     manejoCarga.ocultarCarga()
+                }else{
+                    if (!ubicacionActualMostrada){
+                        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
+                        ubicacionActualMostrada = true
+                        manejoCarga.ocultarCarga()
+                    }
                 }
+
 
             }
 

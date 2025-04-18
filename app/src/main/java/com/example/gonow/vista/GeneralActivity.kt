@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.example.gonow.data.AuthSingleton
 import com.example.gonow.tfg.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -17,7 +19,7 @@ class GeneralActivity : AppCompatActivity() {
         val botonMapa = findViewById<ImageView>(R.id.imageViewMapa)
         val botonPlus = findViewById<ImageView>(R.id.imageViewPlus)
         val botonPersona = findViewById<ImageView>(R.id.imageViewPersona)
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUser = AuthSingleton.auth.currentUser
 
 
 
@@ -37,22 +39,14 @@ class GeneralActivity : AppCompatActivity() {
         }
 
         botonMapa.setOnClickListener {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, FragmentMapa())
-                    .addToBackStack(null)
-                    .commit()
-
+            cambiarFragmentoConConfirmacion(FragmentMapa())
         }
 
         botonPlus.setOnClickListener {
-            if (currentUser != null){
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, FragmentAniadir())
-                    .addToBackStack(null)
-                    .commit()
-            }else{
+            if (currentUser != null) {
+                cambiarFragmentoConConfirmacion(FragmentAniadir())
+            } else {
                 PopUpContenidoGeneral.newInstance(FragmentPopUpSpam()).show(supportFragmentManager, "popUp")
-
             }
 
                 
@@ -60,21 +54,37 @@ class GeneralActivity : AppCompatActivity() {
         }
 
         botonPersona.setOnClickListener {
-            if (currentUser != null){
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, FragmentAjustes())
-                    .addToBackStack(null)
-                    .commit()
-            }else{
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, FragmentAjustesAnonimo())
-                    .addToBackStack(null)
-                    .commit()
-            }
+            val destino = if (currentUser != null) FragmentAjustes() else FragmentAjustesAnonimo()
+            cambiarFragmentoConConfirmacion(destino)
 
         }
 
     }
+
+    fun cambiarFragmentoConConfirmacion(fragment: Fragment) {
+        val fragmentActual = supportFragmentManager.findFragmentById(R.id.frame)
+
+        if (fragmentActual is FragmentAniadir) {
+            val mensaje =  "¿Estás seguro de que quieres salir?\n\nSe perderá la información no guardada."
+            val popup = PopUp.newInstance(mensaje)
+
+            popup.setOnAcceptListener { isConfirmed ->
+                if (isConfirmed) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frame, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+            popup.show(supportFragmentManager, "popUp")
+        } else {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
 
 
 }

@@ -3,8 +3,11 @@ package com.example.gonow.vista
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.example.gonow.data.AuthSingleton
 import com.example.gonow.tfg.R
 
 class FragmentPopUpCambiarContraseña : Fragment(R.layout.fragment_pop_up_cambiar_contrasenia){
@@ -14,15 +17,40 @@ class FragmentPopUpCambiarContraseña : Fragment(R.layout.fragment_pop_up_cambia
 
         val botonCancelar = view.findViewById<Button>(R.id.ButtonCancelar)
         val botonAceptar = view.findViewById<Button>(R.id.ButtonAceptar)
+        val textoContraAntigua = view.findViewById<EditText>(R.id.ContraseñaAntigua)
+        val textoContraNueva = view.findViewById<EditText>(R.id.ContraseñaNueva)
+        val auth = AuthSingleton.auth
+        val user = auth.currentUser
 
         botonAceptar.setOnClickListener {
-            // Cerrar el fragmento actual
-            (requireParentFragment() as? DialogFragment)?.dismiss()
+
+            val nuevaContrasena = textoContraNueva.text.toString()
+            if (nuevaContrasena.length >= 6) {
+                user?.updatePassword(nuevaContrasena)?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Contraseña actualizada correctamente.", Toast.LENGTH_SHORT).show()
+                        // Cerrar el fragmento actual
+                        if (isAdded) {
+                            (requireParentFragment() as? DialogFragment)?.dismiss()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Error, revisa la contraseña", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            } else {
+                    Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+            }
+
+
+
         }
 
         botonCancelar.setOnClickListener {
             // Cerrar el fragmento actual
-            (requireParentFragment() as? DialogFragment)?.dismiss()
+            if (isAdded) {
+                (requireParentFragment() as? DialogFragment)?.dismiss()
+            }
         }
 
     }

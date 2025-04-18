@@ -17,13 +17,14 @@ import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.tfg.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.database.FirebaseDatabase
 
 class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
     val auth = AuthSingleton.auth
-    val currentUser = auth.currentUser?.uid
     val idUsuario = auth.currentUser?.uid
+    val user = auth.currentUser
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,10 +45,18 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val lastRefreshTime = sharedPrefs.getLong("lastRefresh", 0L)
         val tiempoActual = System.currentTimeMillis()
         val tiempoMinimoEntreRefresh = 60 * 1000 // 1 minuto
-
+        // para las estadisticas
         val prefs = requireContext().getSharedPreferences("estadisticas", Context.MODE_PRIVATE)
         val yaGuardadoPuntuados = prefs.getInt("totalPuntuados", -1)
         val yaGuardadoCreados = prefs.getInt("totalCreados", -1)
+        // para saber si es de google o no
+        var esGoogle = false
+
+        user?.providerData?.forEach { profile ->
+            if (profile.providerId == "google.com") {
+                esGoogle = true
+            }
+        }
 
         if (yaGuardadoPuntuados != -1) {
             textViewTotalBaños.text = yaGuardadoPuntuados.toString()
@@ -101,9 +110,34 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         ).forEach { it.setOnTouchListener(touchListener) }
 
         botonBorrarCuenta.setOnClickListener {
-            val mensaje = "¿Seguro que quieres BORRAR LA CUENTA?"
+            val mensaje = "borrar"
             val popup = PopUp.newInstance(mensaje)
-            popup.show(parentFragmentManager, "popUp")
+            popup.setOnAcceptListener { isConfirmed ->
+                if (isConfirmed) {
+                    user?.delete()
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(requireContext(), "Cuenta eliminada correctamente.", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                                requireActivity().finishAffinity()
+                            } else {
+                                val exception = task.exception
+                                if (exception is FirebaseAuthRecentLoginRequiredException) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Por seguridad, por favor cierra sesión y vuelve a iniciar para borrar tu cuenta.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else {
+                                    Toast.makeText(requireContext(), "Error al eliminar la cuenta.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                }
+            }
+            popup.show(parentFragmentManager, "PopUp")
         }
 
         botonCerrarSesion.setOnClickListener {
@@ -128,6 +162,13 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
             popup.show(parentFragmentManager, "popUp")
 
 
+        }
+
+        if(esGoogle){
+            botonCambiarCorreo.isEnabled = false
+            botonCambiarCorreo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
+            botonCambiarContrasena.isEnabled = false
+            botonCambiarContrasena.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
         }
 
         botonCambiarCorreo.setOnClickListener {

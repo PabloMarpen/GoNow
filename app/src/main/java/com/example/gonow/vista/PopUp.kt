@@ -41,7 +41,14 @@ class PopUp : DialogFragment() {
         val btnNop = view.findViewById<Button>(R.id.btnNo)
 
         val message = arguments?.getString(ARG_MESSAGE) ?: "Mensaje por defecto"
-        texto.text = message
+        if(message == "borrar"){
+            texto.text = "¿Seguro que quieres borrar tu cuenta?"
+            btnAceptar.text = "BORRAR"
+            btnNop.text = "CANCELAR"
+            btnAceptar.setBackgroundColor(Color.parseColor("#ff4c4c"))
+        }else{
+            texto.text = message
+        }
 
         btnAceptar.setOnClickListener {
             listener?.invoke(true)

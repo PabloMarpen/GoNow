@@ -67,7 +67,7 @@
         app:srcCompat="@drawable/filter" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/imageViewBotonUbi"
         android:layout_width="63dp"
         android:layout_height="63dp"
         android:layout_marginTop="12dp"
@@ -81,10 +81,20 @@
         android:id="@+id/imageViewUbi"
         android:layout_width="38dp"
         android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-        app:layout_constraintEnd_toEndOf="@+id/imageView6"
-        app:layout_constraintStart_toStartOf="@+id/imageView6"
-        app:layout_constraintTop_toTopOf="@+id/imageView6"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewBotonUbi"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewBotonUbi"
+        app:layout_constraintStart_toStartOf="@+id/imageViewBotonUbi"
+        app:layout_constraintTop_toTopOf="@+id/imageViewBotonUbi"
         app:srcCompat="@drawable/miubi" />
+
+    <ImageView
+        android:id="@+id/imageViewUbiOn"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewBotonUbi"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewBotonUbi"
+        app:layout_constraintStart_toStartOf="@+id/imageViewBotonUbi"
+        app:layout_constraintTop_toTopOf="@+id/imageViewBotonUbi"
+        app:srcCompat="@drawable/miubion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

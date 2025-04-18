@@ -17,20 +17,20 @@
 
     <Button
         android:id="@+id/btnSi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         style="@style/PrimaryButton"
-        android:fontFamily="@font/poppinsextrabold"
-        android:text="SI"
-        android:textSize="24dp"
-        android:layout_marginTop="10dp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppinsmedium"
+        android:text="Si"
+        android:textSize="20dp" />
     <Button
         android:id="@+id/btnNo"
         style="@style/botonGris"
-        android:fontFamily="@font/poppinsextrabold"
+        android:fontFamily="@font/poppinsmedium"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="NO"
-        android:textSize="24dp"
+        android:layout_height="match_parent"
+        android:text="No"
+        android:textSize="20dp"
         android:layout_marginTop="10dp" />
 </LinearLayout>

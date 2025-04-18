@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -31,6 +32,7 @@ import kotlin.math.sqrt
 
 
 class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
+
 
     companion object {
         private const val ARG_NOMBRE = "nombre"
@@ -94,41 +96,11 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val botonEditar = view.findViewById<ImageView>(R.id.imageEditar)
         val botonLlegar = view.findViewById<Button>(R.id.botonLlegar)
         val botonPuntuar = view.findViewById<Button>(R.id.botonPuntuar)
-
+        val user = AuthSingleton.auth.currentUser
         val idBanio = arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
-        val idUsuario = AuthSingleton.auth.currentUser?.uid ?: ""
-        // mostrar la puntuacion
-        Puntuacion.rating = (arguments?.getDouble(ARG_PUNTUACION) ?: 0.0).toFloat()
 
-        FirestoreSingleton.db.collection("calificaciones")
-            .whereEqualTo("idBanio", idBanio)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    var sumaPuntuaciones = 0.0
-                    var cantidadCalificaciones = 0
 
-                    // Iterar sobre todas las calificaciones para sumarlas
-                    for (document in querySnapshot.documents) {
-                        val puntuacion = document.getDouble("puntuacion") ?: 0.0
-                        sumaPuntuaciones += puntuacion
-                        cantidadCalificaciones++
-                    }
-
-                    // Calcular la media de las puntuaciones
-                    val mediaPuntuacion = if (cantidadCalificaciones > 0) {
-                        sumaPuntuaciones / cantidadCalificaciones
-                    } else {
-                        0.0
-                    }
-
-                    // Mostrar la puntuación media en el RatingBar
-                    Puntuacion.rating = mediaPuntuacion.toFloat()
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Error al obtener las calificaciones.", Toast.LENGTH_SHORT).show()
-            }
+        calcularMediaPuntuacion(idBanio, Puntuacion)
 
         // mostrar o no el boton de editar si eres el creador
         if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
@@ -211,11 +183,21 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         // mostrar la distancia
         textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
 
+
         botonPuntuar.setOnClickListener {
-            val calificarFragmento = FragmentPopUpCalificar.newInstance(
-                arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
-            )
-            PopUpContenidoGeneral.newInstance(calificarFragmento).show(parentFragmentManager, "popUp")
+            if (user != null){
+                val calificarFragmento = FragmentPopUpCalificar.newInstance(
+                    arguments?.getString(ARG_ID_DOCUMENTO) ?: "",
+                    arguments?.getString(ARG_CREADOR) ?: "",
+                    arguments?.getDouble(ARG_PUNTUACION) ?: 0.0
+                )
+                PopUpContenidoGeneral.newInstance(calificarFragmento).show(parentFragmentManager, "popUp")
+            }else{
+                PopUpContenidoGeneral.newInstance(FragmentPopUpSpam()).show(parentFragmentManager, "popUp")
+
+            }
+
+
         }
         botonBorrar.setOnClickListener {
             val docId = arguments?.getString(ARG_ID_DOCUMENTO)
@@ -266,6 +248,46 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
 
     }
+
+    private fun calcularMediaPuntuacion(idBanio: String, Puntuacion: RatingBar) {
+        FirestoreSingleton.db.collection("urinarios")
+            .document(idBanio)
+            .get()
+            .addOnSuccessListener { documentUrinario ->
+                val puntuacionUrinario = documentUrinario.getDouble("puntuacion") ?: 0.0
+
+                FirestoreSingleton.db.collection("calificaciones")
+                    .whereEqualTo("idBanio", idBanio)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        var sumaPuntuaciones = puntuacionUrinario
+                        var cantidadCalificaciones = 1 // contamos con la del creador
+
+                        for (document in querySnapshot.documents) {
+                            val puntuacion = document.getDouble("puntuacion") ?: 0.0
+                            sumaPuntuaciones += puntuacion
+                            cantidadCalificaciones++
+                        }
+
+                        val mediaPuntuacion = if (cantidadCalificaciones > 0) {
+                            sumaPuntuaciones / cantidadCalificaciones
+                        } else {
+                            0.0
+                        }
+
+                        Puntuacion.rating = mediaPuntuacion.toFloat()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(Puntuacion.context, "Error al obtener las calificaciones.", Toast.LENGTH_SHORT).show()
+                        Log.e("Firestore", "Error en calificaciones", e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(Puntuacion.context, "Error al obtener el baño.", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", "Error en urinario", e)
+            }
+    }
+
 
     fun calculateAndFormatDistance(startPoint: LatLng, endPoint: LatLng): String {
         val earthRadius = 6371 // Radio de la Tierra en km
