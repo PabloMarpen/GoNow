@@ -13,5 +13,6 @@ data class Urinario(
     val sinhorario: String? = "",
     val localizacion: GeoPoint? = null,
     val tipoUbi: String? = "",
-    val puntuacion: Double? = 0.0
+    val puntuacion: Double? = 0.0,
+    val mediaPuntuacion: Double? = 0.0,
 )

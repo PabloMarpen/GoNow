@@ -9,7 +9,11 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 
@@ -54,6 +58,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private lateinit var localizar: ImageView
     private lateinit var ubicacionActual: LatLng
     private lateinit var manejoCarga: ManejoDeCarga
+    private lateinit var buscador: EditText
     private var googleMap: GoogleMap? = null
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
@@ -64,6 +69,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private var discapacitados : Boolean? = null
     private var unisex : Boolean? = null
     private var gratis : Boolean? = null
+    //buscador
+    private var busqueda = ""
 
 
     private var locationRequest = LocationRequest.Builder(
@@ -123,6 +130,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         botonUbiEstado = view.findViewById(R.id.imageViewBotonUbi)
         rastrear = view.findViewById(R.id.imageViewUbiOn)
         localizar = view.findViewById(R.id.imageViewUbi)
+        buscador = view.findViewById(R.id.editTextBuscador)
 
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
@@ -160,6 +168,25 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     .show(parentFragmentManager, "popUp")
             }
         }
+
+        buscador.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                // Se llama antes de que el texto cambie
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                // Se llama cuando el texto ha cambiado
+                if (charSequence?.isNotEmpty() == true) {
+                    busqueda = charSequence.toString()
+                    googleMap?.clear()
+                    obtenerYMostrarBanios(busqueda)
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                // Se llama después de que el texto haya cambiado
+            }
+        })
 
 
         //boton de localizacion
@@ -235,7 +262,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                             imagen = it.foto,
                             creador = it.creador,
                             idDocumento = documents.documents[0].id,
-                            tipo = it.tipoUbi ?: "Sin tipo"
+                            tipo = it.tipoUbi ?: "Sin tipo",
+                            mediaPuntuacion = it.mediaPuntuacion ?: 0.0
                         )
 
                         requireActivity().supportFragmentManager.beginTransaction()
@@ -252,45 +280,30 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
     }
 
-    private fun obtenerYMostrarBanios() {
+    private fun obtenerYMostrarBanios(textoBuscar : String? = null) {
         db.collection("urinarios")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
                     val banio = document.toObject(Urinario::class.java)
-                    val idBanio = document.id
 
-                    db.collection("calificaciones")
-                        .whereEqualTo("idBanio", idBanio)
-                        .get()
-                        .addOnSuccessListener { querySnapshot ->
-                            var sumaPuntuaciones = banio.puntuacion ?: 0.0
-                            var cantidadCalificaciones = 1
+                    // Comprobar si el baño cumple los filtros
+                    val cumpleFiltros = cumpleFiltros(banio)
 
-                            for (calif in querySnapshot) {
-                                sumaPuntuaciones += calif.getDouble("puntuacion") ?: 0.0
-                                cantidadCalificaciones++
-                            }
+                    // Verificar si el nombre contiene el texto de búsqueda (si existe)
+                    val cumpleBusqueda = textoBuscar?.let { banio.nombre?.contains(it, ignoreCase = true) } ?: true
 
-                            val media = if (cantidadCalificaciones > 0)
-                                sumaPuntuaciones / cantidadCalificaciones
-                            else 0.0
+                    // Si cumple ambos criterios, agregar el marcador
+                    if (cumpleFiltros && cumpleBusqueda) {
+                        agregarMarcadorAlMapa(banio)
+                    }
 
-                            val mediaFloat = media.toFloat()
-
-                            if (cumpleFiltros(banio, mediaFloat)) {
-                                agregarMarcadorAlMapa(banio)
-                            }
-                        }
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Error al cargar baños", Toast.LENGTH_SHORT).show()
             }
     }
-
-
-
 
     private fun agregarMarcadorAlMapa(banio: Urinario) {
         val location = banio.localizacion
@@ -382,19 +395,21 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         manejoCarga.ocultarCarga()
     }
 
-    private fun cumpleFiltros(banio: Urinario, mediaPuntuacion: Float): Boolean {
+    private fun cumpleFiltros(banio: Urinario): Boolean {
         val etiquetas = banio.etiquetas ?: emptyList()
 
-        // no tocar lo de el filtro de ubi, da error la comprobación
-        if(tipoUbiSeleccionado != null && tipoUbiSeleccionado != "" && tipoUbiSeleccionado != "null" && tipoUbiSeleccionado != banio.tipoUbi) return false
-        if (estrellas != null && mediaPuntuacion < estrellas!!) return false
+        if (tipoUbiSeleccionado != null && tipoUbiSeleccionado != "" && tipoUbiSeleccionado != "null" && tipoUbiSeleccionado != banio.tipoUbi) return false
+        if(banio.mediaPuntuacion == 0.0){
+            if (estrellas != null && banio.puntuacion!! < estrellas!!) return false
+        }else{
+            if (estrellas != null && banio.mediaPuntuacion!! < estrellas!!) return false
+        }
         if (discapacitados == true && !etiquetas.any { it.equals("Accesible", ignoreCase = true) }) return false
         if (unisex == true && !etiquetas.any { it.equals("Unisex", ignoreCase = true) }) return false
         if (gratis == true && !etiquetas.any { it.equals("Gratis", ignoreCase = true) }) return false
 
         return true
     }
-
 
 
 

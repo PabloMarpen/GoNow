@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:fontFamily="@font/poppinssemibold"
-            android:text="Cambiar correo"
+            android:text="@string/cambiar_correo"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />
@@ -26,7 +26,7 @@
         android:background="@drawable/forma_entrada_texto"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
-        android:hint="Correo nuevo"
+        android:hint="@string/correo_nuevo"
         android:inputType="textEmailAddress"
         android:textSize="24sp"
         android:textColor="#000000"
@@ -41,7 +41,7 @@
         android:layout_marginTop="80dp"
         android:fontFamily="@font/poppinsextrabold"
         android:textColor="@color/oscuro"
-        android:text="Aceptar"
+        android:text="@string/aceptar"
         android:textSize="24dp" />
 
     <Button
@@ -52,7 +52,7 @@
         android:textColor="@color/oscuro"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/poppinsextrabold"
-        android:text="Cancelar"
+        android:text="@string/cancelar"
         android:textSize="24dp" />
 
 </LinearLayout>

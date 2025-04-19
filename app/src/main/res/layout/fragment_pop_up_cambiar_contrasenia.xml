@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
         android:fontFamily="@font/poppinssemibold"
-        android:text="Cambiar contraseña"
+        android:text="@string/cambiar_contrase_a"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />
@@ -26,7 +26,7 @@
         android:background="@drawable/forma_entrada_texto"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
-        android:hint="Contraseña antigua"
+        android:hint="@string/contrase_a_antigua"
         android:inputType="textPassword"
         android:textSize="24sp"
         android:textColor="#000000"
@@ -41,7 +41,7 @@
         android:background="@drawable/forma_entrada_texto"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
-        android:hint="Contraseña nueva"
+        android:hint="@string/contrase_a_nueva"
         android:inputType="textPassword"
         android:textSize="24sp"
         android:textColor="#000000"
@@ -56,7 +56,7 @@
         android:layout_marginTop="80dp"
         android:fontFamily="@font/poppinsextrabold"
         android:textColor="@color/oscuro"
-        android:text="Aceptar"
+        android:text="@string/aceptar"
         android:textSize="24dp" />
 
     <Button
@@ -67,7 +67,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsextrabold"
-        android:text="Cancelar"
+        android:text="@string/cancelar"
         android:textSize="24dp" />
 
 </LinearLayout>

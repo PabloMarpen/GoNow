@@ -59,5 +59,21 @@
     <string name="guardar">Guardar</string>
     <string name="calificar">Calificar</string>
     <string name="total_de_ba_os_creados">Total de baños creados:</string>
+    <string name="si">Si</string>
+    <string name="no">No</string>
+    <string name="publicar">Publicar</string>
+    <string name="contrase_a_antigua">Contraseña antigua</string>
+    <string name="contrase_a_nueva">Contraseña nueva</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="correo_nuevo">Correo nuevo</string>
+    <string name="filtros">Filtros</string>
+    <string name="discapacitados">Discapacitados</string>
+    <string name="borrar_filtros">Borrar filtros</string>
+    <string name="abierto_24_7">Abierto 24/7</string>
+    <string name="cerrado">Cerrado</string>
+    <string name="tiene_horario">Tiene horario</string>
+    <string name="comentarioHoras">Horas aproximadas en las que esta abierto el baño.</string>
+    <string name="reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos">Regístrate en segundos para:\n✅ Añadir nuevos baños 🏛️\n✅ Calificar y dejar reseñas ⭐\n\n¡Únete y mejora la experiencia para todos! 🙌</string>
 
 </resources>

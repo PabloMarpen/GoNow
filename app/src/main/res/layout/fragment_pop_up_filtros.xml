@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:fontFamily="@font/poppinssemibold"
-        android:text="Filtros"
+        android:text="@string/filtros"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />
@@ -22,7 +22,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinsregular"
-        android:text="Discapacitados"
+        android:text="@string/discapacitados"
         android:textColor="@color/secondary"
         android:textSize="20sp" />
 
@@ -31,7 +31,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinsregular"
-        android:text="Unisex"
+        android:text="@string/unisex"
         android:textColor="@color/secondary"
         android:textSize="20sp" />
 
@@ -40,7 +40,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinsregular"
-        android:text="Gratis"
+        android:text="@string/gratis"
         android:textColor="@color/secondary"
         android:textSize="20sp" />
 
@@ -80,7 +80,7 @@
         android:layout_marginTop="50dp"
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinslight"
-        android:text="Borrar filtros"
+        android:text="@string/borrar_filtros"
         android:textSize="20sp" />
 
     <Button
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
-        android:text="Guardar"
+        android:text="@string/guardar"
         android:layout_marginTop="10dp"
         android:textSize="20sp" />
 

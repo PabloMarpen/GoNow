@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:fontFamily="@font/poppinslight"
-        android:text="Regístrate en segundos para:\n✅ Añadir nuevos baños 🏛️\n✅ Calificar y dejar reseñas ⭐\n\n¡Únete y mejora la experiencia para todos! 🙌"
+        android:text="@string/reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="20sp" />

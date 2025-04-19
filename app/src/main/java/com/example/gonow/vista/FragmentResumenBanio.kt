@@ -49,8 +49,22 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         private const val ARG_CREADOR = "creador"
         private const val ARG_ID_DOCUMENTO = "idDocumento"
         private const val ARG_ID_TIPO = "tipo"
+        private const val ARG_MEDIAPUNTUACION = "mediaPuntuacion"
 
-        fun newInstance(nombre: String,tipo : String, descripcion: String, horario: Map<String, String?>?, puntuacion: Double, sinhorario: String?, etiquetas: List<String>, cordenadasbanio: LatLng, ubicacionUsuario: LatLng, imagen: String?, creador: String?, idDocumento: String?): FragmentResumenBanio {
+        fun newInstance(
+            nombre: String,
+            tipo : String,
+            descripcion: String,
+            horario: Map<String, String?>?,
+            puntuacion: Double,
+            sinhorario: String?,
+            etiquetas: List<String>,
+            cordenadasbanio: LatLng,
+            ubicacionUsuario: LatLng,
+            imagen: String?,
+            creador: String?,
+            idDocumento: String?,
+            mediaPuntuacion : Double): FragmentResumenBanio {
             val fragment = FragmentResumenBanio()
             val args = Bundle()
             args.putString(ARG_NOMBRE, nombre)
@@ -75,6 +89,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             args.putString(ARG_CREADOR, creador)
             args.putString(ARG_ID_DOCUMENTO, idDocumento)
             args.putString(ARG_ID_TIPO, tipo)
+            args.putDouble(ARG_MEDIAPUNTUACION, mediaPuntuacion)
             fragment.arguments = args
             return fragment
         }
@@ -107,7 +122,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
         }
 
-        calcularMediaPuntuacion(idBanio, Puntuacion)
+        if(arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0){
+            Puntuacion.rating = arguments?.getDouble(ARG_PUNTUACION)?.toFloat() ?: 0f
+        }else{
+            Puntuacion.rating = arguments?.getDouble(ARG_MEDIAPUNTUACION)?.toFloat() ?: 0f
+        }
+
 
         // mostrar o no el boton de editar si eres el creador
         if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
@@ -263,49 +283,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
     }
 
-    private fun calcularMediaPuntuacion(idBanio: String, Puntuacion: RatingBar) {
-        manejoCarga.mostrarCarga()
-        FirestoreSingleton.db.collection("urinarios")
-            .document(idBanio)
-            .get()
-            .addOnSuccessListener { documentUrinario ->
-                val puntuacionUrinario = documentUrinario.getDouble("puntuacion") ?: 0.0
 
-                FirestoreSingleton.db.collection("calificaciones")
-                    .whereEqualTo("idBanio", idBanio)
-                    .get()
-                    .addOnSuccessListener { querySnapshot ->
-                        var sumaPuntuaciones = puntuacionUrinario
-                        var cantidadCalificaciones = 1 // contamos con la del creador
-
-                        for (document in querySnapshot.documents) {
-                            val puntuacion = document.getDouble("puntuacion") ?: 0.0
-                            sumaPuntuaciones += puntuacion
-                            cantidadCalificaciones++
-                        }
-
-                        val mediaPuntuacion = if (cantidadCalificaciones > 0) {
-                            sumaPuntuaciones / cantidadCalificaciones
-                        } else {
-                            0.0
-                        }
-
-                        Puntuacion.rating = mediaPuntuacion.toFloat()
-                        manejoCarga.ocultarCarga()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(Puntuacion.context, "Error al obtener las calificaciones.", Toast.LENGTH_SHORT).show()
-                        Log.e("Firestore", "Error en calificaciones", e)
-                        manejoCarga.ocultarCarga()
-                    }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(Puntuacion.context, "Error al obtener el baño.", Toast.LENGTH_SHORT).show()
-                Log.e("Firestore", "Error en urinario", e)
-                manejoCarga.ocultarCarga()
-            }
-
-    }
 
 
     fun calculateAndFormatDistance(startPoint: LatLng, endPoint: LatLng): String {

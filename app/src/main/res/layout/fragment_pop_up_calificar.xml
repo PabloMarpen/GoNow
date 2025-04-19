@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:fontFamily="@font/poppinssemibold"
-        android:text="Calificar"
+        android:text="@string/calificar"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />

@@ -23,7 +23,7 @@
         android:layout_marginTop="10dp"
         android:fontFamily="@font/poppinsmedium"
         android:textColor="@color/oscuro"
-        android:text="Si"
+        android:text="@string/si"
         android:textSize="20dp" />
     <Button
         android:id="@+id/btnNo"
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textColor="@color/oscuro"
-        android:text="No"
+        android:text="@string/no"
         android:textSize="20dp"
         android:layout_marginTop="10dp" />
 </LinearLayout>

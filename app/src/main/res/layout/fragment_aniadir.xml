@@ -282,7 +282,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="90dp"
             android:fontFamily="@font/poppinssemibold"
-            android:text="Publicar"
+            android:text="@string/publicar"
             android:textColor="@color/oscuro"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"

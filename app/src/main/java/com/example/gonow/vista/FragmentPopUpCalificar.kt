@@ -59,13 +59,22 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                 if(idUsuario == creador){
                     guardarOActualizarCalificacionDeCreador(idBanio, estrellas, isAdded) {
 
-                        (requireParentFragment() as? DialogFragment)?.dismiss()
+                        if (isAdded) {
+                            (parentFragment as? DialogFragment)?.dismiss()
+                        }
+
+
 
                     }
                 }else{
                     guardarOActualizarCalificacion(idBanio, idUsuario, estrellas, isAdded) {
 
-                        (requireParentFragment() as? DialogFragment)?.dismiss()
+                        if (isAdded) {
+                            (parentFragment as? DialogFragment)?.dismiss()
+                        }
+
+
+
                     }
                 }
 
@@ -73,6 +82,47 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
 
         }
     }
+
+    private fun actualizarMediaPuntuacion(idBanio: String) {
+        val db = FirestoreSingleton.db
+
+        db.collection("urinarios").document(idBanio).get()
+            .addOnSuccessListener { documentUrinario ->
+                val puntuacionCreador = documentUrinario.getDouble("puntuacion") ?: 0.0
+
+                db.collection("calificaciones")
+                    .whereEqualTo("idBanio", idBanio)
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        var suma = puntuacionCreador
+                        var cantidad = 1 // ya contamos la del creador
+
+                        for (doc in querySnapshot.documents) {
+                            val puntuacion = doc.getDouble("puntuacion") ?: 0.0
+                            suma += puntuacion
+                            cantidad++
+                        }
+
+                        val media = if (cantidad > 0) suma / cantidad else 0.0
+
+                        db.collection("urinarios").document(idBanio)
+                            .update("mediaPuntuacion", media)
+                            .addOnSuccessListener {
+                                Log.d("MediaPuntuacion", "Media actualizada correctamente: $media")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("MediaPuntuacion", "Error al actualizar la media", e)
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("MediaPuntuacion", "Error al obtener calificaciones", e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("MediaPuntuacion", "Error al obtener el baño", e)
+            }
+    }
+
 
     private fun cargarCalificacionDeCreador(idBanio: String, idUsuario: String, estrellas: RatingBar) {
         val docRef = FirestoreSingleton.db.collection("urinarios").document(idBanio)
@@ -126,11 +176,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             .document(idBanio)
             .update("puntuacion", estrellas.rating.toDouble())
             .addOnSuccessListener {
-                Toast.makeText(
-                    estrellas.context,
-                    "Puntuación del baño actualizada correctamente",
-                    Toast.LENGTH_SHORT
-                ).show()
+
                 if (isAdded) cerrarDialog()
             }
             .addOnFailureListener { e ->
@@ -140,7 +186,18 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                     Toast.LENGTH_SHORT
                 ).show()
                 Log.e("Firestore", "Error al actualizar puntuación del urinario", e)
+            }.addOnSuccessListener {
+                Toast.makeText(
+                    estrellas.context,
+                    "Puntuación del baño actualizada correctamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                actualizarMediaPuntuacion(idBanio)
+
+                if (isAdded) cerrarDialog()
             }
+
     }
 
 
@@ -191,7 +248,13 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             .addOnFailureListener { e ->
                 Toast.makeText(estrellas.context, "Error al verificar la calificación: ${e.message}", Toast.LENGTH_SHORT).show()
                 Log.e("Firestore", "Error al verificar calificación", e)
+            }.addOnSuccessListener {
+
+                actualizarMediaPuntuacion(idBanio)
+
+                if (isAdded) cerrarDialog()
             }
+
     }
 
 
