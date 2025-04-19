@@ -18,9 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:backgroundTint="@color/support"
-            app:cardCornerRadius="32dp"
-            app:cardElevation="4dp"
+            android:backgroundTint="@color/general"
+            app:cardCornerRadius="27dp"
             app:layout_constraintEnd_toEndOf="@+id/textViewNombre"
             app:layout_constraintStart_toStartOf="@+id/textViewNombre"
             app:layout_constraintTop_toBottomOf="@+id/textViewNombre">
@@ -29,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:background="@drawable/forma_campos_editar"
                 android:orientation="horizontal"
                 android:padding="8dp">
 

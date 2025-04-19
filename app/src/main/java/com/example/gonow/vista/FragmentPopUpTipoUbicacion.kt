@@ -84,9 +84,6 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
             tipoSeleccionado = radioButtonOtro.text.toString()
         }
         buttonGuardar.setOnClickListener {
-            if(tipoSeleccionado == null){
-                Toast.makeText(requireContext(), "Selecciona al menos una opción", Toast.LENGTH_SHORT).show()
-            }else {
                 // enviar el horario para manejar los datos en el otro fragment
                 val result = Bundle().apply {
                     putString("tipo_ubicacion", tipoSeleccionado)
@@ -96,7 +93,7 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
                 requireActivity().supportFragmentManager.setFragmentResult("ubicacion", result)
 
                 (requireParentFragment() as? DialogFragment)?.dismiss()
-            }
+
         }
 
 

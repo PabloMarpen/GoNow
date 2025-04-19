@@ -58,6 +58,13 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
     private var esCamaraEnMovimiento = false
+    // filtros
+    private var tipoUbiSeleccionado : String? = null
+    private var estrellas : Float? = null
+    private var discapacitados : Boolean? = null
+    private var unisex : Boolean? = null
+    private var gratis : Boolean? = null
+
 
     private var locationRequest = LocationRequest.Builder(
         Priority.PRIORITY_HIGH_ACCURACY,
@@ -85,6 +92,29 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
+    // para los filtros
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requireActivity().supportFragmentManager.setFragmentResultListener("filtros", this) { _, bundle ->
+            val tipoUbiSeleccionado = bundle.getString("tipo_ubicacion")
+            val estrellas = bundle.getFloat("estrellas")
+            val discapacitados = bundle.getBoolean("discapacitados")
+            val unisex = bundle.getBoolean("unisex")
+            val gratis = bundle.getBoolean("gratis")
+
+            this.tipoUbiSeleccionado = tipoUbiSeleccionado.toString()
+            this.estrellas = estrellas
+            this.discapacitados = discapacitados
+            this.unisex = unisex
+            this.gratis = gratis
+            googleMap?.clear()
+            obtenerYMostrarBanios()
+        }
+
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -107,11 +137,30 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
 
         filtro.setOnClickListener {
+            if (tipoUbiSeleccionado != null &&
+                estrellas != null &&
+                discapacitados != null &&
+                unisex != null &&
+                gratis != null
+            ) {
+                val filtroFragment = FragmentPopUpFiltro.newInstance(
+                    switchUnisexDato = unisex!!,
+                    switchDiscapacitadosDato = discapacitados!!,
+                    switchGratisDato = gratis!!,
+                    tipoUbiSeleccionado = tipoUbiSeleccionado!!,
+                    estrellasDato = estrellas!!
+                )
 
-            val fragmento = FragmentPopUpFiltro()
-            val popup = PopUpContenidoGeneral.newInstance(fragmento)
-            popup.show(parentFragmentManager, "popUp")
+                PopUpContenidoGeneral.newInstance(filtroFragment)
+                    .show(parentFragmentManager, "popUp")
+            } else {
+                // Si no hay datos guardados, abrimos el popup vacío
+                val filtroFragment = FragmentPopUpFiltro()
+                PopUpContenidoGeneral.newInstance(filtroFragment)
+                    .show(parentFragmentManager, "popUp")
+            }
         }
+
 
         //boton de localizacion
         rastrear.visibility = View.GONE
@@ -209,15 +258,39 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     val banio = document.toObject(Urinario::class.java)
-                    agregarMarcadorAlMapa(banio)
+                    val idBanio = document.id
+
+                    db.collection("calificaciones")
+                        .whereEqualTo("idBanio", idBanio)
+                        .get()
+                        .addOnSuccessListener { querySnapshot ->
+                            var sumaPuntuaciones = banio.puntuacion ?: 0.0
+                            var cantidadCalificaciones = 1
+
+                            for (calif in querySnapshot) {
+                                sumaPuntuaciones += calif.getDouble("puntuacion") ?: 0.0
+                                cantidadCalificaciones++
+                            }
+
+                            val media = if (cantidadCalificaciones > 0)
+                                sumaPuntuaciones / cantidadCalificaciones
+                            else 0.0
+
+                            val mediaFloat = media.toFloat()
+
+                            if (cumpleFiltros(banio, mediaFloat)) {
+                                agregarMarcadorAlMapa(banio)
+                            }
+                        }
                 }
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 Toast.makeText(context, "Error al cargar baños", Toast.LENGTH_SHORT).show()
-
             }
-
     }
+
+
+
 
     private fun agregarMarcadorAlMapa(banio: Urinario) {
         val location = banio.localizacion
@@ -261,7 +334,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
-
     private fun iniciarActualizacionesUbicacion() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -296,8 +368,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         posicion.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         manejoCarga.ocultarCarga()
@@ -311,6 +381,20 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         super.onStart()
         manejoCarga.ocultarCarga()
     }
+
+    private fun cumpleFiltros(banio: Urinario, mediaPuntuacion: Float): Boolean {
+        val etiquetas = banio.etiquetas ?: emptyList()
+
+        // no tocar lo de el filtro de ubi, da error la comprobación
+        if(tipoUbiSeleccionado != null && tipoUbiSeleccionado != "" && tipoUbiSeleccionado != "null" && tipoUbiSeleccionado != banio.tipoUbi) return false
+        if (estrellas != null && mediaPuntuacion < estrellas!!) return false
+        if (discapacitados == true && !etiquetas.any { it.equals("Accesible", ignoreCase = true) }) return false
+        if (unisex == true && !etiquetas.any { it.equals("Unisex", ignoreCase = true) }) return false
+        if (gratis == true && !etiquetas.any { it.equals("Gratis", ignoreCase = true) }) return false
+
+        return true
+    }
+
 
 
 
