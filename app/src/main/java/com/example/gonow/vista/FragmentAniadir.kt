@@ -149,7 +149,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             parentFragmentManager,
             timeoutMillis = 20000L
         ) {
-            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -188,12 +188,12 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             } ?: run {
                 manejoCarga.ocultarCarga()
                 textoNombre.setText(getString(R.string.banio))
-                Toast.makeText(requireContext(), "No se pudo obtener la ubicación", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener { e ->
             manejoCarga.ocultarCarga()
             textoNombre.setText(getString(R.string.banio))
-            Toast.makeText(requireContext(), "Error al obtener ubicación", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
         }
 
         botonAñadirImagen.setOnClickListener {
@@ -249,7 +249,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         botonPublicar.setOnClickListener {
             if (validarCampos()) {
                 manejoCarga.mostrarCarga()
-                Toast.makeText(requireContext(), "Publicando...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.publicandomensaje), Toast.LENGTH_SHORT).show()
                 // Crear el objeto horario
                 val horario = mapOf(
                     "apertura" to horaApertura,
@@ -300,9 +300,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 FirestoreSingleton.db.collection("urinarios")
                     .add(banio)
                     .addOnSuccessListener { documentReference ->
-
                         manejoCarga.ocultarCarga()
-                        Toast.makeText(requireContext(), "¡Publicado con éxito!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.publicacion_exitosa), Toast.LENGTH_SHORT).show()
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.frame, FragmentMapa())
                             .addToBackStack(null)
@@ -310,7 +309,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     }
                     .addOnFailureListener { e ->
                         manejoCarga.ocultarCarga()
-                        Toast.makeText(requireContext(), "Error al publicar: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.error_al_publicar, e.message), Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error al publicar", e)
                     }
             }
@@ -340,19 +339,19 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     private fun validarCampos(): Boolean {
         return when {
             textoNombre.text.toString().isEmpty() -> {
-                Toast.makeText(context, "Añade un nombre", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_nombre_vacio), Toast.LENGTH_SHORT).show()
                 false
             }
             ratingBar.rating < 0.5 -> {
-                Toast.makeText(context, "La puntuación debe ser mayor a 0", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_puntuacion_minima), Toast.LENGTH_SHORT).show()
                 false
             }
-            horaApertura == null || horaCierre == null ->{
-                Toast.makeText(context, "Añade un horario", Toast.LENGTH_SHORT).show()
+            horaApertura == null || horaCierre == null -> {
+                Toast.makeText(context, getString(R.string.error_falta_horario), Toast.LENGTH_SHORT).show()
                 false
             }
-            tipoUbiSeleccionado == null ->{
-                Toast.makeText(context, "Añade un tipo de ubicación", Toast.LENGTH_SHORT).show()
+            tipoUbiSeleccionado == null -> {
+                Toast.makeText(context, getString(R.string.error_falta_tipo_ubicacion), Toast.LENGTH_SHORT).show()
                 false
             }
 
@@ -418,7 +417,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
     private fun mostrarConfirmacionDeSalida() {
-        val mensaje = "¿Estás seguro de que quieres salir?\n\nSe perderá la información no guardada."
+        val mensaje = getString(R.string.mensajeConfirmacion1) + "\n\n" + getString(R.string.mensajeConfirmacion2)
         val popup = PopUp.newInstance(mensaje)
         popup.setOnAcceptListener { isConfirmed ->
             if (isConfirmed) {

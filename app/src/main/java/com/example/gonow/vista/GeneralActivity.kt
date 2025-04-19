@@ -119,7 +119,7 @@ class GeneralActivity : AppCompatActivity() {
     fun cambiarFragmentoConConfirmacion(fragment: Fragment) {
         val fragmentActual = supportFragmentManager.findFragmentById(R.id.frame)
         if (fragmentActual is FragmentAniadir) {
-            val mensaje =  "¿Estás seguro de que quieres salir?\n\nSe perderá la información no guardada."
+            val mensaje =  getString(R.string.mensajeConfirmacion1) + "\n\n" + getString(R.string.mensajeConfirmacion2)
             val popup = PopUp.newInstance(mensaje)
 
             popup.setOnAcceptListener { isConfirmed ->

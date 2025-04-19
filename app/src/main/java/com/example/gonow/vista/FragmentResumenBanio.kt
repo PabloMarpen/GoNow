@@ -70,11 +70,11 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             args.putString(ARG_NOMBRE, nombre)
             args.putString(ARG_DESCRIPCION, descripcion)
             val horaApertura = horario?.let {
-                val Apertura = it["apertura"] ?: "No disponible"
+                val Apertura = it["apertura"] ?: "Not available"
                 Apertura
             } ?: ""
             val horaCierre = horario?.let {
-                val Cierre = it["cierre"] ?: "No disponible"
+                val Cierre = it["cierre"] ?: "Not available"
                 Cierre
             } ?: ""
 
@@ -119,7 +119,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             parentFragmentManager,
             timeoutMillis = 20000L
         ) {
-            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
         }
 
         if(arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0){
@@ -143,29 +143,35 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 val decodedBitmap = decodeBase64ToBitmap(base64Image)
                 imageView.setImageBitmap(decodedBitmap)
             } catch (e: IllegalArgumentException) {
-                Log.e("Base64Decode", "Error al decodificar la imagen: ${e.message}")
-                // Puedes poner una imagen por defecto o simplemente ocultar el ImageView si prefieres
-                imageView.setImageResource(R.drawable.noimage) // o lo que tengas
+
+                imageView.setImageResource(R.drawable.noimage)
             }
         }
 
         // mostrar el nombre
-        textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: "Nombre no disponible"
-        // mostrar la descripcion
-        if(arguments?.getString(ARG_DESCRIPCION) == ""){
-            textViewDescripcion.text = "Sin descripción"
-        }else{
-            textViewDescripcion.text = arguments?.getString(ARG_DESCRIPCION)
-        }
-        // mostrar el horario
-        if(arguments?.getString(ARG_HORACIERRE) == "null" && arguments?.getString(ARG_HORAPERTURA) == "null"){
-            textViewHorario.text = arguments?.getString(ARG_SINHORARIO) ?: ""
-        }else{
-            val horaApertura = arguments?.getString(ARG_HORAPERTURA) ?: "No disponible"
-            val horaCierre = arguments?.getString(ARG_HORACIERRE) ?: "No disponible"
-            textViewHorario.text = "$horaApertura - $horaCierre"
+        textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: getString(R.string.nombre_no_disponible)
 
+        // mostrar la descripcion
+        val descripcion = arguments?.getString(ARG_DESCRIPCION)
+        textViewDescripcion.text = if (descripcion.isNullOrEmpty()) {
+            getString(R.string.sin_descripcion)
+        } else {
+            descripcion
         }
+
+        // mostrar el horario
+        val horaApertura = arguments?.getString(ARG_HORAPERTURA)
+        val horaCierre = arguments?.getString(ARG_HORACIERRE)
+        val sinHorario = arguments?.getString(ARG_SINHORARIO) ?: ""
+
+        textViewHorario.text = if (horaApertura == "null" && horaCierre == "null") {
+            sinHorario
+        } else {
+            val apertura = horaApertura ?: getString(R.string.no_disponible)
+            val cierre = horaCierre ?: getString(R.string.no_disponible)
+            "$apertura - $cierre"
+        }
+
 
 
         // mostrar las etiquetas en chips
@@ -204,7 +210,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             chipGroup.addView(tipo)
         } else {
             val chip = Chip(requireContext()).apply {
-                text = "Etiquetas no disponibles"
+                text = getString(R.string.no_disponible)
                 isClickable = false
                 isCheckable = false
 
@@ -276,7 +282,8 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                     if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
                         startActivity(mapIntent)
                     } else {
-                        Toast.makeText(context, "Google Maps no está instalado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.googlenoinstalado), Toast.LENGTH_SHORT).show()
+
                     }
         }
 

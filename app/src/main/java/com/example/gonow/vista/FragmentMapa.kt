@@ -141,7 +141,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             parentFragmentManager,
             timeoutMillis = 20000L
         ) {
-            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
         }
 
         filtro.setOnClickListener {
@@ -197,13 +197,13 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 rastrear.visibility = View.GONE
                 localizar.visibility = View.VISIBLE
                 esCamaraEnMovimiento = false
-                Toast.makeText(requireContext(), "Modo libre", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.modo_libre), Toast.LENGTH_SHORT).show()
                 obtenerUbicacionActual()
             }else{
                 rastrear.visibility = View.VISIBLE
                 localizar.visibility = View.GONE
                 esCamaraEnMovimiento = true
-                Toast.makeText(requireContext(), "Siguiendo al usuario", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.siguiendo_usuario), Toast.LENGTH_SHORT).show()
                 obtenerUbicacionActual()
             }
         }
@@ -275,7 +275,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error al obtener datos: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_obtener_datos), Toast.LENGTH_SHORT).show()
             }
 
     }
@@ -301,7 +301,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Error al cargar baños", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.error_cargar_banios), Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -343,7 +343,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
             }
         }.addOnFailureListener {
-            Toast.makeText(context, "Error obteniendo ubicación", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
         }
     }
 

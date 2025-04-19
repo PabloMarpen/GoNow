@@ -1,0 +1,110 @@
+<resources>
+    <!-- Home screen -->
+    <string name="app_name">GoNow</string>
+    <string name="iniciar_sesion">I already have an account</string>
+    <string name="registrarme">Sign up</string>
+    <string name="inicio_sinCuenta">I need to go now!</string>
+    <string name="Bienvenida">Welcome to</string>
+    <string name="info1Pantalla1">The best toilets near you.</string>
+    <string name="info2Pantalla1">Access quickly without an account.</string>
+
+    <!-- Registration screen -->
+    <string name="crear_cuenta">Create an account</string>
+    <string name="olvidoContraseña">I forgot my password</string>
+    <string name="preguntaCuenta">Already have an account?</string>
+    <string name="inicia_sesión">Log in</string>
+    <string name="correo">Email</string>
+    <string name="contrasena">Password</string>
+    <string name="repite_la_contrasena">Repeat password</string>
+    <string name="ya_tienes_cuenta">Already have an account?</string>
+    <string name="bienvenido_de_nuevo">Welcome back!</string>
+    <string name="no_tienes_cuenta">Don\'t have an account?</string>
+    <string name="correo_de_recuperacion">Recovery email</string>
+    <string name="enviar">Send</string>
+    <string name="volver">Back</string>
+    <string name="buscar">Search...</string>
+    <string name="a_adir_un_ba_o">Add a bathroom</string>
+    <string name="nombre">Name</string>
+    <string name="descripci_n">Description</string>
+    <string name="unisex">Unisex</string>
+    <string name="gratis">Free</string>
+    <string name="elegir_tipo_de_ubicaci_n">Choose location</string>
+    <string name="a_adir_horario">Add hours</string>
+    <string name="mi_perfil">My profile</string>
+    <string name="total_de_ba_os_puntuados">Total rated bathrooms:</string>
+    <string name="cambiar_contrase_a">Change password</string>
+    <string name="cambiar_correo">Change email</string>
+    <string name="ayuda">Help</string>
+    <string name="borrar_cuenta">Delete account</string>
+    <string name="cerrar_sesi_n">Log out</string>
+    <string name="elige_el_tipo_de_ubicaci_n">Choose location type</string>
+    <string name="ba_o_publico">Public bathroom</string>
+    <string name="bar">Bar</string>
+    <string name="tienda">Store</string>
+    <string name="restaurante">Restaurant</string>
+    <string name="gasolinera">Gas station</string>
+    <string name="otro">Other</string>
+    <string name="puntuaci_n">Rating</string>
+    <string name="banio">Bathroom</string>
+
+    <!-- Google -->
+    <string name="default_web_client_id">673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com</string>
+    <string name="distancia">Distance:</string>
+    <string name="horario">Opening hours</string>
+    <string name="puntuar_ba_o">Rate bathroom</string>
+    <string name="reg_strate">Sign up</string>
+    <string name="quiere_tener_acceso_completo">Want full access?</string>
+    <string name="registrate_o_inicia_sesi_n">Sign up or log in</string>
+    <string name="como_llegar">Get directions</string>
+    <string name="guardar">Save</string>
+    <string name="calificar">Rate</string>
+    <string name="total_de_ba_os_creados">Total bathrooms created:</string>
+    <string name="si">Yes</string>
+    <string name="no">No</string>
+    <string name="publicar">Publish</string>
+    <string name="contrase_a_antigua">Old password</string>
+    <string name="contrase_a_nueva">New password</string>
+    <string name="aceptar">Accept</string>
+    <string name="cancelar">Cancel</string>
+    <string name="correo_nuevo">New email</string>
+    <string name="filtros">Filters</string>
+    <string name="discapacitados">Accessible</string>
+    <string name="borrar_filtros">Clear filters</string>
+    <string name="abierto_24_7">Open 24/7</string>
+    <string name="cerrado">Closed</string>
+    <string name="tiene_horario">Has opening hours</string>
+    <string name="comentarioHoras">Approximate hours when the bathroom is open.</string>
+    <string name="reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos">
+        Sign up in seconds to:\n✅ Add new bathrooms 🏛️\n✅ Rate and leave reviews ⭐\n\nJoin and improve the experience for everyone! 🙌
+    </string>
+    <string name="mensajeConfirmacion1">Are you sure you want to leave?</string>
+    <string name="mensajeConfirmacion2">Your unsaved information will be lost.</string>
+    <string name="error_nombre_vacio">Add a name</string>
+    <string name="error_puntuacion_minima">The rating must be greater than 0</string>
+    <string name="error_falta_horario">Add hours</string>
+    <string name="error_falta_tipo_ubicacion">Add a location type</string>
+    <string name="publicacion_exitosa">Published successfully!</string>
+    <string name="error_al_publicar">Error publishing: %1$s</string>
+    <string name="publicandomensaje">Publishing...</string>
+    <string name="ubicacion_no_obtenida">Could not get location</string>
+    <string name="tiempo_carga_agotado">Loading time expired</string>
+    <string name="error_obtener_ubicacion">Error getting location</string>
+    <string name="error_cargar_banios">Error loading toilets</string>
+    <string name="error_obtener_datos">Error fetching data</string>
+    <string name="siguiendo_usuario">Following the user</string>
+    <string name="modo_libre">Free mode</string>
+    <string name="nombre_no_disponible">Name not available</string>
+    <string name="sin_descripcion">No description</string>
+    <string name="no_disponible">Not available</string>
+    <string name="googlenoinstalado">Google Maps not installed</string>
+    <string name="cargando">Loading...</string>
+    <string name="bienvenido_con_correo">Welcome, %1$s</string>
+    <string name="error_credenciales">Incorrect credentials error</string>
+    <string name="correo_no_valido">Invalid email</string>
+    <string name="contrasena_vacia">Empty password</string>
+    <string name="completar_campos">Please complete all fields correctly.</string>
+
+
+
+
+</resources>

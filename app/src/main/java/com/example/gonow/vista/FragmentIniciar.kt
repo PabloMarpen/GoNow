@@ -57,18 +57,23 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         userViewModel.authenticationState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is AuthenticationState.Loading -> {
-                    Toast.makeText(requireContext(), "Cargando...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.cargando), Toast.LENGTH_SHORT).show()
                 }
                 is AuthenticationState.Success -> {
                     val user = state.user
-                    Toast.makeText(requireContext(), "Bienvenido, ${user?.email}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.bienvenido_con_correo, user?.email),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     iniciarMapa()
                 }
                 is AuthenticationState.Error -> {
-                    Toast.makeText(requireContext(), "Error credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_credenciales), Toast.LENGTH_SHORT).show()
                 }
             }
         })
+
 
 
         botonGoogle.setOnClickListener {
@@ -89,13 +94,14 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
 
         botonIniciar.setOnClickListener {
             if (!correo.text.toString().isValidEmail()) {
-                Toast.makeText(requireContext(), "Correo no válido", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
             } else if (contraseña.text.toString().isEmpty()) {
-                Toast.makeText(requireContext(), "Contraseña vacía", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.contrasena_vacia), Toast.LENGTH_SHORT).show()
             } else {
                 userViewModel.signInWithEmailAndPassword(correo.text.toString(), contraseña.text.toString())
             }
         }
+
 
         textoOlvidoContrasena.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()

@@ -60,18 +60,23 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         userViewModel.authenticationState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is AuthenticationState.Loading -> {
-                    Toast.makeText(requireContext(), "cargando...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.cargando), Toast.LENGTH_SHORT).show()
                 }
                 is AuthenticationState.Success -> {
                     val user = state.user
-                    Toast.makeText(requireContext(), "Bienvenido, ${user?.email}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.bienvenido_con_correo, user?.email),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     iniciarMapa()
                 }
                 is AuthenticationState.Error -> {
-                    Toast.makeText(requireContext(), "Error: ${state.errorMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_credenciales), Toast.LENGTH_SHORT).show()
                 }
             }
         })
+
 
         botonRegistrar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -94,9 +99,9 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
             if (correo.text.isNotEmpty() && contraseña.text.isNotEmpty() && contraseña2.text.isNotEmpty() && contraseña2.text.toString() == contraseña.text.toString()) {
                 userViewModel.createUserWithEmailAndPassword(correo.text.toString(), contraseña.text.toString())
             } else if (!correo.text.toString().isValidEmail()) {
-                Toast.makeText(requireContext(), "Correo no válido", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
             }else {
-                Toast.makeText(requireContext(), "Por favor, complete todos los campos correctamente.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.completar_campos), Toast.LENGTH_SHORT).show()
             }
         }
         textoIniciarSesion.setOnClickListener {
