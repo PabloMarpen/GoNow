@@ -59,6 +59,7 @@
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/poppinslight"
+            android:textColor="@color/oscuro"
             android:text="00:00"
             android:textSize="20sp" />
 
@@ -69,6 +70,7 @@
             android:layout_height="50dp"
             android:fontFamily="@font/poppinslight"
             android:text="00:00"
+            android:textColor="@color/oscuro"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -80,7 +82,7 @@
         android:fontFamily="@font/poppinslight"
         android:text="Horas aproximadas en las que esta abierto el baño."
         android:textAlignment="center"
-        android:textColor="@color/secondary"
+        android:textColor="@color/contraste"
         android:textSize="20sp" />
 
     <Button
@@ -89,6 +91,7 @@
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
         android:text="Guardar"
         android:textSize="20sp" />

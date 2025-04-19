@@ -64,7 +64,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         2000L // Cada 2 segundos
     )
         .setMinUpdateIntervalMillis(1000L) // Cada 1 segundo si hay nueva ubicación
-        .setWaitForAccurateLocation(true) // Espera a que la ubicación sea precisa
         .setMaxUpdateDelayMillis(4000L) // No más de 4 segundos entre updates
         .build()
 
@@ -81,10 +80,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             if (fineLocationGranted || coarseLocationGranted) {
                 obtenerUbicacionActual()
                 iniciarActualizacionesUbicacion()
-                manejoCarga.ocultarCarga()
             } else {
                 Toast.makeText(requireContext(), "Permisos de ubicación denegados", Toast.LENGTH_SHORT).show()
-                manejoCarga.ocultarCarga()
             }
         }
 
@@ -159,9 +156,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
-        manejoCarga.mostrarCarga() // para la carga
-        obtenerYMostrarBanios() // para los baños
+        ubicacionActual = LatLng(0.0, 0.0)
+        manejoCarga.ocultarCarga() // para evitar que al cambiar al modo oscuro se quede cargando
         obtenerUbicacionActual() // para la ubicación actual
+        obtenerYMostrarBanios() // para los baños
         iniciarActualizacionesUbicacion()// para la ubicación actual
     }
 
@@ -251,18 +249,18 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 )
             )
             return
-
         }
+
         posicion.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
-                val ubicacionActual = LatLng(it.latitude, it.longitude)
+                ubicacionActual = LatLng(it.latitude, it.longitude)  // Inicialización correcta de la propiedad
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
-
             }
         }.addOnFailureListener {
             Toast.makeText(context, "Error obteniendo ubicación", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun iniciarActualizacionesUbicacion() {
         if (ActivityCompat.checkSelfPermission(
@@ -273,9 +271,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
             return
         }
+
         googleMap?.isMyLocationEnabled = true
 
         locationCallback = object : LocationCallback() {
@@ -283,25 +281,21 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 val location = locationResult.lastLocation ?: return
                 ubicacionActual = LatLng(location.latitude, location.longitude)
 
-                if(esCamaraEnMovimiento){
+                // Mueve la cámara solo si es necesario
+                if (esCamaraEnMovimiento || !ubicacionActualMostrada) {
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
                     ubicacionActualMostrada = true
-                    manejoCarga.ocultarCarga()
-                }else{
-                    if (!ubicacionActualMostrada){
-                        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
-                        ubicacionActualMostrada = true
-                        manejoCarga.ocultarCarga()
-                    }
                 }
 
-
+                if (manejoCarga.estaCargando()) {
+                    manejoCarga.ocultarCarga()
+                }
             }
-
         }
 
         posicion.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
+
 
 
     override fun onDestroyView() {
@@ -312,6 +306,12 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             posicion.removeLocationUpdates(locationCallback)
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        manejoCarga.ocultarCarga()
+    }
+
 
 
 

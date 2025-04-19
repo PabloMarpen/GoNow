@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/ba_o_publico"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
         <RadioButton
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/bar"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
         <RadioButton
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/tienda"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
         <RadioButton
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/restaurante"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
         <RadioButton
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/gasolinera"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
         <RadioButton
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppinsregular"
             android:text="@string/otro"
-            android:textColor="@color/secondary"
+            android:textColor="@color/contraste"
             android:textSize="20sp" />
 
 
@@ -86,6 +86,7 @@
         style="@style/PrimaryButton"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
         android:text="@string/guardar"
         android:textSize="20sp" />

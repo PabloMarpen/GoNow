@@ -17,9 +17,12 @@ class ManejoDeCarga(
     }
 
     fun mostrarCarga() {
-        ocultarCarga() // Por si ya había uno activo
+        // Asegurarse de que solo se muestra una vez
+        ocultarCarga()
 
         loadingDialog = LoadingDialog()
+        if (fragmentManager.isStateSaved) return
+
         loadingDialog?.show(fragmentManager, "loading")
 
         handler.postDelayed(timeoutRunnable, timeoutMillis)
@@ -27,7 +30,26 @@ class ManejoDeCarga(
 
     fun ocultarCarga() {
         handler.removeCallbacks(timeoutRunnable)
-        loadingDialog?.dismiss()
+
+        loadingDialog?.let { dialog ->
+            if (dialog.isAdded && !dialog.parentFragmentManager.isStateSaved) {
+                dialog.dismiss()
+            }
+        }
+
         loadingDialog = null
+    }
+
+    fun estaCargando(): Boolean {
+        return loadingDialog?.isAdded == true
+    }
+
+    // Esta función podría ser útil en onStart() o onResume para reiniciar la carga
+    fun reiniciarCargaSiEsNecesario() {
+        if (fragmentManager.isStateSaved) {
+            return
+        }
+        handler.removeCallbacks(timeoutRunnable)
+        handler.postDelayed(timeoutRunnable, timeoutMillis)
     }
 }

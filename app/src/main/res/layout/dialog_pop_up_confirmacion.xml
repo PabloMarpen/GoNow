@@ -13,7 +13,7 @@
         android:fontFamily="@font/poppinssemibold"
         android:text="Texto de ejemplo"
         android:textSize="18sp"
-        android:textColor="@color/secondary" />
+        android:textColor="@color/contraste" />
 
     <Button
         android:id="@+id/btnSi"
@@ -22,6 +22,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/poppinsmedium"
+        android:textColor="@color/oscuro"
         android:text="Si"
         android:textSize="20dp" />
     <Button
@@ -30,6 +31,7 @@
         android:fontFamily="@font/poppinsmedium"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textColor="@color/oscuro"
         android:text="No"
         android:textSize="20dp"
         android:layout_marginTop="10dp" />

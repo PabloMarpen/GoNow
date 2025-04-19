@@ -33,6 +33,7 @@ import kotlin.math.sqrt
 
 class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
+    private lateinit var manejoCarga: ManejoDeCarga
 
     companion object {
         private const val ARG_NOMBRE = "nombre"
@@ -99,6 +100,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val user = AuthSingleton.auth.currentUser
         val idBanio = arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
 
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        ) {
+            Toast.makeText(requireContext(), "Tiempo de carga agotado", Toast.LENGTH_SHORT).show()
+        }
 
         calcularMediaPuntuacion(idBanio, Puntuacion)
 
@@ -110,10 +117,18 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
 
         // mostrar la imagen si no es null o vacio
-        if(arguments?.getString(ARG_IMAGEN) != null && arguments?.getString(ARG_IMAGEN) != ""){
-            val decodedBitmap = decodeBase64ToBitmap(arguments?.getString(ARG_IMAGEN)!!)  // encodedImage es tu cadena base64
-            imageView.setImageBitmap(decodedBitmap)
+        val base64Image = arguments?.getString(ARG_IMAGEN)
+        if (!base64Image.isNullOrEmpty()) {
+            try {
+                val decodedBitmap = decodeBase64ToBitmap(base64Image)
+                imageView.setImageBitmap(decodedBitmap)
+            } catch (e: IllegalArgumentException) {
+                Log.e("Base64Decode", "Error al decodificar la imagen: ${e.message}")
+                // Puedes poner una imagen por defecto o simplemente ocultar el ImageView si prefieres
+                imageView.setImageResource(R.drawable.noimage) // o lo que tengas
+            }
         }
+
         // mostrar el nombre
         textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: "Nombre no disponible"
         // mostrar la descripcion
@@ -143,12 +158,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                     isCheckable = false
                     if(etiqueta == "Accesible" || etiqueta == "Con jabón" || etiqueta == "Con papel" || etiqueta == "Gratis" || etiqueta == "Con zona bebé" || etiqueta == "No unisex"){
                         chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary))
-                        setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
                     }else{
                         chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
-                        setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
                     }
@@ -162,7 +177,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 isClickable = false
                 isCheckable = false
                 chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                 chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                 chipStrokeWidth = 0f
             }
@@ -175,14 +190,13 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
             }
             chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
-            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.general))
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
             chip.chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
             chip.chipStrokeWidth = 0f
             chipGroup.addView(chip)
         }
         // mostrar la distancia
         textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
-
 
         botonPuntuar.setOnClickListener {
             if (user != null){
@@ -250,6 +264,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
     }
 
     private fun calcularMediaPuntuacion(idBanio: String, Puntuacion: RatingBar) {
+        manejoCarga.mostrarCarga()
         FirestoreSingleton.db.collection("urinarios")
             .document(idBanio)
             .get()
@@ -276,16 +291,20 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                         }
 
                         Puntuacion.rating = mediaPuntuacion.toFloat()
+                        manejoCarga.ocultarCarga()
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(Puntuacion.context, "Error al obtener las calificaciones.", Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error en calificaciones", e)
+                        manejoCarga.ocultarCarga()
                     }
             }
             .addOnFailureListener { e ->
                 Toast.makeText(Puntuacion.context, "Error al obtener el baño.", Toast.LENGTH_SHORT).show()
                 Log.e("Firestore", "Error en urinario", e)
+                manejoCarga.ocultarCarga()
             }
+
     }
 
 
@@ -325,5 +344,15 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
     fun decodeBase64ToBitmap(base64String: String): Bitmap {
         val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        manejoCarga.reiniciarCargaSiEsNecesario()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        manejoCarga.ocultarCarga()
     }
 }

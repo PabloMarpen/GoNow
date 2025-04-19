@@ -55,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:fontFamily="@font/poppinsextrabold"
+        android:textColor="@color/oscuro"
         android:text="Aceptar"
         android:textSize="24dp" />
 
@@ -64,6 +65,7 @@
         android:layout_width="252dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsextrabold"
         android:text="Cancelar"
         android:textSize="24dp" />

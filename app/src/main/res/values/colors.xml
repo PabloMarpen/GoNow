@@ -7,5 +7,7 @@
     <color name="support">#ECECEC</color>
     <color name="supportVariant">#929191</color>
     <color name="supportVariantDark">#686868</color>
+    <color name="oscuro">#23232F</color>
     <color name="general">#D9D9D9</color>
+    <color name="contraste">#23232F</color>
 </resources>

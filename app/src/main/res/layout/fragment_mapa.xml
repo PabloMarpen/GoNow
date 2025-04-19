@@ -49,7 +49,7 @@
         android:layout_height="63dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/forma_circulo"
+        android:background="@drawable/forma_circulo2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintBottom_toBottomOf="@+id/editTextText"

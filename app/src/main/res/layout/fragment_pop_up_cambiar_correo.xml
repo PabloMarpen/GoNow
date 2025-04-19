@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:fontFamily="@font/poppinsextrabold"
+        android:textColor="@color/oscuro"
         android:text="Aceptar"
         android:textSize="24dp" />
 
@@ -48,6 +49,7 @@
         style="@style/botonGris"
         android:layout_width="252dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/oscuro"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/poppinsextrabold"
         android:text="Cancelar"

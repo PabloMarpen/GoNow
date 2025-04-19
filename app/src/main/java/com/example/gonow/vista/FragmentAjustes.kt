@@ -169,6 +169,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
             botonCambiarCorreo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
             botonCambiarContrasena.isEnabled = false
             botonCambiarContrasena.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
+
         }
 
         botonCambiarCorreo.setOnClickListener {

@@ -2,7 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/support"/> <!-- Color del círculo -->
+    <solid android:color="@color/general"/> <!-- Color del círculo -->
     <size android:width="100dp" android:height="100dp"/> <!-- Tamaño del círculo -->
+    <stroke android:color="@color/secondary" android:width="2dp"/>
     <corners android:radius="27dp"/>
 </shape>
