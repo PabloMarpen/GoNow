@@ -24,20 +24,18 @@ import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import android.os.Environment
+import android.util.Base64
 import android.util.Log
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.fragment.app.DialogFragment
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
-import com.example.gonow.modelo.Calificacion
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
@@ -85,6 +83,64 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
     }
 
+    // para editar un baño
+    private var idBanio: String? = null
+    private var puntuacionOriginal: Double? = null
+    private var nombreDato : String? = null
+    private var descripcion : String? = null
+    private var etiquetas : List<String>? = null
+    private var foto : String? = null
+    private var tipo: String? = null
+    private var horario : Map<String, String?>? = null
+    private var sinhorario: String? = null
+    private var esEditar: Boolean = false
+    private var horaapeturadatoeditar : String? = null
+    private var horacierredatoeditar : String? = null
+
+    companion object {
+        // Constantes para las claves (mejora el mantenimiento)
+        private const val KEY_ID_BANIO = "idBanio"
+        private const val KEY_PUNTUACION_ORIGINAL = "puntuacionOriginal"
+        private const val KEY_NOMBRE = "nombre"
+        private const val KEY_DESCRIPCION = "descripcion"
+        private const val KEY_ETIQUETAS = "etiquetas"
+        private const val KEY_FOTO = "foto"
+        private const val KEY_TIPO = "tipo"
+        private const val KEY_HORAPERTURA = "horapertura"
+        private const val KEY_HORACIERRE = "horacierre"
+        private const val KEY_SINHORARIO = "sinhorario"
+        private const val KEY_ES_EDITAR = "esEditar"
+
+        fun newInstance(
+            nombre: String?,
+            esEditar: Boolean,
+            puntuacionOriginal: Double? = null,
+            descripcion: String? = null,
+            tipo: String? = null,
+            sinHorario: String? = null,
+            horaApertura: String? = null,
+            horaCierre: String? = null,
+            etiquetas: List<String>? = null,
+            foto: String? = null,
+            idBanio: String? = null
+        ): FragmentAniadir {
+            return FragmentAniadir().apply {
+                arguments = Bundle().apply {
+                    putString(KEY_NOMBRE, nombre)
+                    putBoolean(KEY_ES_EDITAR, esEditar)
+                    putDouble(KEY_PUNTUACION_ORIGINAL, puntuacionOriginal ?: 0.0)
+                    putString(KEY_DESCRIPCION, descripcion)
+                    putString(KEY_TIPO, tipo)
+                    putString(KEY_SINHORARIO, sinHorario)
+                    putString(KEY_HORAPERTURA, horaApertura)
+                    putString(KEY_HORACIERRE, horaCierre)
+                    putStringArrayList(KEY_ETIQUETAS, etiquetas?.let { ArrayList(it) })
+                    putString(KEY_FOTO, foto)
+                    putString(KEY_ID_BANIO, idBanio)
+                }
+            }
+        }
+    }
 
 
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -98,7 +154,25 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // para evitar que de el error del bundel al pasarle muchos datos de golpe (la foto) lo he pasado a null en vez de "savedInstanceState"
+        // desactivando una función útil de Android (guardar y restaurar el estado al rotar o al cerrar/reabrir).
+        super.onCreate(null)
+
+        arguments?.let {
+            nombreDato = it.getString(KEY_NOMBRE)
+            esEditar = it.getBoolean(KEY_ES_EDITAR)
+            puntuacionOriginal = it.getDouble(KEY_PUNTUACION_ORIGINAL)
+            descripcion = it.getString(KEY_DESCRIPCION)
+            tipo = it.getString(KEY_TIPO)
+            sinhorario = it.getString(KEY_SINHORARIO)
+            horaapeturadatoeditar = it.getString(KEY_HORAPERTURA)
+            horacierredatoeditar = it.getString(KEY_HORACIERRE)
+            etiquetas = it.getStringArrayList(KEY_ETIQUETAS)
+            foto = it.getString(KEY_FOTO)
+            idBanio = it.getString(KEY_ID_BANIO)
+        } ?: run {
+            requireActivity().finish()
+        }
 
         requireActivity().supportFragmentManager.setFragmentResultListener("horario", this) { _, bundle ->
             // Recibimos los datos del fragmento y los asignamos a las variables
@@ -135,7 +209,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         textoDescripcion = view.findViewById(R.id.EditTextDescripcion)
         textoNombre = view.findViewById(R.id.EditTextNombre)
         ratingBar = view.findViewById(R.id.ratingBar)
-        ratingBar.rating = 5f
 
         switchAcesibilidad = view.findViewById(R.id.switchAcesibilidad)
         switchUnisex = view.findViewById(R.id.switchUnisex)
@@ -148,9 +221,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
             timeoutMillis = 20000L
-        ) {
-            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
-        }
+        )
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             mostrarConfirmacionDeSalida()
@@ -169,32 +240,83 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             return
         }
 
+        if(esEditar){
+            textoNombre.setText(nombreDato)
+            ratingBar.rating = puntuacionOriginal!!.toFloat()
+            textoDescripcion.setText(descripcion)
+            tipoUbiSeleccionado = tipo
+            if(horaApertura == "null" || horaCierre == "null" || sinhorario != "null"){
+                if(sinhorario == getString(R.string.abiertosiempre)){
+                   abiertoSiempre = true
+                    cerradoSiempre = false
+                    tieneHorario = false
+                }
+                if(sinhorario == getString(R.string.cerradosiempre)){
+                    cerradoSiempre = true
+                    abiertoSiempre = false
+                    tieneHorario = false
+                }
+            }else{
+                tieneHorario = true
+                abiertoSiempre = false
+                cerradoSiempre = false
+                horaApertura = horaapeturadatoeditar
+                horaCierre = horacierredatoeditar
+            }
+            if (etiquetas != null && etiquetas!!.isNotEmpty()) {
+                for (etiqueta in etiquetas!!) {
 
-        manejoCarga.mostrarCarga()
-       //Obtener la ubicación actual con Geolocalización por nombre de la calle
-        posicion.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                ubicacionActual = LatLng(it.latitude, it.longitude)
+                    when (etiqueta) {
+                        "01" -> switchAcesibilidad.isChecked = true
+                        "02" -> switchUnisex.isChecked = true
+                        "03" -> switchJabon.isChecked = true
+                        "04" -> switchPapel.isChecked = true
+                        "05" -> switchGratis.isChecked = true
+                        "06" -> switchCambiar.isChecked = true
+                    }
 
-                val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
-                val calle = direccion["calle"] ?: ""
-                val numero = direccion["numero"] ?: ""
-                val ciudad = direccion["ciudad"] ?: ""
+                }
+            }
+            val base64Image = arguments?.getString(KEY_FOTO)
+            if (!base64Image.isNullOrEmpty()) {
+                try {
+                    val decodedBitmap = decodeBase64ToBitmap(base64Image)
+                    botonAñadirImagen.setImageBitmap(decodedBitmap)
+                } catch (e: IllegalArgumentException) {
 
-                val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
-                textoNombre.setText(nombre.trim())
+                    botonAñadirImagen.setImageResource(R.drawable.noimage)
+                }
+            }
 
-                manejoCarga.ocultarCarga()
-            } ?: run {
+        }else{
+            ratingBar.rating = 5f
+            manejoCarga.mostrarCarga()
+            //Obtener la ubicación actual con Geolocalización por nombre de la calle
+            posicion.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    ubicacionActual = LatLng(it.latitude, it.longitude)
+
+                    val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
+                    val calle = direccion["calle"] ?: ""
+                    val numero = direccion["numero"] ?: ""
+                    val ciudad = direccion["ciudad"] ?: ""
+
+                    val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
+                    textoNombre.setText(nombre.trim())
+
+                    manejoCarga.ocultarCarga()
+                } ?: run {
+                    manejoCarga.ocultarCarga()
+                    textoNombre.setText(getString(R.string.banio))
+                    Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener { e ->
                 manejoCarga.ocultarCarga()
                 textoNombre.setText(getString(R.string.banio))
-                Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
             }
-        }.addOnFailureListener { e ->
-            manejoCarga.ocultarCarga()
-            textoNombre.setText(getString(R.string.banio))
-            Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
         }
+
 
         botonAñadirImagen.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -247,74 +369,120 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
 
         botonPublicar.setOnClickListener {
-            if (validarCampos()) {
-                manejoCarga.mostrarCarga()
-                Toast.makeText(requireContext(), getString(R.string.publicandomensaje), Toast.LENGTH_SHORT).show()
-                // Crear el objeto horario
-                val horario = mapOf(
-                    "apertura" to horaApertura,
-                    "cierre" to horaCierre
-                )
-                // Crear la lista de etiquetas
-                val etiquetas = mutableListOf<String>(
-                    if (switchAcesibilidad.isChecked) "Accesible" else "No accesible",
-                    if (switchUnisex.isChecked) "Unisex" else "No unisex",
-                    if (switchJabon.isChecked) "Con jabón" else "Sin jabón",
-                    if (switchPapel.isChecked) "Con papel" else "Sin papel",
-                    if (switchGratis.isChecked) "Gratis" else "De pago",
-                    if (switchCambiar.isChecked) "Con zona bebé" else "Sin zona bebé"
-                )
+                if (validarCampos()) {
+                    manejoCarga.mostrarCarga()
+                    Toast.makeText(requireContext(), getString(R.string.publicandomensaje), Toast.LENGTH_SHORT).show()
+                    // Crear el objeto horario
+                    val horario = mapOf(
+                        "apertura" to horaApertura,
+                        "cierre" to horaCierre
+                    )
+                    // Crear la lista de etiquetas
+                    val etiquetas = listOf(
+                        if (switchAcesibilidad.isChecked) "01" else "10", // 01 = Accesible, 10 = No accesible
+                        if (switchUnisex.isChecked) "02" else "20",       // 02 = Unisex, 20 = No unisex
+                        if (switchJabon.isChecked) "03" else "30",        // 03 = Con jabón, 30 = Sin jabón
+                        if (switchPapel.isChecked) "04" else "40",        // 04 = Con papel, 40 = Sin papel
+                        if (switchGratis.isChecked) "05" else "50",       // 05 = Gratis, 50 = De pago
+                        if (switchCambiar.isChecked) "06" else "60"       // 06 = Con zona bebé, 60 = Sin zona bebé
+                    )
 
-                // Crear el objeto banio
+                    val sinhorario = if (horaApertura != null && horaCierre != null) {
+                        when {
+                            abiertoSiempre -> getString(R.string.abiertosiempre)
+                            cerradoSiempre -> getString(R.string.cerradosiempre)
+                            else -> "null"
+                        }
+                    } else {
+                        "null"  // Si horaApertura o horaCierre son nulos
+                    }
 
+                    // Crear el objeto banio
 
-                val encodedImage = if (photoFile != null) {
-                    compressAndEncodeImageToBase64(photoFile!!, 1048487)
-                } else {
-                    ""
-                }
-
-                val banio = Urinario(
-                    nombre = textoNombre.text.toString(),
-                    sinhorario = if(horaApertura != null && horaCierre != null){
-                        if(abiertoSiempre){
-                            getString(R.string.abiertosiempre)
+                    val encodedImage = if (photoFile != null) {
+                        compressAndEncodeImageToBase64(photoFile!!, 1048487)
+                    } else {
+                        if(esEditar){
+                            arguments?.getString(KEY_FOTO)
                         }else{
-                            getString(R.string.cerradosiempre)
+                            ""
+                        }
+                    }
+
+
+
+                    if(esEditar){
+
+
+                        // Crear el objeto con los datos editados
+                        val banioActualizado = mapOf(
+                            "nombre" to textoNombre.text.toString(),
+                            "sinhorario" to sinhorario,
+                            "descripcion" to textoDescripcion.text.toString(),
+                            "etiquetas" to etiquetas,
+                            "foto" to encodedImage,
+                            "horario" to horario,
+                            "puntuacion" to ratingBar.rating.toDouble()
+                        )
+
+                        // Actualizar el baño en Firestore
+                        idBanio?.let { it1 ->
+                            FirestoreSingleton.db.collection("urinarios")
+                                .document(it1)  // Usamos el ID del baño existente para actualizarlo
+                                .update(banioActualizado)  // Solo actualizamos los datos modificados
+                                .addOnSuccessListener {
+                                    manejoCarga.ocultarCarga()
+                                    Toast.makeText(requireContext(), getString(R.string.actualizadobien), Toast.LENGTH_SHORT).show()
+                                    requireActivity().supportFragmentManager.beginTransaction()
+                                        .replace(R.id.frame, FragmentMapa())
+                                        .addToBackStack(null)
+                                        .commit()
+                                }
+                                .addOnFailureListener { e ->
+                                    manejoCarga.ocultarCarga()
+                                    Toast.makeText(requireContext(), getString(R.string.error_actualizarbanio), Toast.LENGTH_SHORT).show()
+                                    Log.e("Firestore", "Error al actualizar", e)
+                                }
                         }
                     }else{
-                        null
-                    },
-                    creador = AuthSingleton.auth.currentUser?.uid ?: "",
-                    descripcion = textoDescripcion.text.toString(),
-                    etiquetas = etiquetas,
-                    foto = encodedImage,
-                    horario = horario,
-                    localizacion = GeoPoint(ubicacionActual.latitude, ubicacionActual.longitude),
-                    tipoUbi = tipoUbiSeleccionado,
-                    puntuacion = ratingBar.rating.toDouble(),
-                )
+                        val banio = Urinario(
+                            nombre = textoNombre.text.toString(),
+                            sinhorario = sinhorario,
+                            creador = AuthSingleton.auth.currentUser?.uid ?: "",
+                            descripcion = textoDescripcion.text.toString(),
+                            etiquetas = etiquetas,
+                            foto = encodedImage,
+                            horario = horario,
+                            localizacion = GeoPoint(ubicacionActual.latitude, ubicacionActual.longitude),
+                            tipoUbi = tipoUbiSeleccionado,
+                            puntuacion = ratingBar.rating.toDouble(),
+                        )
 
 
-                // Guardar en Firestore con el UID del usuario como ID
-                FirestoreSingleton.db.collection("urinarios")
-                    .add(banio)
-                    .addOnSuccessListener { documentReference ->
-                        manejoCarga.ocultarCarga()
-                        Toast.makeText(requireContext(), getString(R.string.publicacion_exitosa), Toast.LENGTH_SHORT).show()
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(R.id.frame, FragmentMapa())
-                            .addToBackStack(null)
-                            .commit()
+                        // Guardar en Firestore con el UID del usuario como ID
+                        FirestoreSingleton.db.collection("urinarios")
+                            .add(banio)
+                            .addOnSuccessListener { documentReference ->
+                                manejoCarga.ocultarCarga()
+                                Toast.makeText(requireContext(), getString(R.string.publicacion_exitosa), Toast.LENGTH_SHORT).show()
+                                requireActivity().supportFragmentManager.beginTransaction()
+                                    .replace(R.id.frame, FragmentMapa())
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
+                            .addOnFailureListener { e ->
+                                manejoCarga.ocultarCarga()
+                                Toast.makeText(requireContext(), getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
+                                Log.e("Firestore", "Error al publicar", e)
+                            }
                     }
-                    .addOnFailureListener { e ->
-                        manejoCarga.ocultarCarga()
-                        Toast.makeText(requireContext(), getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
-                        Log.e("Firestore", "Error al publicar", e)
-                    }
+
+
+                }
+
             }
 
-        }
+
 
     }
 
@@ -346,7 +514,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Toast.makeText(context, getString(R.string.error_puntuacion_minima), Toast.LENGTH_SHORT).show()
                 false
             }
-            horaApertura == null || horaCierre == null -> {
+            horaApertura == null && horaCierre == null && sinhorario == null -> {
                 Toast.makeText(context, getString(R.string.error_falta_horario), Toast.LENGTH_SHORT).show()
                 false
             }
@@ -414,6 +582,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
         val byteArray = byteArrayOutputStream.toByteArray()
         return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+    }
+
+    fun decodeBase64ToBitmap(base64String: String): Bitmap {
+        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 
     private fun mostrarConfirmacionDeSalida() {

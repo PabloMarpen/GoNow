@@ -54,7 +54,8 @@ class GeneralActivity : AppCompatActivity() {
             gestionarSelectorVisual(FragmentMapa())
             val fragmentActual = supportFragmentManager.findFragmentById(R.id.frame)
             if (fragmentActual !is FragmentMapa) {
-                cambiarFragmentoConConfirmacion(FragmentMapa())
+                cambiarFragmentoConConfirmacion(FragmentMapa(
+                ))
             }
 
         }
@@ -65,12 +66,20 @@ class GeneralActivity : AppCompatActivity() {
 
             if (fragmentActual !is FragmentAniadir) {
                 if (currentUser != null) {
-                    cambiarFragmentoConConfirmacion(FragmentAniadir())
+
+                    val aniadirFragmento = FragmentAniadir.newInstance(
+                        nombre = "",
+                        esEditar = false,
+                        puntuacionOriginal = null,
+                        descripcion = null
+                    )
+                    cambiarFragmentoConConfirmacion(aniadirFragmento)  // Llamamos al método de confirmación
                 } else {
                     PopUpContenidoGeneral.newInstance(FragmentPopUpSpam()).show(supportFragmentManager, "popUp")
                 }
             }
         }
+
 
 
         botonPersona.setOnClickListener {
@@ -124,6 +133,7 @@ class GeneralActivity : AppCompatActivity() {
 
             popup.setOnAcceptListener { isConfirmed ->
                 if (isConfirmed) {
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.frame, fragment)
                         .addToBackStack(null)

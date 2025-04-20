@@ -128,6 +128,9 @@
     <string name="dar_permisos">Grant permissions</string>
     <string name="textopermisos">To help you find nearby restrooms 🚻📍\nwe need your location.\n\nIt\'s quick, safe, and enhances your experience to the max! 😉</string>
     <string name="permisos_porfavor">Please grant permissions</string>
+    <string name="actualizadobien">Updated successfully</string>
+    <string name="error_actualizarbanio">Error updating bathroom</string>
+
 
 
 

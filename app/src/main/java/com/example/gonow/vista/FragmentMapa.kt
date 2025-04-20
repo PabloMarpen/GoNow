@@ -143,9 +143,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
             timeoutMillis = 20000L
-        ) {
-            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
-        }
+        )
 
         filtro.setOnClickListener {
             if (tipoUbiSeleccionado != null &&
@@ -256,6 +254,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 if (!documents.isEmpty) {
                     val banio = documents.documents[0].toObject(Urinario::class.java)
                     banio?.let {
+
                         val fragment = FragmentResumenBanio.newInstance(
                             nombre = it.nombre ?: getString(R.string.nombre_no_disponible),
                             descripcion = it.descripcion ?: getString(R.string.sin_descripcion),

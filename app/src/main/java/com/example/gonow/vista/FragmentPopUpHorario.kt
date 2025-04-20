@@ -76,13 +76,13 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         val switchAbierto = view.findViewById<Switch>(R.id.switchAbierto)
         val switchCerrado = view.findViewById<Switch>(R.id.switchCerrado)
         val switchTieneHorario = view.findViewById<Switch>(R.id.switchTieneHorario)
-        switchAbierto.isChecked = true
 
         botonHorarioAbrir.text = horaAperturaDato
         botonHorarioCerrar.text = horaCierreDato
         switchAbierto.isChecked = switchAbiertoDato ?: false
         switchCerrado.isChecked = switchCerradoDato ?: false
         switchTieneHorario.isChecked = switchTieneHorarioDato ?: false
+
 
         cambiarEstadoBotones(botonHorarioAbrir, switchTieneHorario)
         cambiarEstadoBotones(botonHorarioCerrar, switchTieneHorario)
@@ -118,6 +118,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
                     if(switchTieneHorario.isChecked){
                         putString("hora_apertura", botonHorarioAbrir.text.toString())
                         putString("hora_cierre", botonHorarioCerrar.text.toString())
+
                     }else{
                         putString("hora_apertura", null)
                         putString("hora_cierre", null)
@@ -175,5 +176,6 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
             boton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
         }
     }
+
 
 }

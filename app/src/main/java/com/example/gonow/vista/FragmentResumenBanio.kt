@@ -35,6 +35,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
     private lateinit var manejoCarga: ManejoDeCarga
 
+
     companion object {
         private const val ARG_NOMBRE = "nombre"
         private const val ARG_DESCRIPCION = "descripcion"
@@ -178,26 +179,46 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         if (etiquetas != null && etiquetas.isNotEmpty()) {
             chipGroup.removeAllViews()
             for (etiqueta in etiquetas) {
+
+                val nombreBonito = when (etiqueta) {
+                    "01" -> "Accesible"
+                    "10" -> "No accesible"
+                    "02" -> "Unisex"
+                    "20" -> "No unisex"
+                    "03" -> "Con jabón"
+                    "30" -> "Sin jabón"
+                    "04" -> "Con papel"
+                    "40" -> "Sin papel"
+                    "05" -> "Gratis"
+                    "50" -> "De pago"
+                    "06" -> "Con zona bebé"
+                    "60" -> "Sin zona bebé"
+                    else -> etiqueta
+                }
+
                 val chip = Chip(requireContext()).apply {
-                    text = etiqueta
+                    text = nombreBonito
                     isClickable = false
                     isCheckable = false
-                    if(etiqueta == "Accesible" || etiqueta == "Con jabón" || etiqueta == "Con papel" || etiqueta == "Gratis" || etiqueta == "Con zona bebé" || etiqueta == "No unisex"){
+
+                    // Códigos "positivos" -> primarios (01–06)
+                    if (etiqueta in listOf("01", "02", "03", "04", "05", "06")) {
                         chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary))
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
-                    }else{
+                    } else {
                         chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
                     }
-
                 }
-                chipGroup.addView(chip)
 
+                chipGroup.addView(chip)
             }
+
+            // Añadir el chip con el tipo de baño
             val tipo = Chip(requireContext()).apply {
                 text = tipoDeBanio
                 isClickable = false
@@ -268,7 +289,24 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             }
         }
         botonEditar.setOnClickListener {
+            val editarFragmento = FragmentAniadir.newInstance(
+                nombre = arguments?.getString(ARG_NOMBRE),
+                esEditar = true,
+                puntuacionOriginal = arguments?.getDouble(ARG_PUNTUACION) ?: 0.0,
+                descripcion = arguments?.getString(ARG_DESCRIPCION),
+                tipo = arguments?.getString(ARG_ID_TIPO),
+                sinHorario = arguments?.getString(ARG_SINHORARIO),
+                horaApertura = arguments?.getString(ARG_HORAPERTURA),
+                horaCierre = arguments?.getString(ARG_HORACIERRE),
+                etiquetas = arguments?.getStringArrayList(ARG_ETIQUETAS) ?: emptyList(),
+                foto = arguments?.getString(ARG_IMAGEN),
+                idBanio = idBanio
 
+            )
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame, editarFragmento)
+                .addToBackStack(null)
+                .commit()
         }
 
         botonLlegar.setOnClickListener {
@@ -289,8 +327,6 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
 
     }
-
-
 
 
     fun calculateAndFormatDistance(startPoint: LatLng, endPoint: LatLng): String {
