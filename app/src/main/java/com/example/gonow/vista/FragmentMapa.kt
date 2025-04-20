@@ -409,9 +409,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }else{
             if (estrellas != null && banio.mediaPuntuacion!! < estrellas!!) return false
         }
-        if (discapacitados == true && !etiquetas.any { it.equals("Accesible", ignoreCase = true) }) return false
-        if (unisex == true && !etiquetas.any { it.equals("Unisex", ignoreCase = true) }) return false
-        if (gratis == true && !etiquetas.any { it.equals("Gratis", ignoreCase = true) }) return false
+        if (discapacitados == true && !etiquetas.any { it.equals("01", ignoreCase = true) }) return false
+        if (unisex == true && !etiquetas.any { it.equals("02", ignoreCase = true) }) return false
+        if (gratis == true && !etiquetas.any { it.equals("05", ignoreCase = true) }) return false
 
         return true
     }
