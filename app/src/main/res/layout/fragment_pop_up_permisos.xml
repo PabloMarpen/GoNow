@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="0dp"
         android:fontFamily="@font/poppinssemibold"
-        android:text="@string/reg_strate"
+        android:text="@string/permisos_porfavor"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />
@@ -27,37 +27,27 @@
         android:gravity="center"/>
 
     <TextView
-        android:id="@+id/tituloHorario2"
-        android:layout_width="237dp"
-        android:layout_height="82dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="5dp"
-        android:fontFamily="@font/poppinsmedium"
-        android:text="@string/quiere_tener_acceso_completo"
-        android:textAlignment="center"
-        android:textColor="@color/secondary"
-        android:textSize="20dp" />
-
-    <TextView
         android:id="@+id/comentario"
         android:layout_width="311dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:fontFamily="@font/poppinslight"
-        android:text="@string/reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos"
+        android:text="@string/textopermisos"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="16sp" />
 
+
+
     <Button
-        android:id="@+id/buttonRegistrarme"
+        android:id="@+id/buttonDarPermisos"
         style="@style/PrimaryButton"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
-        android:text="@string/registrarme"
+        android:text="@string/dar_permisos"
         android:textSize="16sp" />
 
 </LinearLayout>

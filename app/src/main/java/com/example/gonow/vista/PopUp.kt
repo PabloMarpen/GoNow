@@ -40,11 +40,11 @@ class PopUp : DialogFragment() {
         val btnAceptar = view.findViewById<Button>(R.id.btnSi)
         val btnNop = view.findViewById<Button>(R.id.btnNo)
 
-        val message = arguments?.getString(ARG_MESSAGE) ?: "Mensaje por defecto"
+        val message = arguments?.getString(ARG_MESSAGE) ?: getString(R.string.mensaje_por_defecto)
         if(message == "borrar"){
-            texto.text = "¿Seguro que quieres borrar tu cuenta?"
-            btnAceptar.text = "BORRAR"
-            btnNop.text = "CANCELAR"
+            texto.text = getString(R.string.confirmar_borrado)
+            btnAceptar.text = getString(R.string.boton_borrar)
+            btnNop.text = getString(R.string.boton_cancelar)
             btnAceptar.setBackgroundColor(Color.parseColor("#ff4c4c"))
         }else{
             texto.text = message

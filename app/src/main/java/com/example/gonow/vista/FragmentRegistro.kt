@@ -48,7 +48,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         val correo = view.findViewById<EditText>(R.id.Correo)
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
         val contraseña2 = view.findViewById<EditText>(R.id.contraseña)
-        val googleIdButton = view.findViewById<ImageView>(R.id.imageViewGoogle)
+        val googleIdButton = view.findViewById<Button>(R.id.buttonGoogle)
         firebaseAuth = AuthSingleton.auth
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

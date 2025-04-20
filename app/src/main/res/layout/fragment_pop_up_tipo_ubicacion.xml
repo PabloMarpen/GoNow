@@ -31,7 +31,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/ba_o_publico"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioButtonBar"
@@ -40,7 +40,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/bar"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioButtonTienda"
@@ -49,7 +49,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/tienda"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioButtonRestaurante"
@@ -58,7 +58,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/restaurante"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioButtonGasolinera"
@@ -67,7 +67,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/gasolinera"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <RadioButton
             android:id="@+id/radioButtonOtro"
@@ -76,7 +76,7 @@
             android:fontFamily="@font/poppinsregular"
             android:text="@string/otro"
             android:textColor="@color/contraste"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
 
     </RadioGroup>
@@ -89,6 +89,6 @@
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
         android:text="@string/guardar"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
 </LinearLayout>

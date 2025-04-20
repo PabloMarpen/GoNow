@@ -23,7 +23,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/abierto_24_7"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Switch
         android:id="@+id/switchCerrado"
@@ -32,7 +32,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/cerrado"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Switch
         android:id="@+id/switchTieneHorario"
@@ -41,7 +41,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/tiene_horario"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <!-- Aquí metemos los dos botones en línea -->
     <LinearLayout
@@ -61,7 +61,7 @@
             android:fontFamily="@font/poppinslight"
             android:textColor="@color/oscuro"
             android:text="00:00"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/botonHorarioCerrar"
@@ -71,19 +71,19 @@
             android:fontFamily="@font/poppinslight"
             android:text="00:00"
             android:textColor="@color/oscuro"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/comentario"
-        android:layout_marginBottom="5dp"
-        android:layout_width="match_parent"
+        android:layout_width="270dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="5dp"
         android:fontFamily="@font/poppinslight"
         android:text="@string/comentarioHoras"
         android:textAlignment="center"
         android:textColor="@color/contraste"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/buttonGuardar"
@@ -94,6 +94,6 @@
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinsregular"
         android:text="@string/guardar"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
 </LinearLayout>

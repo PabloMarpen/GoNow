@@ -18,22 +18,22 @@
     <!-- Barra de navegación (Se dibuja encima del mapa) -->
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/overlayShape"
-        android:layout_width="377dp"
-        android:layout_height="82dp"
-        android:src="@drawable/forma_barra_navegacion"
+        android:layout_width="400dp"
+        android:layout_height="80dp"
         android:clipToOutline="true"
+        android:src="@drawable/forma_barra_navegacion"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewCirculo1"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="13dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewMapa"
         app:layout_constraintStart_toStartOf="@+id/imageViewMapa"
@@ -41,12 +41,12 @@
 
     <ImageView
         android:id="@+id/imageViewCirculo2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="13dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewPlus"
         app:layout_constraintStart_toStartOf="@+id/imageViewPlus"
@@ -54,12 +54,12 @@
 
     <ImageView
         android:id="@+id/imageViewCirculo3"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="13dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewPersona"
         app:layout_constraintStart_toStartOf="@+id/imageViewPersona"
@@ -68,9 +68,9 @@
     <!-- Íconos dentro del menú -->
     <ImageView
         android:id="@+id/imageViewPlus"
-        android:layout_width="48dp"
+        android:layout_width="29dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"
         app:layout_constraintTop_toTopOf="@+id/overlayShape"
@@ -78,9 +78,9 @@
 
     <ImageView
         android:id="@+id/imageViewMapa"
-        android:layout_width="48dp"
+        android:layout_width="29dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"
@@ -90,9 +90,9 @@
 
     <ImageView
         android:id="@+id/imageViewPersona"
-        android:layout_width="48dp"
+        android:layout_width="29dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintEnd_toEndOf="@+id/overlayShape"
         app:layout_constraintHorizontal_bias="0.855"
         app:layout_constraintStart_toStartOf="@+id/overlayShape"

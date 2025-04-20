@@ -66,11 +66,11 @@ class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
 
         botonEnviar.setOnClickListener {
             if(!correoRecu.text.toString().isValidEmail()){
-                Toast.makeText(requireContext(), "Correo no válido", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(requireContext(), "Enviar", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.enviar), Toast.LENGTH_SHORT).show()
 
-                val mensaje = "Se enviará un correo para restablecer la contraseña a ${correoRecu.text}"
+                val mensaje = getString(R.string.mensaje_restablecer_contrasena)
                 val popup = PopUp.newInstance(mensaje)
                 popup.show(parentFragmentManager, "popUp")
             }

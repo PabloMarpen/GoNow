@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinssemibold"
         android:text="Texto de ejemplo"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/contraste" />
 
     <Button
@@ -24,7 +24,7 @@
         android:fontFamily="@font/poppinsmedium"
         android:textColor="@color/oscuro"
         android:text="@string/si"
-        android:textSize="20dp" />
+        android:textSize="18sp" />
     <Button
         android:id="@+id/btnNo"
         style="@style/botonGris"
@@ -33,6 +33,6 @@
         android:layout_height="match_parent"
         android:textColor="@color/oscuro"
         android:text="@string/no"
-        android:textSize="20dp"
+        android:textSize="18sp"
         android:layout_marginTop="10dp" />
 </LinearLayout>

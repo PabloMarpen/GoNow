@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
@@ -71,6 +72,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private var gratis : Boolean? = null
     //buscador
     private var busqueda = ""
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
 
 
     private var locationRequest = LocationRequest.Builder(
@@ -95,7 +98,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 obtenerUbicacionActual()
                 iniciarActualizacionesUbicacion()
             } else {
-                Toast.makeText(requireContext(), "Permisos de ubicación denegados", Toast.LENGTH_SHORT).show()
+                PopUpContenidoGeneral.newInstance(FragmentPopUpPermisos()).show(parentFragmentManager, "popUp")
             }
         }
 
@@ -169,24 +172,27 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
+
+
         buscador.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
-                // Se llama antes de que el texto cambie
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                // Se llama cuando el texto ha cambiado
-                if (charSequence?.isNotEmpty() == true) {
-                    busqueda = charSequence.toString()
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                runnable?.let { handler.removeCallbacks(it) }
+
+                runnable = Runnable {
+                    val texto = s.toString()
+                    busqueda = texto
                     googleMap?.clear()
-                    obtenerYMostrarBanios(busqueda)
+                    obtenerYMostrarBanios(texto)
                 }
+
+                handler.postDelayed(runnable!!, 300) // Espera 300ms después de que el usuario deje de escribir
             }
 
-            override fun afterTextChanged(editable: Editable?) {
-                // Se llama después de que el texto haya cambiado
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
+
 
 
         //boton de localizacion
@@ -251,8 +257,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     val banio = documents.documents[0].toObject(Urinario::class.java)
                     banio?.let {
                         val fragment = FragmentResumenBanio.newInstance(
-                            nombre = it.nombre ?: "Sin nombre",
-                            descripcion = it.descripcion ?: "Sin descripción",
+                            nombre = it.nombre ?: getString(R.string.nombre_no_disponible),
+                            descripcion = it.descripcion ?: getString(R.string.sin_descripcion),
                             horario = it.horario,
                             puntuacion = it.puntuacion ?: 0.0,
                             sinhorario = it.sinhorario,

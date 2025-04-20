@@ -44,7 +44,7 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
         val textoRegistrarme = view.findViewById<TextView>(R.id.textViewRegistrarme)
         val correo = view.findViewById<EditText>(R.id.Correo)
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
-        val botonGoogle = view.findViewById<ImageView>(R.id.imageViewGoogle)
+        val botonGoogle = view.findViewById<Button>(R.id.buttonGoogle)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))

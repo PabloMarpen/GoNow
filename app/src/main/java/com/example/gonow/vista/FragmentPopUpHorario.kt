@@ -111,7 +111,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 
         buttonGuardar.setOnClickListener {
             if(!switchAbierto.isChecked && !switchCerrado.isChecked && !switchTieneHorario.isChecked){
-                Toast.makeText(requireContext(), "Selecciona al menos una opción", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.seleccionaunaalmenos), Toast.LENGTH_SHORT).show()
             }else {
                 // enviar el horario para manejar los datos en el otro fragment
                 val result = Bundle().apply {

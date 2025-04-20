@@ -32,7 +32,7 @@ class FragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
         }
 
         botonAyuda.setOnClickListener {
-            Toast.makeText(requireContext(), "Esta función no está disponible", Toast.LENGTH_SHORT).show()
+
         }
 
     }

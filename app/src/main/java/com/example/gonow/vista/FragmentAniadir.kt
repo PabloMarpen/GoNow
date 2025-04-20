@@ -93,7 +93,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         if (isGranted) {
             lanzarCamara()
         } else {
-            Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.permisocamaradenegado), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -278,9 +278,9 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     nombre = textoNombre.text.toString(),
                     sinhorario = if(horaApertura != null && horaCierre != null){
                         if(abiertoSiempre){
-                            "abierto 24/7"
+                            getString(R.string.abiertosiempre)
                         }else{
-                            "baño cerrado"
+                            getString(R.string.cerradosiempre)
                         }
                     }else{
                         null
@@ -309,7 +309,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     }
                     .addOnFailureListener { e ->
                         manejoCarga.ocultarCarga()
-                        Toast.makeText(requireContext(), getString(R.string.error_al_publicar, e.message), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
                         Log.e("Firestore", "Error al publicar", e)
                     }
             }

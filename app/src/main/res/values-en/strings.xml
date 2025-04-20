@@ -1,7 +1,7 @@
 <resources>
     <!-- Home screen -->
     <string name="app_name">GoNow</string>
-    <string name="iniciar_sesion">I already have an account</string>
+    <string name="iniciar_sesion">Log in</string>
     <string name="registrarme">Sign up</string>
     <string name="inicio_sinCuenta">I need to go now!</string>
     <string name="Bienvenida">Welcome to</string>
@@ -103,6 +103,39 @@
     <string name="correo_no_valido">Invalid email</string>
     <string name="contrasena_vacia">Empty password</string>
     <string name="completar_campos">Please complete all fields correctly.</string>
+    <string name="cerrarsesion">Are you sure you want to log out?</string>
+    <string name="borrar">Delete</string>
+    <string name="cuenta_eliminada">Account deleted successfully.</string>
+    <string name="error_eliminar_cuenta">Error deleting account.</string>
+    <string name="seguridad_eliminar">For security, please log out and log back in to delete your account.</string>
+    <string name="permisocamaradenegado">Camera permission denied</string>
+    <string name="debescalificar">You must rate</string>
+    <string name="erropuntuacionbanios">Error loading bathroom rating</string>
+    <string name="errorverificar">Error verifying rating</string>
+    <string name="puntuacionactualizadabien">Bathroom rating updated successfully</string>
+    <string name="calificacionenviada">Rating sent</string>
+    <string name="contraseñaactualizada">Password updated successfully.</string>
+    <string name="error_revisar_contrasena">Error, check your password</string>
+    <string name="error_contrasena_corta">The password must be at least 6 characters long.</string>
+    <string name="seleccionaunaalmenos">Select at least one option</string>
+    <string name="mensaje_restablecer_contrasena">A password reset email will be sent to %1$s</string>
+    <string name="mensaje_por_defecto">Default message</string>
+    <string name="confirmar_borrado">Are you sure you want to delete your account?</string>
+    <string name="boton_borrar">DELETE</string>
+    <string name="boton_cancelar">CANCEL</string>
+    <string name="error_obtener_urinarios_creados">Error getting created toilets</string>
+    <string name="error_obtener_califi">Error getting ratings</string>
+    <string name="dar_permisos">Grant permissions</string>
+    <string name="textopermisos">To help you find nearby restrooms 🚻📍\nwe need your location.\n\nIt\'s quick, safe, and enhances your experience to the max! 😉</string>
+    <string name="permisos_porfavor">Please grant permissions</string>
+
+
+
+
+
+    <!-- HORARIO -->
+    <string name="abiertosiempre">Open 24/7</string>
+    <string name="cerradosiempre">Closed</string>
 
 
 

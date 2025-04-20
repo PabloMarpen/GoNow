@@ -28,18 +28,18 @@ class FragmentPopUpCambiarContraseña : Fragment(R.layout.fragment_pop_up_cambia
             if (nuevaContrasena.length >= 6) {
                 user?.updatePassword(nuevaContrasena)?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Contraseña actualizada correctamente.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.contraseñaactualizada), Toast.LENGTH_SHORT).show()
                         // Cerrar el fragmento actual
                         if (isAdded) {
                             (requireParentFragment() as? DialogFragment)?.dismiss()
                         }
                     } else {
-                        Toast.makeText(requireContext(), "Error, revisa la contraseña", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.error_revisar_contrasena), Toast.LENGTH_SHORT).show()
 
                     }
                 }
             } else {
-                    Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_contrasena_corta), Toast.LENGTH_SHORT).show()
             }
 
 

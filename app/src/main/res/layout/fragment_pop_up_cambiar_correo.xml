@@ -20,8 +20,8 @@
 
     <EditText
         android:id="@+id/CambiarCorreo"
-        android:layout_width="270dp"
-        android:layout_height="69dp"
+        android:layout_width="267dp"
+        android:layout_height="49dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/forma_entrada_texto"
         android:ems="10"
@@ -34,25 +34,25 @@
         />
 
     <Button
-        android:id="@+id/buttonAceptar"
+        android:id="@+id/ButtonAceptar"
         style="@style/PrimaryButton"
         android:layout_width="252dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:fontFamily="@font/poppinsextrabold"
+        android:fontFamily="@font/poppinslight"
         android:textColor="@color/oscuro"
         android:text="@string/aceptar"
-        android:textSize="24dp" />
+        android:textSize="18sp" />
 
     <Button
-        android:id="@+id/buttonCancelar"
+        android:id="@+id/ButtonCancelar"
         style="@style/botonGris"
         android:layout_width="252dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/oscuro"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/poppinsextrabold"
+        android:textColor="@color/oscuro"
+        android:fontFamily="@font/poppinslight"
         android:text="@string/cancelar"
-        android:textSize="24dp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

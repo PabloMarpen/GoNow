@@ -117,7 +117,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
                     user?.delete()
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                Toast.makeText(requireContext(), "Cuenta eliminada correctamente.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.cuenta_eliminada), Toast.LENGTH_SHORT).show()
                                 val intent = Intent(requireContext(), MainActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
@@ -127,11 +127,11 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
                                 if (exception is FirebaseAuthRecentLoginRequiredException) {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Por seguridad, por favor cierra sesión y vuelve a iniciar para borrar tu cuenta.",
+                                        getString(R.string.seguridad_eliminar),
                                         Toast.LENGTH_LONG
                                     ).show()
                                 } else {
-                                    Toast.makeText(requireContext(), "Error al eliminar la cuenta.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(requireContext(), getString(R.string.error_eliminar_cuenta), Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -141,7 +141,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         }
 
         botonCerrarSesion.setOnClickListener {
-            val mensaje = "¿Seguro que quieres cerrar sesión?"
+            val mensaje = getString(R.string.cerrarsesion)
             val popup = PopUp.newInstance(mensaje)
             popup.setOnAcceptListener { isConfirmed ->
                 if (isConfirmed) {
@@ -211,7 +211,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
                 onConsultaTermina() // Llamar al método cuando termine la consulta
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error al obtener las calificaciones", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_obtener_califi), Toast.LENGTH_SHORT).show()
                 onConsultaTermina() // Llamar al método cuando termine la consulta (aunque falle)
             }
 
@@ -226,7 +226,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
                 onConsultaTermina() // Llamar al método cuando termine la consulta
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error al obtener los urinarios creados", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_obtener_urinarios_creados), Toast.LENGTH_SHORT).show()
                 onConsultaTermina() // Llamar al método cuando termine la consulta (aunque falle)
             }
     }

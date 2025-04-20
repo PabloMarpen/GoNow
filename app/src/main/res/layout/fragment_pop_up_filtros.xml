@@ -17,6 +17,24 @@
         android:textColor="@color/secondary"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/textViewPuntuacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppinsregular"
+        android:layout_marginBottom="10dp"
+        android:text="@string/puntuaci_n"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="16sp" />
+
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"/>
+
     <Switch
         android:id="@+id/switchDiscapacitados"
         android:layout_width="260dp"
@@ -24,7 +42,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/discapacitados"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Switch
         android:id="@+id/switchUnisex"
@@ -33,7 +51,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/unisex"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Switch
         android:id="@+id/switchGratis"
@@ -42,46 +60,30 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/gratis"
         android:textColor="@color/secondary"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/botonUbicacion"
         style="@style/SecondaryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="63dp"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="33dp"
         android:fontFamily="@font/poppinslight"
         android:text="@string/elegir_tipo_de_ubicaci_n"
         android:textColor="@color/oscuro"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/textViewPuntuacion"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:fontFamily="@font/poppinsregular"
-        android:text="@string/puntuaci_n"
-        android:textAlignment="center"
-        android:textColor="@color/secondary"
-        android:textSize="24sp" />
-
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/buttonBorrarFiltros"
         style="@style/SecondaryButton"
-        android:layout_width="215dp"
+        android:layout_width="211dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/oscuro"
         android:fontFamily="@font/poppinslight"
         android:text="@string/borrar_filtros"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/buttonGuardarFiltros"
@@ -92,7 +94,7 @@
         android:fontFamily="@font/poppinsregular"
         android:text="@string/guardar"
         android:layout_marginTop="10dp"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
 
 

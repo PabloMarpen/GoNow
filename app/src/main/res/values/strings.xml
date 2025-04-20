@@ -79,18 +79,10 @@
     <!-- mensajes de los pop ups-->
     <string name="mensajeConfirmacion1">¿Estás seguro de que quieres salir?</string>
     <string name="mensajeConfirmacion2">Se perderá la información no guardada.</string>
-    <string name="error_nombre_vacio">Añade un nombre</string>
-    <string name="error_puntuacion_minima">La puntuación debe ser mayor a 0</string>
-    <string name="error_falta_horario">Añade un horario</string>
-    <string name="error_falta_tipo_ubicacion">Añade un tipo de ubicación</string>
     <string name="publicacion_exitosa">¡Publicado con éxito!</string>
-    <string name="error_al_publicar">Error al publicar: %1$s</string>
     <string name="publicandomensaje">Publicando...</string>
     <string name="ubicacion_no_obtenida">No se pudo obtener la ubicación</string>
     <string name="tiempo_carga_agotado">Tiempo de carga agotado</string>
-    <string name="error_obtener_ubicacion">Error al obtener ubicación</string>
-    <string name="error_cargar_banios">Error al cargar baños</string>
-    <string name="error_obtener_datos">Error al obtener datos</string>
     <string name="siguiendo_usuario">Siguiendo al usuario</string>
     <string name="modo_libre">Modo libre</string>
     <string name="nombre_no_disponible">Nombre no disponible</string>
@@ -99,11 +91,51 @@
     <string name="googlenoinstalado">Google Maps no instalado</string>
     <string name="cargando">Cargando...</string>
     <string name="bienvenido_con_correo">Bienvenido, %1$s</string>
-    <string name="error_credenciales">Error credenciales incorrectas</string>
     <string name="correo_no_valido">Correo no válido</string>
     <string name="contrasena_vacia">Contraseña vacía</string>
     <string name="completar_campos">Por favor, complete todos los campos correctamente.</string>
+    <string name="cerrarsesion">¿Seguro que quieres cerrar sesión?</string>
+    <string name="borrar">Borrar</string>
+    <string name="cuenta_eliminada">Cuenta eliminada correctamente.</string>
+    <string name="seguridad_eliminar">Por seguridad, por favor cierra sesión y vuelve a iniciar para borrar tu cuenta.</string>
+    <string name="permisocamaradenegado">Permiso de cámara denegado</string>
+    <string name="debescalificar">Debes calificar</string>
+    <string name="puntuacionactualizadabien">Puntuación del baño actualizada correctamente</string>
+    <string name="calificacionenviada">Calificación enviada</string>
+    <string name="contraseñaactualizada">Contraseña actualizada correctamente.</string>
+    <string name="error_revisar_contrasena">Error, revisa la contraseña</string>
+    <string name="error_contrasena_corta">La contraseña debe tener al menos 6 caracteres.</string>
+    <string name="seleccionaunaalmenos">Selecciona al menos una opción"</string>
+    <string name="mensaje_restablecer_contrasena">Se enviará un correo para restablecer la contraseña a %1$s</string>
+    <string name="mensaje_por_defecto">Mensaje por defecto</string>
+    <string name="confirmar_borrado">¿Seguro que quieres borrar tu cuenta?</string>
+    <string name="boton_borrar">BORRAR</string>
+    <string name="boton_cancelar">CANCELAR</string>
+    <string name="dar_permisos">Dar permisos</string>
+    <string name="textopermisos">Para ayudarte a encontrar baños cercanos 🚻📍\nnecesitamos tu ubicación.\n\n¡Es rápido, seguro y mejora tu experiencia al máximo! 😉</string>
+    <string name="permisos_porfavor">Permisos porfavor</string>
 
+
+
+    <!-- errores -->
+    <string name="erropuntuacionbanios">Error al cargar puntuación del baño</string>
+    <string name="errorverificar">Error al verificar la calificación</string>
+    <string name="error_eliminar_cuenta">Error al eliminar la cuenta.</string>
+    <string name="error_credenciales">Error credenciales incorrectas</string>
+    <string name="error_obtener_ubicacion">Error al obtener ubicación</string>
+    <string name="error_cargar_banios">Error al cargar baños</string>
+    <string name="error_obtener_datos">Error al obtener datos</string>
+    <string name="error_al_publicar">Error al publicar</string>
+    <string name="error_nombre_vacio">Añade un nombre</string>
+    <string name="error_puntuacion_minima">La puntuación debe ser mayor a 0</string>
+    <string name="error_falta_horario">Añade un horario</string>
+    <string name="error_falta_tipo_ubicacion">Añade un tipo de ubicación</string>
+    <string name="error_obtener_urinarios_creados">Error al obtener los urinarios creados</string>
+    <string name="error_obtener_califi">Error al obtener las calificaciones</string>
+
+    <!-- HORARIO -->
+    <string name="abiertosiempre">abierto 24/7</string>
+    <string name="cerradosiempre">baño cerrado</string>
 
 
 

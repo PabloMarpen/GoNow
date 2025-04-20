@@ -26,15 +26,15 @@
     <!-- Barra de búsqueda -->
     <EditText
         android:id="@+id/editTextBuscador"
-        android:layout_width="0dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="240dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="19dp"
         android:background="@drawable/forma_busqueda_texto"
         android:hint="@string/buscar"
         android:ems="10"
         android:fontFamily="@font/poppinsregular"
-        android:textSize="24sp"
+        android:textSize="16sp"
         android:textColor="#000000"
         android:textColorHint="@color/supportVariant"
         android:inputType="text"
@@ -48,17 +48,17 @@
         android:layout_width="63dp"
         android:layout_height="63dp"
         android:layout_marginStart="7dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="30dp"
         android:background="@drawable/forma_circulo2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextText"
-        app:layout_constraintStart_toEndOf="@+id/editTextText" />
+        app:layout_constraintBottom_toBottomOf="@+id/editTextBuscador"
+        app:layout_constraintStart_toEndOf="@+id/editTextBuscador" />
 
     <!-- Ícono de filtro dentro del círculo -->
     <ImageView
         android:id="@+id/imageViewFiltro"
-        android:layout_width="38dp"
+        android:layout_width="29dp"
         android:layout_height="38dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView5"
         app:layout_constraintEnd_toEndOf="@+id/imageView5"
@@ -79,7 +79,7 @@
 
     <ImageView
         android:id="@+id/imageViewUbi"
-        android:layout_width="38dp"
+        android:layout_width="29dp"
         android:layout_height="38dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewBotonUbi"
         app:layout_constraintEnd_toEndOf="@+id/imageViewBotonUbi"
@@ -89,7 +89,7 @@
 
     <ImageView
         android:id="@+id/imageViewUbiOn"
-        android:layout_width="38dp"
+        android:layout_width="29dp"
         android:layout_height="38dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewBotonUbi"
         app:layout_constraintEnd_toEndOf="@+id/imageViewBotonUbi"
