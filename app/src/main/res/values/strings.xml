@@ -85,14 +85,13 @@
     <string name="publicacion_exitosa">¡Publicado con éxito!</string>
     <string name="publicandomensaje">Publicando...</string>
     <string name="ubicacion_no_obtenida">No se pudo obtener la ubicación</string>
-    <string name="tiempo_carga_agotado">Tiempo de carga agotado</string>
+    <string name="tiempo_carga_agotado">La conexión está tardando demasiado. Revisa tu red o vuelve a intentarlo.</string>
     <string name="siguiendo_usuario">Siguiendo al usuario</string>
     <string name="modo_libre">Modo libre</string>
     <string name="nombre_no_disponible">Nombre no disponible</string>
     <string name="sin_descripcion">Sin descripción</string>
     <string name="no_disponible">No disponible</string>
     <string name="googlenoinstalado">Google Maps no instalado</string>
-    <string name="cargando">Cargando...</string>
     <string name="bienvenido_con_correo">Bienvenido, %1$s</string>
     <string name="correo_no_valido">Correo no válido</string>
     <string name="contrasena_vacia">Contraseña vacía</string>
@@ -118,7 +117,12 @@
     <string name="textopermisos">Para ayudarte a encontrar baños cercanos 🚻📍\nnecesitamos tu ubicación.\n\n¡Es rápido, seguro y mejora tu experiencia al máximo! 😉</string>
     <string name="permisos_porfavor">Permisos porfavor</string>
     <string name="actualizadobien">Se ha actualizado</string>
-
+    <string name="confirmar_borrar_banio">¿Seguro que quieres borrar este baño?</string>">
+    <string name="banio_borrado">Baño y reseñas borrados</string>
+    <string name="error_borrar_banio">Error al borrar el baño</string>
+    <string name="error_borrar_resenas">Error al borrar las reseñas</string>
+    <string name="error_buscar_resenas">Error al buscar reseñas</string>
+    <string name="id_no_disponible">ID de documento no disponible</string>
 
 
     <!-- errores -->
@@ -137,6 +141,21 @@
     <string name="error_obtener_urinarios_creados">Error al obtener los urinarios creados</string>
     <string name="error_obtener_califi">Error al obtener las calificaciones</string>
     <string name="error_actualizarbanio">Error al actualizar</string>
+    <string name="error_muchotiempo">Porfavor revise su conexión a internet</string>
+
+
+    <!-- mensajes de carga -->
+    <string name="cargando">Cargando...</string>
+    <string name="cargandobanios">Cargando baños...</string>
+    <string name="cargandobanio">Cargando baño...</string>
+    <string name="cargandocalificaciones">Cargando calificacion...</string>
+    <string name="subiendocalificacion">Subiendo calificacion...</string>
+    <string name="cargandoNombreCalle">Cargando nombre de la calle...</string>
+    <string name="publicando">Publicando...</string>
+    <string name="actualizando">Actualizando...</string>
+    <string name="borrando">Borrando...</string>
+
+
 
     <!-- HORARIO -->
     <string name="abiertosiempre">abierto 24/7</string>

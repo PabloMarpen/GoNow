@@ -16,11 +16,11 @@ class ManejoDeCarga(
         onTimeout?.invoke()
     }
 
-    fun mostrarCarga() {
+    fun mostrarCarga(mensaje: String = "Cargando...") {
         // Asegurarse de que solo se muestra una vez
         ocultarCarga()
 
-        loadingDialog = LoadingDialog()
+        loadingDialog = LoadingDialog.newInstance(mensaje)
         if (fragmentManager.isStateSaved) return
 
         loadingDialog?.show(fragmentManager, "loading")
@@ -44,7 +44,6 @@ class ManejoDeCarga(
         return loadingDialog?.isAdded == true
     }
 
-    // Esta función podría ser útil en onStart() o onResume para reiniciar la carga
     fun reiniciarCargaSiEsNecesario() {
         if (fragmentManager.isStateSaved) {
             return
@@ -53,3 +52,4 @@ class ManejoDeCarga(
         handler.postDelayed(timeoutRunnable, timeoutMillis)
     }
 }
+

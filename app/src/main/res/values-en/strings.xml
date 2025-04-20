@@ -97,7 +97,6 @@
     <string name="sin_descripcion">No description</string>
     <string name="no_disponible">Not available</string>
     <string name="googlenoinstalado">Google Maps not installed</string>
-    <string name="cargando">Loading...</string>
     <string name="bienvenido_con_correo">Welcome, %1$s</string>
     <string name="error_credenciales">Incorrect credentials error</string>
     <string name="correo_no_valido">Invalid email</string>
@@ -132,6 +131,23 @@
     <string name="error_actualizarbanio">Error updating bathroom</string>
     <string name="actualizarbanio">Update bathroom</string>
     <string name="actualizar">Update</string>
+    <string name="confirmar_borrar_banio">Are you sure you want to delete this bathroom?</string>
+    <string name="banio_borrado">Bathroom and reviews deleted</string>
+    <string name="error_borrar_banio">Error deleting bathroom</string>
+    <string name="error_borrar_resenas">Error deleting reviews</string>
+    <string name="error_buscar_resenas">Error fetching reviews</string>
+    <string name="id_no_disponible">Document ID not available</string>
+    <string name="cargando">Loading...</string>
+    <string name="cargandobanios">Loading bathrooms...</string>
+    <string name="cargandobanio">Loading bathroom...</string>
+    <string name="cargandocalificaciones">Loading rating...</string>
+    <string name="subiendocalificacion">Uploading rating...</string>
+    <string name="cargandoNombreCalle">Loading street name...</string>
+    <string name="publicando">Publishing...</string>
+    <string name="actualizando">Updating...</string>
+    <string name="borrando">Deleting...</string>
+
+
 
 
 

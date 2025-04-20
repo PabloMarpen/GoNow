@@ -313,7 +313,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         }else{
             ratingBar.rating = 5f
-            manejoCarga.mostrarCarga()
+            manejoCarga.mostrarCarga(getString(R.string.cargandoNombreCalle))
             //Obtener la ubicación actual con Geolocalización por nombre de la calle
             posicion.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
@@ -393,7 +393,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         botonPublicar.setOnClickListener {
                 if (validarCampos()) {
-                    manejoCarga.mostrarCarga()
+                    manejoCarga.mostrarCarga(getString(R.string.publicando))
                     Toast.makeText(requireContext(), getString(R.string.publicandomensaje), Toast.LENGTH_SHORT).show()
                     // Crear el objeto horario
                     val horario = mapOf(

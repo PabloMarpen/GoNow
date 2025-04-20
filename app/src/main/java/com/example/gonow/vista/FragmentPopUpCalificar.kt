@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
 
+    private lateinit var manejoCarga: ManejoDeCarga
 
     companion object {
         private const val ARG_IDBANIO = "idBanio"
@@ -39,6 +40,13 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        ){
+            Toast.makeText(requireContext(), getString(R.string.error_muchotiempo), Toast.LENGTH_SHORT).show()
+        }
+
         val estrellas = view.findViewById<RatingBar>(R.id.ratingBarCalificar)
         val botonGuardar = view.findViewById<Button>(R.id.buttonEnviar)
         val idBanio = arguments?.getString(ARG_IDBANIO) ?: ""
@@ -47,25 +55,26 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
 
         // si el creador es el mismo que el usuario, no se puede calificar una nueva solo la que ya existe
         if (idUsuario == creador) {
+            manejoCarga.mostrarCarga(getString(R.string.cargandocalificaciones))
             cargarCalificacionDeCreador(idBanio, idUsuario, estrellas)
         }else{
+            manejoCarga.mostrarCarga(getString(R.string.cargandocalificaciones))
             cargarCalificacionExistente(idBanio, idUsuario, estrellas)
         }
 
         botonGuardar.setOnClickListener {
+
             if (estrellas.rating == 0.0f) {
                 Toast.makeText(requireContext(), getString(R.string.debescalificar), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else{
-
+                manejoCarga.mostrarCarga(getString(R.string.subiendocalificacion))
                 if(idUsuario == creador){
                     guardarOActualizarCalificacionDeCreador(idBanio, estrellas, isAdded) {
 
                         if (isAdded) {
                             (parentFragment as? DialogFragment)?.dismiss()
                         }
-
-
 
                     }
                 }else{
@@ -110,17 +119,21 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                         db.collection("urinarios").document(idBanio)
                             .update("mediaPuntuacion", media)
                             .addOnSuccessListener {
+                                manejoCarga.ocultarCarga()
                                 Log.d("MediaPuntuacion", "Media actualizada correctamente: $media")
                             }
                             .addOnFailureListener { e ->
+                                manejoCarga.ocultarCarga()
                                 Log.e("MediaPuntuacion", "Error al actualizar la media", e)
                             }
                     }
                     .addOnFailureListener { e ->
+                        manejoCarga.ocultarCarga()
                         Log.e("MediaPuntuacion", "Error al obtener calificaciones", e)
                     }
             }
             .addOnFailureListener { e ->
+                manejoCarga.ocultarCarga()
                 Log.e("MediaPuntuacion", "Error al obtener el baño", e)
             }
     }
@@ -139,9 +152,11 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                         estrellas.rating = puntuacion
                     }
                 }
+                manejoCarga.ocultarCarga()
             }
             .addOnFailureListener { e ->
                 context?.let {
+                    manejoCarga.ocultarCarga()
                     Toast.makeText(it, it.getString(R.string.erropuntuacionbanios), Toast.LENGTH_SHORT).show()
                 }
                 Log.e("Firestore", "Error al cargar puntuación", e)
@@ -163,9 +178,11 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                 } else {
                     estrellas.rating = 0.0f
                 }
+                manejoCarga.ocultarCarga()
             }
             .addOnFailureListener { e ->
                 context?.let {
+                    manejoCarga.ocultarCarga()
                     Toast.makeText(it, it.getString(R.string.errorverificar), Toast.LENGTH_SHORT).show()
                 }
                 Log.e("Firestore", "Error al verificar calificación", e)
@@ -184,6 +201,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             .update("puntuacion", estrellas.rating.toDouble())
             .addOnSuccessListener {
                 context?.let {
+                    manejoCarga.ocultarCarga()
                     Toast.makeText(it, it.getString(R.string.puntuacionactualizadabien), Toast.LENGTH_SHORT).show()
                 }
                 actualizarMediaPuntuacion(idBanio)
@@ -191,6 +209,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             }
             .addOnFailureListener { e ->
                 context?.let {
+                    manejoCarga.ocultarCarga()
                     Toast.makeText(it, it.getString(R.string.erropuntuacionbanios), Toast.LENGTH_SHORT).show()
                 }
                 Log.e("Firestore", "Error al actualizar puntuación del urinario", e)
@@ -232,6 +251,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                         }
                         .addOnFailureListener { e ->
                             context?.let {
+                                manejoCarga.ocultarCarga()
                                 Toast.makeText(it, it.getString(R.string.erropuntuacionbanios), Toast.LENGTH_SHORT).show()
                             }
                             Log.e("Firestore", "Error al actualizar", e)
@@ -248,6 +268,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                         }
                         .addOnFailureListener { e ->
                             context?.let {
+                                manejoCarga.ocultarCarga()
                                 Toast.makeText(it, it.getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
                             }
                             Log.e("Firestore", "Error al publicar", e)
@@ -256,6 +277,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             }
             .addOnFailureListener { e ->
                 context?.let {
+                    manejoCarga.ocultarCarga()
                     Toast.makeText(it, it.getString(R.string.errorverificar), Toast.LENGTH_SHORT).show()
                 }
                 Log.e("Firestore", "Error al verificar calificación", e)

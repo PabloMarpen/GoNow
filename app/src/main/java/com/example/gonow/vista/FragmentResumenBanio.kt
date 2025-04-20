@@ -118,9 +118,9 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
-            timeoutMillis = 20000L
-        ) {
-            Toast.makeText(requireContext(), getString(R.string.tiempo_carga_agotado), Toast.LENGTH_SHORT).show()
+            timeoutMillis = 20000L // 20000L
+        ){
+            Toast.makeText(requireContext(), getString(R.string.error_muchotiempo), Toast.LENGTH_SHORT).show()
         }
 
         if(arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0){
@@ -263,31 +263,54 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         botonBorrar.setOnClickListener {
             val docId = arguments?.getString(ARG_ID_DOCUMENTO)
             if (docId != null) {
-                val mensaje = "¿Seguro que quieres borrar este baño?"
+                val mensaje = getString(R.string.confirmar_borrar_banio)
                 val popup = PopUp.newInstance(mensaje)
                 popup.setOnAcceptListener { isConfirmed ->
                     if (isConfirmed) {
-                        FirestoreSingleton.db
-                            .collection("urinarios")
-                            .document(docId)
-                            .delete()
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Baño borrado", Toast.LENGTH_SHORT).show()
-                                requireActivity().supportFragmentManager.beginTransaction()
-                                    .replace(R.id.frame, FragmentMapa())
-                                    .commit()
+                        val db = FirestoreSingleton.db
+
+                        // Primero, borrar las reseñas asociadas
+                        db.collection("calificaciones")
+                            .whereEqualTo("idBanio", docId)
+                            .get()
+                            .addOnSuccessListener { querySnapshot ->
+                                val batch = db.batch()
+                                for (document in querySnapshot) {
+                                    batch.delete(document.reference)
+                                }
+
+                                // Ejecutar el batch para eliminar todas las reseñas
+                                batch.commit()
+                                    .addOnSuccessListener {
+                                        // Luego, borrar el baño
+                                        db.collection("urinarios")
+                                            .document(docId)
+                                            .delete()
+                                            .addOnSuccessListener {
+                                                Toast.makeText(requireContext(), getString(R.string.banio_borrado), Toast.LENGTH_SHORT).show()
+                                                requireActivity().supportFragmentManager.beginTransaction()
+                                                    .replace(R.id.frame, FragmentMapa())
+                                                    .commit()
+                                            }
+                                            .addOnFailureListener {
+                                                Toast.makeText(requireContext(), getString(R.string.error_borrar_banio), Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(requireContext(), getString(R.string.error_borrar_resenas), Toast.LENGTH_SHORT).show()
+                                    }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(requireContext(), "Error al borrar", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), getString(R.string.error_buscar_resenas), Toast.LENGTH_SHORT).show()
                             }
                     }
                 }
                 popup.show(parentFragmentManager, "popUp")
-
             } else {
-                Toast.makeText(requireContext(), "ID de documento no disponible", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.id_no_disponible), Toast.LENGTH_SHORT).show()
             }
         }
+
         botonEditar.setOnClickListener {
             val editarFragmento = FragmentAniadir.newInstance(
                 nombre = arguments?.getString(ARG_NOMBRE),

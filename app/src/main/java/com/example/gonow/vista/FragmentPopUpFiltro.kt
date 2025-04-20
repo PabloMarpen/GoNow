@@ -19,7 +19,7 @@ class FragmentPopUpFiltro : Fragment(R.layout.fragment_pop_up_filtros){
     private var switchGratisDato : Boolean? = null
     private var tipoUbiSeleccionado : String? = null
     private var estrellasDato : Float? = null
-
+    private lateinit var manejoCarga: ManejoDeCarga
 
     companion object {
         // Constantes para las claves (mejora el mantenimiento)
@@ -77,6 +77,10 @@ class FragmentPopUpFiltro : Fragment(R.layout.fragment_pop_up_filtros){
         val buttonGuardarFiltros = view.findViewById<Button>(R.id.buttonGuardarFiltros)
         val buttonBorrarFiltros = view.findViewById<Button>(R.id.buttonBorrarFiltros)
 
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        )
 
         botonUbicacion.setOnClickListener {
             // cargamos el popup seleccionando nuestra interfaz y pasamos los datos
@@ -117,6 +121,7 @@ class FragmentPopUpFiltro : Fragment(R.layout.fragment_pop_up_filtros){
             requireActivity().supportFragmentManager.setFragmentResult("filtros", result)
 
             (requireParentFragment() as? DialogFragment)?.dismiss()
+
         }
 
         ratingBar.rating = estrellasDato ?: 0f

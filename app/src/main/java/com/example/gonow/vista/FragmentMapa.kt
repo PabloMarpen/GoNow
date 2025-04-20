@@ -143,7 +143,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
             timeoutMillis = 20000L
-        )
+        ){
+            Toast.makeText(requireContext(), getString(R.string.error_muchotiempo), Toast.LENGTH_SHORT).show()
+        }
 
         filtro.setOnClickListener {
             if (tipoUbiSeleccionado != null &&
@@ -185,7 +187,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     obtenerYMostrarBanios(texto)
                 }
 
-                handler.postDelayed(runnable!!, 300) // Espera 300ms después de que el usuario deje de escribir
+                handler.postDelayed(runnable!!, 500) // Espera 300ms después de que el usuario deje de escribir
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -237,14 +239,14 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
 
         ubicacionActual = LatLng(0.0, 0.0)
-        manejoCarga.ocultarCarga() // para evitar que al cambiar al modo oscuro se quede cargando
+        manejoCarga.mostrarCarga(getString(R.string.cargandobanios))
         obtenerUbicacionActual() // para la ubicación actual
         obtenerYMostrarBanios() // para los baños
         iniciarActualizacionesUbicacion()// para la ubicación actual
     }
 
     private fun mostrarDatosBanio(marker: Marker) {
-        manejoCarga.mostrarCarga()
+        manejoCarga.mostrarCarga(getString(R.string.cargandobanio))
         // Versión con consulta a Firestore
         db.collection("urinarios")
             .whereEqualTo("descripcion", marker.title)
@@ -302,10 +304,11 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     if (cumpleFiltros && cumpleBusqueda) {
                         agregarMarcadorAlMapa(banio)
                     }
-
+                    manejoCarga.ocultarCarga()
                 }
             }
             .addOnFailureListener {
+                manejoCarga.ocultarCarga()
                 Toast.makeText(context, getString(R.string.error_cargar_banios), Toast.LENGTH_SHORT).show()
             }
     }
