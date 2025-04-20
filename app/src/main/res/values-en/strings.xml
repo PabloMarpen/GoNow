@@ -146,6 +146,8 @@
     <string name="publicando">Publishing...</string>
     <string name="actualizando">Updating...</string>
     <string name="borrando">Deleting...</string>
+    <string name="error_muchotiempo">Please check your internet connection</string>
+
 
 
 
