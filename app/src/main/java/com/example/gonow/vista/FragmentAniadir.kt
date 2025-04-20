@@ -222,10 +222,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
-        manejoCarga = ManejoDeCarga(
-            parentFragmentManager,
-            timeoutMillis = 20000L
-        )
+        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
+            textoNombre.setText(getString(R.string.banio))
+            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             mostrarConfirmacionDeSalida()
@@ -569,8 +569,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
     override fun onDestroyView() {
+        // para evitar que al cambiar de tema oscuro crashe
+        if (::manejoCarga.isInitialized) {
+            manejoCarga.ocultarCarga()
+        }
         super.onDestroyView()
-        manejoCarga.ocultarCarga()
     }
 
 
