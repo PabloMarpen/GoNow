@@ -28,12 +28,12 @@
 
     <ImageView
         android:id="@+id/imageViewCirculo1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="57dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewMapa"
         app:layout_constraintStart_toStartOf="@+id/imageViewMapa"
@@ -41,12 +41,12 @@
 
     <ImageView
         android:id="@+id/imageViewCirculo2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="57dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewPlus"
         app:layout_constraintStart_toStartOf="@+id/imageViewPlus"
@@ -54,12 +54,12 @@
 
     <ImageView
         android:id="@+id/imageViewCirculo3"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="57dp"
         android:background="@drawable/forma_seleccion"
         app:layout_constraintEnd_toEndOf="@+id/imageViewPersona"
         app:layout_constraintStart_toStartOf="@+id/imageViewPersona"

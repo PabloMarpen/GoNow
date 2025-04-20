@@ -26,6 +26,8 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Base64
 import android.util.Log
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -209,6 +211,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         textoDescripcion = view.findViewById(R.id.EditTextDescripcion)
         textoNombre = view.findViewById(R.id.EditTextNombre)
         ratingBar = view.findViewById(R.id.ratingBar)
+        val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
+        val textoNombreBanio = view.findViewById<TextView>(R.id.textViewTitulo)
 
         switchAcesibilidad = view.findViewById(R.id.switchAcesibilidad)
         switchUnisex = view.findViewById(R.id.switchUnisex)
@@ -240,7 +244,26 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             return
         }
 
+        // para que se marque el campo cuando se toca y que se mueva la pantalla
+        textoDescripcion.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, textoDescripcion.top)
+                }
+            }
+        }
+        // para que se marque el campo cuando se toca y que se mueva la pantalla
+        textoNombre.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, textoDescripcion.top)
+                }
+            }
+        }
+
         if(esEditar){
+            botonPublicar.text = getString(R.string.actualizarbanio)
+            textoNombreBanio.text = getString(R.string.actualizar)
             textoNombre.setText(nombreDato)
             ratingBar.rating = puntuacionOriginal!!.toFloat()
             textoDescripcion.setText(descripcion)

@@ -130,6 +130,9 @@
     <string name="permisos_porfavor">Please grant permissions</string>
     <string name="actualizadobien">Updated successfully</string>
     <string name="error_actualizarbanio">Error updating bathroom</string>
+    <string name="actualizarbanio">Update bathroom</string>
+    <string name="actualizar">Update</string>
+
 
 
 

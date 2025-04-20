@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     tools:layout_editor_absoluteX="1dp"
     tools:layout_editor_absoluteY="1dp"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:id="@+id/scrollView">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
         android:background="@color/general">
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textViewTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -34,10 +35,10 @@
             android:layout_marginTop="20dp"
             app:cardCornerRadius="47dp"
             app:cardBackgroundColor="@android:color/transparent"
-            app:layout_constraintEnd_toEndOf="@+id/textView5"
+            app:layout_constraintEnd_toEndOf="@+id/textViewTitulo"
             app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="@+id/textView5"
-            app:layout_constraintTop_toBottomOf="@+id/textView5">
+            app:layout_constraintStart_toStartOf="@+id/textViewTitulo"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTitulo">
 
             <ImageView
                 android:id="@+id/imageViewAñadirImagen"

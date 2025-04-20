@@ -44,7 +44,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val sharedPrefs = requireContext().getSharedPreferences("refreshPrefs", Context.MODE_PRIVATE)
         val lastRefreshTime = sharedPrefs.getLong("lastRefresh", 0L)
         val tiempoActual = System.currentTimeMillis()
-        val tiempoMinimoEntreRefresh = 60 * 1000 // 1 minuto
+        val tiempoMinimoEntreRefresh = 5000  // 5 segundos
         // para las estadisticas
         val prefs = requireContext().getSharedPreferences("estadisticas", Context.MODE_PRIVATE)
         val yaGuardadoPuntuados = prefs.getInt("totalPuntuados", -1)
