@@ -61,12 +61,20 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
                 }
                 is AuthenticationState.Success -> {
                     val user = state.user
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.bienvenido_con_correo, user?.email),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    iniciarMapa()
+                    user?.reload()?.addOnSuccessListener {
+                        if (user.isEmailVerified) {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.bienvenido_con_correo, user?.email),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            iniciarMapa()
+                        } else {
+                            PopUpContenidoGeneral.newInstance(FragmentPopUpVerificate()).show(parentFragmentManager, "popUp")
+                        }
+                    }
+
+
                 }
                 is AuthenticationState.Error -> {
                     Toast.makeText(requireContext(), getString(R.string.error_credenciales), Toast.LENGTH_SHORT).show()

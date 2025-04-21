@@ -1,5 +1,6 @@
 package com.example.gonow.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,13 +35,28 @@ class userViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authenticationState.value = AuthenticationState.Success(auth.currentUser)
+                    val user = auth.currentUser
+                    user?.sendEmailVerification()
+                        ?.addOnCompleteListener { verifyTask ->
+                            if (verifyTask.isSuccessful) {
+                                Log.d("Auth", "Correo de verificación enviado a ${user.email}")
+
+                            } else {
+                                Log.e(
+                                    "Auth",
+                                    "Error al enviar verificación: ${verifyTask.exception?.message}"
+                                )
+                            }
+                        }
+
+                    _authenticationState.value = AuthenticationState.Success(user)
                 } else {
                     _authenticationState.value = AuthenticationState.Error(task.exception?.message)
                 }
             }
     }
 }
+
 
 // Define el estado de autenticación
 sealed class AuthenticationState {

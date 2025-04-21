@@ -32,8 +32,12 @@ class ManejoDeCarga(
         handler.removeCallbacks(timeoutRunnable)
 
         loadingDialog?.let { dialog ->
-            if (dialog.isAdded && !dialog.parentFragmentManager.isStateSaved) {
+            // Forzar el dismiss si el diálogo es visible
+            if (dialog.isAdded && dialog.isVisible && !dialog.parentFragmentManager.isStateSaved) {
                 dialog.dismiss()
+            } else {
+                // Si el dialog no es visible, elimínalo de inmediato
+                fragmentManager.beginTransaction().remove(dialog).commitAllowingStateLoss()
             }
         }
 

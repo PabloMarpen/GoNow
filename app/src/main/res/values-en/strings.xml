@@ -147,6 +147,13 @@
     <string name="actualizando">Updating...</string>
     <string name="borrando">Deleting...</string>
     <string name="error_muchotiempo">Please check your internet connection</string>
+    <string name="verificate">Verify</string>
+    <string name="mensaje_verificacion">Thanks for signing up! 🎉\n\nWe\'ve sent a verification email to your address.\n\nCheck your inbox (and also the spam folder) and click the link to verify your account.\n\nOnce verified, you\'ll be able to access all the app\'s features 🚀</string>
+    <string name="error_correo_no_registrado">Email not registered</string>
+    <string name="error_enviar_correo">Error sending email</string>
+    <string name="error_verificar_correo">Error verifying email</string>
+    <string name="correo_enviado">Email sent</string>
+    <string name="error_correo_existe">Email already exists or password doesn\'t meet the requirements</string>
 
 
 

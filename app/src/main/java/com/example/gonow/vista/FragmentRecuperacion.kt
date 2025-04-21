@@ -12,7 +12,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.gonow.data.AuthSingleton
 import com.example.gonow.tfg.R
+import com.google.firebase.auth.FirebaseAuth
 
 class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
 
@@ -63,18 +65,30 @@ class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
 
 
 
-
         botonEnviar.setOnClickListener {
-            if(!correoRecu.text.toString().isValidEmail()){
+            if (!correoRecu.text.toString().isValidEmail()) {
                 Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(requireContext(), getString(R.string.enviar), Toast.LENGTH_SHORT).show()
-
-                val mensaje = getString(R.string.mensaje_restablecer_contrasena)
+            } else {
+                val mensaje = getString(R.string.mensaje_restablecer_contrasena, correoRecu.text.toString())
                 val popup = PopUp.newInstance(mensaje)
+                popup.setOnAcceptListener { isConfirmed ->
+                    if (isConfirmed) {
+                        AuthSingleton.auth
+                            .sendPasswordResetEmail(correoRecu.text.toString())
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(requireContext(), getString(R.string.correo_enviado), Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(requireContext(), getString(R.string.error_enviar_correo), Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
+                }
                 popup.show(parentFragmentManager, "popUp")
             }
         }
+
+
 
         botonVolver.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -85,4 +99,6 @@ class FragmentRecuperacion : Fragment(R.layout.fragmet_recuperarcorreo){
         }
 
     }
+
+
 }

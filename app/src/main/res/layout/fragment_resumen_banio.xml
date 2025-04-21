@@ -95,7 +95,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/noimage" />
+                app:srcCompat="@drawable/noimageilusrecortado" />
         </androidx.cardview.widget.CardView>
 
         <RatingBar

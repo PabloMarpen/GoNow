@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 
 //  Componentes de AndroidX
@@ -64,6 +65,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
     private var esCamaraEnMovimiento = false
+    // baños cargados
+    private var baniosCargados = false
     // filtros
     private var tipoUbiSeleccionado : String? = null
     private var estrellas : Float? = null
@@ -304,8 +307,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     if (cumpleFiltros && cumpleBusqueda) {
                         agregarMarcadorAlMapa(banio)
                     }
-                    manejoCarga.ocultarCarga()
                 }
+                baniosCargados = true
+                manejoCarga.ocultarCarga()
             }
             .addOnFailureListener {
                 manejoCarga.ocultarCarga()
@@ -398,9 +402,13 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
+// para evitar que se quede pillado
     override fun onStart() {
         super.onStart()
-        manejoCarga.ocultarCarga()
+        if(baniosCargados){
+            manejoCarga.ocultarCarga()
+
+        }
     }
 
     private fun cumpleFiltros(banio: Urinario): Boolean {

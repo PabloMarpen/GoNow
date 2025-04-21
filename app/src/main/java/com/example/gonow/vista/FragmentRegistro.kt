@@ -64,15 +64,22 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
                 }
                 is AuthenticationState.Success -> {
                     val user = state.user
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.bienvenido_con_correo, user?.email),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    iniciarMapa()
+
+                    user?.reload()?.addOnSuccessListener {
+                        if (user.isEmailVerified) {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.bienvenido_con_correo, user.email),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            iniciarMapa()
+                        } else {
+                            PopUpContenidoGeneral.newInstance(FragmentPopUpVerificate()).show(parentFragmentManager, "popUp")
+                        }
+                    }
                 }
                 is AuthenticationState.Error -> {
-                    Toast.makeText(requireContext(), getString(R.string.error_credenciales), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_correo_existe), Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -87,13 +94,9 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
             false
         }
 
-
-
         googleIdButton.setOnClickListener {
             signInGoogle()
         }
-
-
 
         botonRegistrar.setOnClickListener {
             if (correo.text.isNotEmpty() && contraseña.text.isNotEmpty() && contraseña2.text.isNotEmpty() && contraseña2.text.toString() == contraseña.text.toString()) {

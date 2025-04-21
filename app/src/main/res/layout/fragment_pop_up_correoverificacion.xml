@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tituloHorario"
+        android:layout_width="233dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="0dp"
+        android:fontFamily="@font/poppinssemibold"
+        android:text="@string/verificate"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="24sp" />
+
+    <!-- Aquí metemos los dos botones en línea -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/comentario"
+        android:layout_width="311dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/poppinslight"
+        android:text="@string/mensaje_verificacion"
+        android:textAlignment="center"
+        android:textColor="@color/secondary"
+        android:textSize="16sp" />
+
+
+    <Button
+        android:id="@+id/buttonIniciarSesionVerificacion"
+        style="@style/PrimaryButton"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/oscuro"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/inicia_sesión"
+        android:textSize="16sp" />
+
+</LinearLayout>

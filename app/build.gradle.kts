@@ -51,21 +51,20 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
 
-    implementation(platform(libs.firebase.bom))
-
     // Firebase módulos específicos
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.analytics.ktx)
 
-    //chatty
-
+    // google sing in
     implementation(libs.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
 
-    // Si usas ViewModel compartido entre actividad y fragmentos
+    //ViewModel compartido entre actividad y fragmentos
     implementation(libs.androidx.fragment.ktx)
+    // para recargar la pagina
     implementation (libs.androidx.swiperefreshlayout)
 
     implementation(libs.androidx.runtime.android)

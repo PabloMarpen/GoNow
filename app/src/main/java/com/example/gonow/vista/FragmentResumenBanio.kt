@@ -119,9 +119,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
             timeoutMillis = 20000L // 20000L
-        ){
-            Toast.makeText(requireContext(), getString(R.string.error_muchotiempo), Toast.LENGTH_SHORT).show()
-        }
+        )
 
         if(arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0){
             Puntuacion.rating = arguments?.getDouble(ARG_PUNTUACION)?.toFloat() ?: 0f

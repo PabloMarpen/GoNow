@@ -273,11 +273,15 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                    abiertoSiempre = true
                     cerradoSiempre = false
                     tieneHorario = false
+                    horaApertura = "null"
+                    horaCierre = "null"
                 }
                 if(sinhorario == getString(R.string.cerradosiempre)){
                     cerradoSiempre = true
                     abiertoSiempre = false
                     tieneHorario = false
+                    horaApertura = "null"
+                    horaCierre = "null"
                 }
             }else{
                 tieneHorario = true
@@ -445,7 +449,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                             "etiquetas" to etiquetas,
                             "foto" to encodedImage,
                             "horario" to horario,
-                            "puntuacion" to ratingBar.rating.toDouble()
+                            "puntuacion" to ratingBar.rating.toDouble(),
                         )
 
                         // Actualizar el baño en Firestore
@@ -580,12 +584,12 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     fun compressAndEncodeImageToBase64(file: File, maxSize: Int): String {
         val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: return ""
 
-        // Redimensionar la imagen si es demasiado grande
+        // Redimensionar la imagen si es demasiado grande (a un tamaño más pequeño)
         val width = bitmap.width
         val height = bitmap.height
         val ratio = width.toFloat() / height.toFloat()
 
-        var newWidth = 800 // Ancho máximo
+        var newWidth = 600 // Ancho máximo más pequeño
         var newHeight = (newWidth / ratio).toInt()
 
         if (width > height) {
@@ -598,17 +602,28 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         // Comprimir la imagen con calidad baja
         val byteArrayOutputStream = ByteArrayOutputStream()
-        var quality = 80
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+        var quality = 70 // Comenzamos con calidad baja
 
+        // Usamos el formato WEBP para una mejor compresión
+        resizedBitmap.compress(Bitmap.CompressFormat.WEBP, quality, byteArrayOutputStream)
+
+        // Si el tamaño sigue siendo grande, seguir reduciendo la calidad
         while (byteArrayOutputStream.size() > maxSize) {
             byteArrayOutputStream.reset() // Limpiar el flujo de bytes
-            quality -= 10 // Disminuir la calidad
-            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+            quality -= 5 // Reducir la calidad en pasos más pequeños
+            resizedBitmap.compress(Bitmap.CompressFormat.WEBP, quality, byteArrayOutputStream)
+
+            // Si ya no se puede reducir más, salimos del bucle
+            if (quality <= 10) {
+                break
+            }
         }
+
+        // Convertir a Base64
         val byteArray = byteArrayOutputStream.toByteArray()
-        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
+
 
     fun decodeBase64ToBitmap(base64String: String): Bitmap {
         val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
