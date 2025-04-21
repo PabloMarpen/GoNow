@@ -156,17 +156,34 @@
     <string name="error_correo_existe">Email already exists or password doesn\'t meet the requirements</string>
 
 
+        <!-- Tags -->
+        <string name="etiqueta_01">Accessible</string>
+        <string name="etiqueta_10">Not accessible</string>
+        <string name="etiqueta_02">Unisex</string>
+        <string name="etiqueta_20">Not unisex</string>
+        <string name="etiqueta_03">With soap</string>
+        <string name="etiqueta_30">No soap</string>
+        <string name="etiqueta_04">With toilet paper</string>
+        <string name="etiqueta_40">No toilet paper</string>
+        <string name="etiqueta_05">Free</string>
+        <string name="etiqueta_50">Paid</string>
+        <string name="etiqueta_06">Baby-changing area</string>
+        <string name="etiqueta_60">No baby area</string>
 
-
-
-
-
+        <!-- Bathroom types -->
+        <string name="tipo_01">Public restroom</string>
+        <string name="tipo_02">Bar</string>
+        <string name="tipo_03">Store</string>
+        <string name="tipo_04">Restaurant</string>
+        <string name="tipo_05">Gas station</string>
+        <string name="tipo_06">Other</string>
 
 
 
     <!-- HORARIO -->
     <string name="abiertosiempre">Open 24/7</string>
     <string name="cerradosiempre">Closed</string>
+    <string name="verificar_correo">Verify email</string>
 
 
 

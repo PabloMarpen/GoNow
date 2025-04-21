@@ -120,19 +120,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <Button
-        android:id="@+id/buttonCambiarCorreo"
-        style="@style/PrimaryButton"
-        android:layout_width="268dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppinsregular"
-        android:text="@string/cambiar_correo"
-        android:textColor="@color/oscuro"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCambiarContraseña" />
 
     <Button
         android:id="@+id/buttonAyuda"
@@ -146,7 +133,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCambiarCorreo" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonCambiarContraseña" />
 
     <Button
         android:id="@+id/buttonBorrarCuenta"

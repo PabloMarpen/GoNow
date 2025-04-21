@@ -15,7 +15,6 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
     private var tipoSeleccionado : String? = null
 
     companion object {
-        // Constantes para las claves (mejora el mantenimiento)
         private const val KEY_TIPO_SELECCIONADO = "tipoSeleccionado"
 
         fun nuevaInstancia(
@@ -46,42 +45,42 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
         val radioButtonOtro = view.findViewById<RadioButton>(R.id.radioButtonOtro)
         val buttonGuardar = view.findViewById<Button>(R.id.buttonGuardar)
 
-        if(tipoSeleccionado == "Baño publico"){
+        if(tipoSeleccionado == "01"){
             radioButtonBañoPublico.isChecked = true
         }
-        if(tipoSeleccionado == "Bar"){
+        if(tipoSeleccionado == "02"){
             radioButtonBar.isChecked = true
         }
-        if(tipoSeleccionado == "Tienda") {
+        if(tipoSeleccionado == "03") {
             radioButtonTienda.isChecked = true
         }
-        if(tipoSeleccionado == "Restaurante"){
+        if(tipoSeleccionado == "04"){
             radioButtonRestaurante.isChecked = true
         }
-        if(tipoSeleccionado == "Gasolinera") {
+        if(tipoSeleccionado == "05") {
             radioButtonGasolinera.isChecked = true
         }
-        if(tipoSeleccionado == "Otro"){
+        if(tipoSeleccionado == "06"){
             radioButtonOtro.isChecked = true
         }
 
         radioButtonBañoPublico.setOnClickListener{
-            tipoSeleccionado = radioButtonBañoPublico.text.toString()
+            tipoSeleccionado = "01" //baño publico
         }
         radioButtonBar.setOnClickListener{
-            tipoSeleccionado = radioButtonBar.text.toString()
+            tipoSeleccionado = "02" //Bar
         }
         radioButtonTienda.setOnClickListener{
-            tipoSeleccionado = radioButtonTienda.text.toString()
+            tipoSeleccionado = "03" //Tienda
         }
         radioButtonRestaurante.setOnClickListener{
-            tipoSeleccionado = radioButtonRestaurante.text.toString()
+            tipoSeleccionado = "04" //Restaurante
         }
         radioButtonGasolinera.setOnClickListener{
-            tipoSeleccionado = radioButtonGasolinera.text.toString()
+            tipoSeleccionado = "05" // Gasolinera
         }
         radioButtonOtro.setOnClickListener{
-            tipoSeleccionado = radioButtonOtro.text.toString()
+            tipoSeleccionado = "06" // Otro
         }
         buttonGuardar.setOnClickListener {
                 // enviar el horario para manejar los datos en el otro fragment

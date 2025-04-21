@@ -1,6 +1,7 @@
 package com.example.gonow.vista
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -32,7 +33,8 @@ class FragmentAjustesAnonimo : Fragment(R.layout.fragment_ajustes_anonimo){
         }
 
         botonAyuda.setOnClickListener {
-
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pablommp.myvnc.com/gonow.html"))
+            startActivity(browserIntent)
         }
 
     }

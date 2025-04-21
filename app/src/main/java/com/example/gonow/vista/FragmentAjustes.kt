@@ -3,6 +3,7 @@ package com.example.gonow.vista
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.database.FirebaseDatabase
 
+
 class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
     val auth = AuthSingleton.auth
@@ -33,7 +35,6 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
         val botonBorrarCuenta = view.findViewById<Button>(R.id.buttonBorrarCuenta)
         val botonCerrarSesion = view.findViewById<Button>(R.id.buttonCerrarSesion)
-        val botonCambiarCorreo = view.findViewById<Button>(R.id.buttonCambiarCorreo)
         val botonCambiarContrasena = view.findViewById<Button>(R.id.buttonCambiarContraseña)
         val botonAyuda = view.findViewById<Button>(R.id.buttonAyuda)
         val correoUsuario = view.findViewById<TextView>(R.id.textViewNombre)
@@ -104,7 +105,6 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         listOf(
             botonBorrarCuenta,
             botonCerrarSesion,
-            botonCambiarCorreo,
             botonCambiarContrasena,
             botonAyuda
         ).forEach { it.setOnTouchListener(touchListener) }
@@ -165,23 +165,23 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         }
 
         if(esGoogle){
-            botonCambiarCorreo.isEnabled = false
-            botonCambiarCorreo.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
+
             botonCambiarContrasena.isEnabled = false
             botonCambiarContrasena.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
 
         }
 
-        botonCambiarCorreo.setOnClickListener {
-            //cargamos el popup seleccionando nuestra interfaz
-            PopUpContenidoGeneral.newInstance(FragmentPopUpCambiarCorreo()).show(parentFragmentManager, "popUp")
-        }
 
         botonCambiarContrasena.setOnClickListener {
             //cargamos el popup seleccionando nuestra interfaz
             val fragmento = FragmentPopUpCambiarContraseña()
             val popup = PopUpContenidoGeneral.newInstance(fragmento)
             popup.show(parentFragmentManager, "popUp")
+        }
+
+        botonAyuda.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pablommp.myvnc.com/gonow.html"))
+            startActivity(browserIntent)
         }
 
 

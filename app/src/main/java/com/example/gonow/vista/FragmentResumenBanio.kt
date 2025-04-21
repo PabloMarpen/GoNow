@@ -179,18 +179,18 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             for (etiqueta in etiquetas) {
 
                 val nombreBonito = when (etiqueta) {
-                    "01" -> "Accesible"
-                    "10" -> "No accesible"
-                    "02" -> "Unisex"
-                    "20" -> "No unisex"
-                    "03" -> "Con jabón"
-                    "30" -> "Sin jabón"
-                    "04" -> "Con papel"
-                    "40" -> "Sin papel"
-                    "05" -> "Gratis"
-                    "50" -> "De pago"
-                    "06" -> "Con zona bebé"
-                    "60" -> "Sin zona bebé"
+                    "01" -> getString(R.string.etiqueta_01)
+                    "10" -> getString(R.string.etiqueta_10)
+                    "02" -> getString(R.string.etiqueta_02)
+                    "20" -> getString(R.string.etiqueta_20)
+                    "03" -> getString(R.string.etiqueta_03)
+                    "30" -> getString(R.string.etiqueta_30)
+                    "04" -> getString(R.string.etiqueta_04)
+                    "40" -> getString(R.string.etiqueta_40)
+                    "05" -> getString(R.string.etiqueta_05)
+                    "50" -> getString(R.string.etiqueta_50)
+                    "06" -> getString(R.string.etiqueta_06)
+                    "60" -> getString(R.string.etiqueta_60)
                     else -> etiqueta
                 }
 
@@ -218,7 +218,18 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
             // Añadir el chip con el tipo de baño
             val tipo = Chip(requireContext()).apply {
-                text = tipoDeBanio
+
+                val tipoBanioBonito = when (tipoDeBanio) {
+                    "01" -> getString(R.string.tipo_01)
+                    "02" -> getString(R.string.tipo_02)
+                    "03" -> getString(R.string.tipo_03)
+                    "04" -> getString(R.string.tipo_04)
+                    "05" -> getString(R.string.tipo_05)
+                    "06" -> getString(R.string.tipo_06)
+                    else -> tipoDeBanio
+                }
+
+                text = tipoBanioBonito
                 isClickable = false
                 isCheckable = false
                 chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))

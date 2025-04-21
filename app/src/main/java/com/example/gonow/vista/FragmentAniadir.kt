@@ -450,6 +450,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                             "foto" to encodedImage,
                             "horario" to horario,
                             "puntuacion" to ratingBar.rating.toDouble(),
+                            "tipoUbi" to tipoUbiSeleccionado
                         )
 
                         // Actualizar el baño en Firestore

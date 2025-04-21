@@ -161,11 +161,34 @@
     <string name="actualizando">Actualizando...</string>
     <string name="borrando">Borrando...</string>
 
+    <!-- Etiquetas -->
+    <string name="etiqueta_01">Accesible</string>
+    <string name="etiqueta_10">No accesible</string>
+    <string name="etiqueta_02">Unisex</string>
+    <string name="etiqueta_20">No unisex</string>
+    <string name="etiqueta_03">Con jabón</string>
+    <string name="etiqueta_30">Sin jabón</string>
+    <string name="etiqueta_04">Con papel</string>
+    <string name="etiqueta_40">Sin papel</string>
+    <string name="etiqueta_05">Gratis</string>
+    <string name="etiqueta_50">De pago</string>
+    <string name="etiqueta_06">Con zona bebé</string>
+    <string name="etiqueta_60">Sin zona bebé</string>
+
+    <!-- Tipos de baño -->
+    <string name="tipo_01">Baño público</string>
+    <string name="tipo_02">Bar</string>
+    <string name="tipo_03">Tienda</string>
+    <string name="tipo_04">Restaurante</string>
+    <string name="tipo_05">Gasolinera</string>
+    <string name="tipo_06">Otro</string>
+
 
 
     <!-- HORARIO -->
     <string name="abiertosiempre">abierto 24/7</string>
     <string name="cerradosiempre">baño cerrado</string>
+    <string name="verificar_correo">Verificar correo</string>
 
 
 </resources>

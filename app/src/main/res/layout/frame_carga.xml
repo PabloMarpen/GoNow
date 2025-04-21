@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/cargando"
+            android:fontFamily="@font/poppinslight"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="16sp" />

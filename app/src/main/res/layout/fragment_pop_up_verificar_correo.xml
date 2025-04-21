@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:fontFamily="@font/poppinssemibold"
-            android:text="@string/cambiar_correo"
+        android:text="@string/verificar_correo"
         android:textAlignment="center"
         android:textColor="@color/secondary"
         android:textSize="24sp" />
@@ -33,6 +33,7 @@
         android:textColorHint="@color/supportVariant"
         />
 
+
     <Button
         android:id="@+id/ButtonAceptar"
         style="@style/PrimaryButton"
@@ -41,7 +42,7 @@
         android:layout_marginTop="80dp"
         android:fontFamily="@font/poppinslight"
         android:textColor="@color/oscuro"
-        android:text="@string/aceptar"
+        android:text="@string/enviar"
         android:textSize="18sp" />
 
     <Button
