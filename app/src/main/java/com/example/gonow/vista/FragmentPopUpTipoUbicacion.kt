@@ -1,10 +1,13 @@
 package com.example.gonow.vista
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.tfg.R
@@ -34,6 +37,7 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -82,6 +86,23 @@ class FragmentPopUpTipoUbicacion : Fragment(R.layout.fragment_pop_up_tipo_ubicac
         radioButtonOtro.setOnClickListener{
             tipoSeleccionado = "06" // Otro
         }
+
+        buttonGuardar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.primaryVariant
+                    )
+                )
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary)
+                )
+            }
+            false
+        }
+
         buttonGuardar.setOnClickListener {
                 // enviar el horario para manejar los datos en el otro fragment
                 val result = Bundle().apply {

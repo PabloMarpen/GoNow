@@ -16,7 +16,16 @@ class ManejoDeCarga(
         onTimeout?.invoke()
     }
 
-    fun mostrarCarga(mensaje: String = "Cargando...") {
+    // Clase ManejoDeCarga que gestiona la visualización y ocultación de un diálogo de carga en un fragmento.
+    // Incluye un mecanismo de temporizador para ocultar el diálogo si no se ha completado una operación en un tiempo especificado (por defecto, 20 segundos).
+    // Los métodos principales son:
+    // - mostrarCarga: Muestra el diálogo de carga con un mensaje opcional, asegurándose de que solo se muestre una vez y gestionando el tiempo de espera.
+    // - ocultarCarga: Oculta el diálogo de carga y maneja correctamente la eliminación del diálogo de la vista en función del estado del fragmento.
+    // - estaCargando: Devuelve un booleano indicando si el diálogo de carga está actualmente visible.
+    // - reiniciarCargaSiEsNecesario: Reinicia el temporizador si el fragmento está activo y no guardado.
+
+
+    fun mostrarCarga(mensaje: String = "") {
         // Asegurarse de que solo se muestra una vez
         ocultarCarga()
 

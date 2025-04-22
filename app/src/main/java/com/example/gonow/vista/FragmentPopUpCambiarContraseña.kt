@@ -1,10 +1,13 @@
 package com.example.gonow.vista
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.data.AuthSingleton
@@ -12,6 +15,7 @@ import com.example.gonow.tfg.R
 
 class FragmentPopUpCambiarContraseña : Fragment(R.layout.fragment_pop_up_cambiar_contrasenia){
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -21,6 +25,22 @@ class FragmentPopUpCambiarContraseña : Fragment(R.layout.fragment_pop_up_cambia
         val textoContraNueva = view.findViewById<EditText>(R.id.ContraseñaNueva)
         val auth = AuthSingleton.auth
         val user = auth.currentUser
+
+        botonAceptar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.primaryVariant
+                    )
+                )
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary)
+                )
+            }
+            false
+        }
 
         botonAceptar.setOnClickListener {
 

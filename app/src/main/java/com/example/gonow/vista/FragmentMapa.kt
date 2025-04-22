@@ -88,6 +88,10 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         .setMaxUpdateDelayMillis(4000L) // No más de 4 segundos entre updates
         .build()
 
+    // Inicializa de forma diferida (lazy) el cliente de ubicación de Google (FusedLocationProviderClient),
+    // que se usa para obtener la ubicación actual del dispositivo.
+    // Se asocia al contexto de la actividad que contiene el fragmento.
+
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
@@ -366,6 +370,14 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
+    // Esta función intenta obtener la ubicación actual del usuario:
+    // 1. Comprueba si se tienen los permisos necesarios (ubicación fina y aproximada).
+    //    Si no los tiene, solicita los permisos y termina la función.
+    // 2. Si los permisos están concedidos, solicita la última ubicación conocida del dispositivo.
+    // 3. Si se obtiene una ubicación válida, guarda sus coordenadas en `ubicacionActual`
+    //    y mueve la cámara del mapa a esa posición con un zoom de nivel 15.
+    // 4. Si ocurre un error al obtener la ubicación, muestra un mensaje de error al usuario.
+
     private fun obtenerUbicacionActual() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -388,6 +400,15 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             Toast.makeText(context, getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
         }
     }
+
+    // Esta función inicia las actualizaciones en tiempo real de la ubicación del usuario:
+    // 1. Comprueba si se tienen los permisos de ubicación necesarios. Si no, termina sin hacer nada.
+    // 2. Activa el botón de "mi ubicación" en el mapa (`isMyLocationEnabled = true`).
+    // 3. Crea un `LocationCallback` que se ejecuta cada vez que se recibe una nueva ubicación.
+    //    - Actualiza `ubicacionActual` con las nuevas coordenadas.
+    //    - Mueve la cámara del mapa a la nueva ubicación si la cámara está en movimiento o aún no se ha mostrado la ubicación.
+    //    - Si hay una animación de carga activa, la oculta.
+    // 4. Solicita actualizaciones de ubicación usando `requestLocationUpdates` con el `locationRequest` y el `locationCallback` definido.
 
     private fun iniciarActualizacionesUbicacion() {
         if (ActivityCompat.checkSelfPermission(
@@ -432,7 +453,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
-// para evitar que se quede pillado
+// para evitar que se quede pillada la carga
     override fun onStart() {
         super.onStart()
         if(baniosCargados){

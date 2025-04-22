@@ -1,17 +1,25 @@
 package com.example.gonow.vista
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.gonow.tfg.R
 
 
 class PopUp : DialogFragment() {
+
+    // Este popup muestra un cuadro de diálogo de confirmación personalizado con un mensaje que se le pasa como argumento.
+    // Si el mensaje es "borrar", adapta el texto y colores para confirmar el borrado de algo. Tiene dos botones:
+    // uno para aceptar (invoca un callback con `true`) y otro para cancelar (callback con `false`).
+
 
     companion object {
         private const val ARG_MESSAGE = "message"
@@ -31,6 +39,7 @@ class PopUp : DialogFragment() {
         listener = callback
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = AlertDialog.Builder(requireContext()).create()
         val inflater = requireActivity().layoutInflater
@@ -48,6 +57,22 @@ class PopUp : DialogFragment() {
             btnAceptar.setBackgroundColor(Color.parseColor("#ff4c4c"))
         }else{
             texto.text = message
+        }
+
+        btnAceptar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.primaryVariant
+                    )
+                )
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary)
+                )
+            }
+            false
         }
 
         btnAceptar.setOnClickListener {

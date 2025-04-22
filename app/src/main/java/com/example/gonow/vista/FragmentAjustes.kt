@@ -50,7 +50,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val prefs = requireContext().getSharedPreferences("estadisticas", Context.MODE_PRIVATE)
         val yaGuardadoPuntuados = prefs.getInt("totalPuntuados", -1)
         val yaGuardadoCreados = prefs.getInt("totalCreados", -1)
-        // para saber si es de google o no
+        // para saber si es de google el usuario o no
         var esGoogle = false
 
         user?.providerData?.forEach { profile ->
@@ -59,6 +59,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
             }
         }
 
+        // Configuración de las estadísticas y el swipe refresh
         if (yaGuardadoPuntuados != -1) {
             textViewTotalBaños.text = yaGuardadoPuntuados.toString()
         } else {
@@ -75,6 +76,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
             }
         }
 
+        // Configuración del SwipeRefreshLayout para que no se hagan peticiones contantes
         swipeRefresh.setOnRefreshListener {
             if (tiempoActual - lastRefreshTime > tiempoMinimoEntreRefresh) {
 
@@ -164,13 +166,13 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
 
         }
 
+        // si es google la cuenta se cancela el boton para cambiar contraseña
         if(esGoogle){
 
             botonCambiarContrasena.isEnabled = false
             botonCambiarContrasena.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.supportVariant))
 
         }
-
 
         botonCambiarContrasena.setOnClickListener {
             //cargamos el popup seleccionando nuestra interfaz

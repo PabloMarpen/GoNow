@@ -115,6 +115,16 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         }
     }
 
+    /*
+     * Este bloque de código gestiona el inicio de sesión con Google y su posterior autenticación en Firebase.
+     *
+     * - `signInGoogle()` lanza el intent de inicio de sesión con Google usando `googleSignInClient`.
+     * - `launcher` recibe el resultado del intent y, si es exitoso, obtiene la cuenta de Google seleccionada y la pasa a `handleResults()`.
+     * - `handleResults()` comprueba si la tarea fue exitosa, y si lo fue, llama a `updateUI()` con la cuenta de Google obtenida.
+     * - `updateUI()` usa el `idToken` de la cuenta para crear una credencial de Firebase y autenticar al usuario.
+     *   Si la autenticación es correcta, se inicia la actividad del mapa; si falla, muestra un mensaje de error.
+     */
+
     private fun signInGoogle(){
         val signInIntent = googleSignInClient.signInIntent
         launcher.launch(signInIntent)
@@ -158,6 +168,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         startActivity(intent)
     }
 
+    // validar email
     fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
 

@@ -1,11 +1,14 @@
 package com.example.gonow.vista
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.RatingBar
 import android.widget.Switch
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.tfg.R
@@ -66,6 +69,7 @@ class FragmentPopUpFiltro : Fragment(R.layout.fragment_pop_up_filtros){
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -81,6 +85,46 @@ class FragmentPopUpFiltro : Fragment(R.layout.fragment_pop_up_filtros){
             parentFragmentManager,
             timeoutMillis = 20000L
         )
+
+        botonUbicacion.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
+        }
+
+        buttonBorrarFiltros.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
+        }
+
+        buttonGuardarFiltros.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.primaryVariant
+                    )
+                )
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary)
+                )
+            }
+            false
+        }
 
         botonUbicacion.setOnClickListener {
             // cargamos el popup seleccionando nuestra interfaz y pasamos los datos

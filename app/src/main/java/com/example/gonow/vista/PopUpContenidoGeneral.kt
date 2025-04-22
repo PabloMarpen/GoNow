@@ -13,6 +13,8 @@ import com.example.gonow.tfg.R
 
 class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFragment() {
 
+    // Este popup abre un fragment donde por defecto solo tiene un cruz para cerrar
+
     companion object {
         fun newInstance(fragmento: Fragment): PopUpContenidoGeneral {
             return PopUpContenidoGeneral(fragmento)
@@ -30,6 +32,7 @@ class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFrag
             .replace(R.id.contenedor_fragmento, fragmentoInterno)
             .commit()
 
+        // cruz para cerrar
         val botonCerrar = view.findViewById<ImageButton>(R.id.botonCerrar)
         botonCerrar.setOnClickListener {
             dismiss()

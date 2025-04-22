@@ -1,5 +1,6 @@
 package com.example.gonow.vista
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -101,6 +103,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -287,6 +290,17 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0, 0.0)
         )
 
+        botonPuntuar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
+        }
 
         botonPuntuar.setOnClickListener {
             if (user != null) {
@@ -395,6 +409,18 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 .replace(R.id.frame, editarFragmento)
                 .addToBackStack(null)
                 .commit()
+        }
+
+        botonLlegar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
         }
 
         botonLlegar.setOnClickListener {

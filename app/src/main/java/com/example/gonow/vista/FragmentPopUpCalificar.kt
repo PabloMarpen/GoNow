@@ -6,14 +6,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.RatingBar
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Calificacion
 import com.example.gonow.tfg.R
-import com.google.firebase.firestore.FirebaseFirestore
 
 class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
 

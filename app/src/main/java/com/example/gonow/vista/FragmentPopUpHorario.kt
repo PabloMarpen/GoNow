@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.Switch
@@ -66,7 +67,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint("SimpleDateFormat", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -108,6 +109,21 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
             cambiarEstadoBotones(botonHorarioCerrar, switchTieneHorario)
         }
 
+        buttonGuardar.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.primaryVariant
+                    )
+                )
+
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary)
+                )
+            }
+            false
+        }
 
         buttonGuardar.setOnClickListener {
             if(!switchAbierto.isChecked && !switchCerrado.isChecked && !switchTieneHorario.isChecked){

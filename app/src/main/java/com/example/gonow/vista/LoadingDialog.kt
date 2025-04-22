@@ -16,6 +16,14 @@ class LoadingDialog : DialogFragment() {
 
     private var mensaje: String? = null
 
+    // Clase LoadingDialog que extiende de DialogFragment y representa un diálogo de carga con un mensaje personalizado.
+    // Utiliza el patrón de fábrica para crear una nueva instancia del diálogo pasando un mensaje como argumento.
+    // Los métodos principales son:
+    // - newInstance: Crea una nueva instancia de LoadingDialog con el mensaje proporcionado y lo pasa a los argumentos del diálogo.
+    // - onCreateDialog: Configura el diálogo utilizando un AlertDialog.Builder, inflando una vista personalizada (frame_carga) y mostrando el mensaje en un TextView.
+    // El diálogo es no cancelable para evitar que el usuario lo cierre durante la carga.
+
+
     companion object {
         // Método para crear una nueva instancia del diálogo con un mensaje
         fun newInstance(mensaje: String): LoadingDialog {

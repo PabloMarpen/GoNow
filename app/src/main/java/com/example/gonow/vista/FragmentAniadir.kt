@@ -222,6 +222,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
+        // Manejo de carga con un limite de 10 segundos
         val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
             textoNombre.setText(getString(R.string.banio))
             Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
@@ -261,6 +262,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }
         }
 
+        // si le pasamos editar al fragment se cargan los datos pasados si no, se carga la ubicación actual
         if(esEditar){
             botonPublicar.text = getString(R.string.actualizarbanio)
             textoNombreBanio.text = getString(R.string.actualizar)
@@ -355,7 +357,30 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }
         }
 
+        // cambiar color al pulsar
+        botonTipoUbicacion.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
+        }
 
+        botonAñadirHorario.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondaryVariant)
+                )
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
+                )
+            }
+            false
+        }
 
         botonPublicar.setOnTouchListener { v, event ->
             when (event.action) {
@@ -372,6 +397,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }
             false
         }
+        // fin de cambiar color al pulsar
 
         botonTipoUbicacion.setOnClickListener{
             // cargamos el popup seleccionando nuestra interfaz y pasamos los datos
@@ -437,9 +463,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     }
 
 
-
+                    // si estamos editando hacemos una actualizacion a la base de datos de lo contrario creamos uno nuevo
                     if(esEditar){
-
 
                         // Crear el objeto con los datos editados
                         val banioActualizado = mapOf(
@@ -532,6 +557,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
     }
 
+    // validacion de campos para publicar
     private fun validarCampos(): Boolean {
         return when {
             textoNombre.text.toString().isEmpty() -> {
@@ -556,7 +582,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
     }
 
-
+// creamos la imagen temporalmente en memoria
     private fun createImageFile(): File {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -584,7 +610,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
     fun compressAndEncodeImageToBase64(file: File, maxSize: Int): String {
         val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: return ""
-
         // Redimensionar la imagen si es demasiado grande (a un tamaño más pequeño)
         val width = bitmap.width
         val height = bitmap.height
@@ -598,9 +623,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         } else {
             newWidth = (newHeight * ratio).toInt()
         }
-
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
-
         // Comprimir la imagen con calidad baja
         val byteArrayOutputStream = ByteArrayOutputStream()
         var quality = 70 // Comenzamos con calidad baja
@@ -625,12 +648,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-
+// decodificar la imagen de base64 a bitmap
     fun decodeBase64ToBitmap(base64String: String): Bitmap {
         val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 
+    // popup para evitar que se borren los datos de añadir cuando cambias de fragment
     private fun mostrarConfirmacionDeSalida() {
         val mensaje = getString(R.string.mensajeConfirmacion1) + "\n\n" + getString(R.string.mensajeConfirmacion2)
         val popup = PopUp.newInstance(mensaje)
@@ -644,6 +668,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
         popup.show(parentFragmentManager, "popUp")
     }
+
 
 
 }
