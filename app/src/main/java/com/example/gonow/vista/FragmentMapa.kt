@@ -315,6 +315,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     }
 
     private fun obtenerYMostrarBanios(textoBuscar : String? = null) {
+        var seHanEncontradoBanios = false
+        val textoBuscarLimpio = textoBuscar?.trimEnd()
         db.collection("urinarios")
             .get()
             .addOnSuccessListener { result ->
@@ -325,12 +327,18 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                     val cumpleFiltros = cumpleFiltros(banio)
 
                     // Verificar si el nombre contiene el texto de búsqueda (si existe)
-                    val cumpleBusqueda = textoBuscar?.let { banio.nombre?.contains(it, ignoreCase = true) } ?: true
+                    val cumpleBusquedaNombre = textoBuscarLimpio?.let { banio.nombre?.contains(it, ignoreCase = true) } ?: true
+                    val cumpleBusquedaDescripcion = textoBuscarLimpio?.let { banio.descripcion?.contains(it, ignoreCase = true) } ?: true
 
                     // Si cumple ambos criterios, agregar el marcador
-                    if (cumpleFiltros && cumpleBusqueda) {
+                    if (cumpleFiltros && (cumpleBusquedaNombre || cumpleBusquedaDescripcion)) {
                         agregarMarcadorAlMapa(banio)
+                        seHanEncontradoBanios = true
                     }
+                }
+
+                if (!seHanEncontradoBanios) {
+                    Toast.makeText(context, "No se han encontrado baños", Toast.LENGTH_SHORT).show()
                 }
                 baniosCargados = true
                 manejoCarga.ocultarCarga()
