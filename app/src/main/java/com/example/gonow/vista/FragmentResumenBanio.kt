@@ -435,18 +435,18 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
         return when {
             distanceKm < 0.1 -> {
-                // Menos de 100m -> mostrar en metros
+                // Menos de 100m  mostrar en metros
                 val meters = (distanceKm * 1000).roundToInt()
                 "$meters m"
             }
 
             distanceKm < 10 -> {
-                // Entre 100m y 10km -> mostrar 1 decimal
+                // Entre 100m y 10km mostrar 1 decimal
                 "%.1f km".format(distanceKm)
             }
 
             else -> {
-                // Más de 10km -> mostrar sin decimales
+                // Más de 10km  mostrar sin decimales
                 "${distanceKm.roundToInt()} km"
             }
         }

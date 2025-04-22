@@ -138,14 +138,22 @@ class GeneralActivity : AppCompatActivity() {
                         .replace(R.id.frame, fragment)
                         .addToBackStack(null)
                         .commit()
+                }else{
+                    selectorPlaneta.visibility = ImageView.INVISIBLE
+                    selectorCrear.visibility = ImageView.VISIBLE
+                    selectorAjustes.visibility = ImageView.INVISIBLE
                 }
+
             }
+
             popup.show(supportFragmentManager, "popUp")
+
         } else {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.frame, fragment)
                 .addToBackStack(null)
                 .commit()
+
         }
     }
 
