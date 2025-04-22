@@ -126,6 +126,7 @@
     <string name="verificate">Verificate</string>
     <string name="mensaje_verificacion">¡Gracias por registrarte! 🎉\n\nTe hemos enviado un correo de verificación a tu dirección de email.\n\nRevisa tu bandeja de entrada (y también la carpeta de spam) y haz clic en el enlace para verificar tu cuenta.\n\nUna vez verificado, podrás acceder a todas las funciones de la app 🚀</string>
     <string name="correo_enviado">Correo enviado</string>
+    <string name="no_se_han_encontrado_baños">No se han encontrado baños</string>
 
     <!-- errores -->
     <string name="erropuntuacionbanios">Error al cargar puntuación del baño</string>

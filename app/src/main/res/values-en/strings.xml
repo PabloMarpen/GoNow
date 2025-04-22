@@ -154,9 +154,10 @@
     <string name="error_verificar_correo">Error verifying email</string>
     <string name="correo_enviado">Email sent</string>
     <string name="error_correo_existe">Email already exists or password doesn\'t meet the requirements</string>
+    <string name="no_se_han_encontrado_baños">No restrooms found</string>
 
 
-        <!-- Tags -->
+    <!-- Tags -->
         <string name="etiqueta_01">Accessible</string>
         <string name="etiqueta_10">Not accessible</string>
         <string name="etiqueta_02">Unisex</string>
