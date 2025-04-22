@@ -344,9 +344,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.ubicacionpoint)
             val barBitmap = BitmapFactory.decodeResource(resources, R.drawable.ubicafe)
             val idkBitmap = BitmapFactory.decodeResource(resources, R.drawable.idkubi)
-            val scaledoriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, 140, 170, false) // ancho, alto en píxeles
-            val scaledbarBitmap = Bitmap.createScaledBitmap(barBitmap, 180, 190, false)
-            val scaledidkBitmap = Bitmap.createScaledBitmap(idkBitmap, 180, 190, false)
+            val scaledoriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, 190, 190, false) // ancho, alto en píxeles
+            val scaledbarBitmap = Bitmap.createScaledBitmap(barBitmap, 190, 190, false)
+            val scaledidkBitmap = Bitmap.createScaledBitmap(idkBitmap, 190, 190, false)
 
             val markerIcon = when (banio.tipoUbi) {
                 "02" -> BitmapDescriptorFactory.fromBitmap(scaledbarBitmap)
