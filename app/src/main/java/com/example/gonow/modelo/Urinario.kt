@@ -15,4 +15,5 @@ data class Urinario(
     val tipoUbi: String? = "",
     val puntuacion: Double? = 0.0,
     val mediaPuntuacion: Double? = 0.0,
+    val totalCalificaciones: Int? = 0
 )

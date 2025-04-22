@@ -2,6 +2,7 @@ package com.example.gonow.vista
 
 // Permisos y utilidades del sistema
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -121,10 +122,28 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             this.discapacitados = discapacitados
             this.unisex = unisex
             this.gratis = gratis
+
+            // se guardan los filtros
+            val prefs = requireContext().getSharedPreferences("filtros", Context.MODE_PRIVATE)
+            with(prefs.edit()) {
+                putString("tipo_ubicacion", tipoUbiSeleccionado)
+                putFloat("estrellas", estrellas)
+                putBoolean("discapacitados", discapacitados)
+                putBoolean("unisex", unisex)
+                putBoolean("gratis", gratis)
+                apply()
+            }
+
             googleMap?.clear()
             obtenerYMostrarBanios()
         }
-
+        // se recogen los filtros
+        val prefs = requireContext().getSharedPreferences("filtros", Context.MODE_PRIVATE)
+        tipoUbiSeleccionado = prefs.getString("tipo_ubicacion", "") ?: ""
+        estrellas = prefs.getFloat("estrellas", 0f)
+        discapacitados = prefs.getBoolean("discapacitados", false)
+        unisex = prefs.getBoolean("unisex", false)
+        gratis = prefs.getBoolean("gratis", false)
 
     }
 
@@ -273,7 +292,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                             creador = it.creador,
                             idDocumento = documents.documents[0].id,
                             tipo = it.tipoUbi ?: "Sin tipo",
-                            mediaPuntuacion = it.mediaPuntuacion ?: 0.0
+                            mediaPuntuacion = it.mediaPuntuacion ?: 0.0,
+                            totalPuntuaciones = it.totalCalificaciones ?: 0
                         )
 
                         requireActivity().supportFragmentManager.beginTransaction()
@@ -338,7 +358,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 MarkerOptions()
                     .position(latLng)
                     .title(banio.descripcion)
-                    .snippet("Tipo: ${banio.tipoUbi}")
                     .icon(markerIcon)
             )
 

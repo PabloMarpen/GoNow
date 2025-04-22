@@ -34,6 +34,7 @@ import kotlin.math.sqrt
 class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
     private lateinit var manejoCarga: ManejoDeCarga
+    private lateinit var textViewPersonasPuntuado: TextView
 
 
     companion object {
@@ -51,10 +52,11 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         private const val ARG_ID_DOCUMENTO = "idDocumento"
         private const val ARG_ID_TIPO = "tipo"
         private const val ARG_MEDIAPUNTUACION = "mediaPuntuacion"
+        private const val ARG_TOTAL_PUNTUACIONES = "totalPuntuaciones"
 
         fun newInstance(
             nombre: String,
-            tipo : String,
+            tipo: String,
             descripcion: String,
             horario: Map<String, String?>?,
             puntuacion: Double,
@@ -65,7 +67,9 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             imagen: String?,
             creador: String?,
             idDocumento: String?,
-            mediaPuntuacion : Double): FragmentResumenBanio {
+            mediaPuntuacion: Double,
+            totalPuntuaciones: Int
+        ): FragmentResumenBanio {
             val fragment = FragmentResumenBanio()
             val args = Bundle()
             args.putString(ARG_NOMBRE, nombre)
@@ -91,6 +95,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             args.putString(ARG_ID_DOCUMENTO, idDocumento)
             args.putString(ARG_ID_TIPO, tipo)
             args.putDouble(ARG_MEDIAPUNTUACION, mediaPuntuacion)
+            args.putInt(ARG_TOTAL_PUNTUACIONES, totalPuntuaciones)
             fragment.arguments = args
             return fragment
         }
@@ -113,27 +118,36 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         val botonEditar = view.findViewById<ImageView>(R.id.imageEditar)
         val botonLlegar = view.findViewById<Button>(R.id.botonLlegar)
         val botonPuntuar = view.findViewById<Button>(R.id.botonPuntuar)
+        textViewPersonasPuntuado = view.findViewById(R.id.textViewPersonasPuntuado)
+
         val user = AuthSingleton.auth.currentUser
         val idBanio = arguments?.getString(ARG_ID_DOCUMENTO) ?: ""
+        var totalPuntuaciones = arguments?.getInt(ARG_TOTAL_PUNTUACIONES) ?: 0
+
 
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
             timeoutMillis = 20000L // 20000L
         )
 
-        if(arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0){
-            Puntuacion.rating = arguments?.getDouble(ARG_PUNTUACION)?.toFloat() ?: 0f
-        }else{
-            Puntuacion.rating = arguments?.getDouble(ARG_MEDIAPUNTUACION)?.toFloat() ?: 0f
+        if (totalPuntuaciones > 0) {
+            textViewPersonasPuntuado.text = "($totalPuntuaciones)"
         }
 
 
         // mostrar o no el boton de editar si eres el creador
-        if(arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid){
+        if (arguments?.getString(ARG_CREADOR) == AuthSingleton.auth.currentUser?.uid) {
             tarjetaEditar.visibility = View.VISIBLE
-        }else{
+        } else {
             tarjetaEditar.visibility = View.GONE
         }
+
+        if (arguments?.getDouble(ARG_MEDIAPUNTUACION) == 0.0) {
+            Puntuacion.rating = arguments?.getDouble(ARG_PUNTUACION)?.toFloat() ?: 0f
+        } else {
+            Puntuacion.rating = arguments?.getDouble(ARG_MEDIAPUNTUACION)?.toFloat() ?: 0f
+        }
+
 
         // mostrar la imagen si no es null o vacio
         val base64Image = arguments?.getString(ARG_IMAGEN)
@@ -148,7 +162,8 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
 
         // mostrar el nombre
-        textViewNombre.text = arguments?.getString(ARG_NOMBRE) ?: getString(R.string.nombre_no_disponible)
+        textViewNombre.text =
+            arguments?.getString(ARG_NOMBRE) ?: getString(R.string.nombre_no_disponible)
 
         // mostrar la descripcion
         val descripcion = arguments?.getString(ARG_DESCRIPCION)
@@ -170,7 +185,6 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
             val cierre = horaCierre ?: getString(R.string.no_disponible)
             "$apertura - $cierre"
         }
-
 
 
         // mostrar las etiquetas en chips
@@ -201,12 +215,22 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
                     // Códigos "positivos" -> primarios (01–06)
                     if (etiqueta in listOf("01", "02", "03", "04", "05", "06")) {
-                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.primary))
+                        chipBackgroundColor = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.primary
+                            )
+                        )
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
                     } else {
-                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+                        chipBackgroundColor = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.secondary
+                            )
+                        )
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                         chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                         chipStrokeWidth = 0f
@@ -232,7 +256,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 text = tipoBanioBonito
                 isClickable = false
                 isCheckable = false
-                chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+                chipBackgroundColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.secondary
+                    )
+                )
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
                 chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
                 chipStrokeWidth = 0f
@@ -245,25 +274,32 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 isCheckable = false
 
             }
-            chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
+            chip.chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.secondary))
             chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
             chip.chipStrokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
             chip.chipStrokeWidth = 0f
             chipGroup.addView(chip)
         }
         // mostrar la distancia
-        textViewDistancia.text = calculateAndFormatDistance(arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0,0.0), arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0,0.0)).toString()
+        textViewDistancia.text = calculateAndFormatDistance(
+            arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+            arguments?.getParcelable(ARG_UBICACION_USUARIO) ?: LatLng(0.0, 0.0)
+        )
+
 
         botonPuntuar.setOnClickListener {
-            if (user != null){
+            if (user != null) {
                 val calificarFragmento = FragmentPopUpCalificar.newInstance(
                     arguments?.getString(ARG_ID_DOCUMENTO) ?: "",
                     arguments?.getString(ARG_CREADOR) ?: "",
                     arguments?.getDouble(ARG_PUNTUACION) ?: 0.0
                 )
-                PopUpContenidoGeneral.newInstance(calificarFragmento).show(parentFragmentManager, "popUp")
-            }else{
-                PopUpContenidoGeneral.newInstance(FragmentPopUpSpam()).show(parentFragmentManager, "popUp")
+                PopUpContenidoGeneral.newInstance(calificarFragmento)
+                    .show(parentFragmentManager, "popUp")
+            } else {
+                PopUpContenidoGeneral.newInstance(FragmentPopUpSpam())
+                    .show(parentFragmentManager, "popUp")
 
             }
 
@@ -296,27 +332,47 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                                             .document(docId)
                                             .delete()
                                             .addOnSuccessListener {
-                                                Toast.makeText(requireContext(), getString(R.string.banio_borrado), Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    getString(R.string.banio_borrado),
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                                 requireActivity().supportFragmentManager.beginTransaction()
                                                     .replace(R.id.frame, FragmentMapa())
                                                     .commit()
                                             }
                                             .addOnFailureListener {
-                                                Toast.makeText(requireContext(), getString(R.string.error_borrar_banio), Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    getString(R.string.error_borrar_banio),
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(requireContext(), getString(R.string.error_borrar_resenas), Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.error_borrar_resenas),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(requireContext(), getString(R.string.error_buscar_resenas), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.error_buscar_resenas),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                     }
                 }
                 popup.show(parentFragmentManager, "popUp")
             } else {
-                Toast.makeText(requireContext(), getString(R.string.id_no_disponible), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.id_no_disponible),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -342,19 +398,20 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
 
         botonLlegar.setOnClickListener {
-                val coordenadas = arguments?.getParcelable<LatLng>(ARG_CORDENADAS)
-                val latitud = coordenadas?.latitude ?: 0.0
-                val longitud = coordenadas?.longitude ?: 0.0
-                    val gmmIntentUri = Uri.parse("geo:$latitud,$longitud?q=$latitud,$longitud")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
+            val coordenadas = arguments?.getParcelable<LatLng>(ARG_CORDENADAS)
+            val latitud = coordenadas?.latitude ?: 0.0
+            val longitud = coordenadas?.longitude ?: 0.0
+            val gmmIntentUri = Uri.parse("geo:$latitud,$longitud?q=$latitud,$longitud")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
 
-                    if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
-                        startActivity(mapIntent)
-                    } else {
-                        Toast.makeText(context, getString(R.string.googlenoinstalado), Toast.LENGTH_SHORT).show()
+            if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
+                startActivity(mapIntent)
+            } else {
+                Toast.makeText(context, getString(R.string.googlenoinstalado), Toast.LENGTH_SHORT)
+                    .show()
 
-                    }
+            }
         }
 
 
@@ -382,10 +439,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 val meters = (distanceKm * 1000).roundToInt()
                 "$meters m"
             }
+
             distanceKm < 10 -> {
                 // Entre 100m y 10km -> mostrar 1 decimal
                 "%.1f km".format(distanceKm)
             }
+
             else -> {
                 // Más de 10km -> mostrar sin decimales
                 "${distanceKm.roundToInt()} km"
@@ -399,10 +458,6 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 
-    override fun onStart() {
-        super.onStart()
-        manejoCarga.reiniciarCargaSiEsNecesario()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -92,6 +92,8 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             }
 
         }
+
+
     }
 
     private fun actualizarMediaPuntuacion(idBanio: String) {
@@ -106,7 +108,7 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                     .get()
                     .addOnSuccessListener { querySnapshot ->
                         var suma = puntuacionCreador
-                        var cantidad = 1 // ya contamos la del creador
+                        var cantidad = 1 // Ya contamos la del creador
 
                         for (doc in querySnapshot.documents) {
                             val puntuacion = doc.getDouble("puntuacion") ?: 0.0
@@ -115,16 +117,23 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                         }
 
                         val media = if (cantidad > 0) suma / cantidad else 0.0
+                        val totalCalificaciones = cantidad
 
+                        // Actualiza ambos campos: media y total
                         db.collection("urinarios").document(idBanio)
-                            .update("mediaPuntuacion", media)
+                            .update(
+                                mapOf(
+                                    "mediaPuntuacion" to media,
+                                    "totalCalificaciones" to totalCalificaciones
+                                )
+                            )
                             .addOnSuccessListener {
                                 manejoCarga.ocultarCarga()
-                                Log.d("MediaPuntuacion", "Media actualizada correctamente: $media")
+                                Log.d("MediaPuntuacion", "Media y total actualizados correctamente")
                             }
                             .addOnFailureListener { e ->
                                 manejoCarga.ocultarCarga()
-                                Log.e("MediaPuntuacion", "Error al actualizar la media", e)
+                                Log.e("MediaPuntuacion", "Error al actualizar urinario", e)
                             }
                     }
                     .addOnFailureListener { e ->
