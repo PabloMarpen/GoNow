@@ -159,6 +159,8 @@
     <string name="location_dialog_message">"Location" is currently turned off</string>
     <string name="location_dialog_ok">OK</string>
     <string name="location_dialog_cancel">Cancel</string>
+    <string name="error_ubicacion_no_obtenida">Error getting location</string>
+
 
     <!-- Tags -->
         <string name="etiqueta_01">Accessible</string>

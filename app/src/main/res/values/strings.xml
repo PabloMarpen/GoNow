@@ -153,7 +153,7 @@
     <string name="error_enviar_correo">Error al enviar el correo</string>
     <string name="error_verificar_correo">Error al verificar el correo</string>
     <string name="error_correo_existe">Error el correo ya existe o la contraseña no cumple con los requisitos</string>
-
+    <string name="error_ubicacion_no_obtenida">Error al obtener la ubicación</string>
 
     <!-- mensajes de carga -->
     <string name="cargando">Cargando...</string>

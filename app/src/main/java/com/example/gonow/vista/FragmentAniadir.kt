@@ -88,6 +88,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var tieneHorario : Boolean = false
     var tipoUbiSeleccionado : String? = null
     private lateinit var manejoCarga: ManejoDeCarga
+
     private val posicion: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
@@ -250,6 +251,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         comprobarUbicacionAltaPrecision()
 
+        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
+            textoNombre.setText(getString(R.string.banio))
+            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             mostrarConfirmacionDeSalida()
@@ -343,7 +348,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }else{
             ratingBar.rating = 5f
             //Obtener la ubicación actual con Geolocalización por nombre de la calle
-            actualizarNombreDesdeUbicacion()
+            actualizarNombreDesdeUbicacion(manejoCarga)
         }
 
 
@@ -576,6 +581,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Toast.makeText(context, getString(R.string.error_falta_tipo_ubicacion), Toast.LENGTH_SHORT).show()
                 false
             }
+            ubicacionActual.latitude == 0.0 && ubicacionActual.longitude == 0.0 -> {
+                Toast.makeText(context, getString(R.string.error_ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+                false
+            }
 
 
             else -> true
@@ -669,11 +678,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         popup.show(parentFragmentManager, "popUp")
     }
 
-    private fun actualizarNombreDesdeUbicacion() {
-        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
-            textoNombre.setText(getString(R.string.banio))
-            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
-        }
+    private fun actualizarNombreDesdeUbicacion(manejoCarga: ManejoDeCarga) {
+
 
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
