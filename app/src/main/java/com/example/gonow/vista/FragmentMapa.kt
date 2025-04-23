@@ -2,15 +2,21 @@ package com.example.gonow.vista
 
 // Permisos y utilidades del sistema
 import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,6 +25,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 
 //  Componentes de AndroidX
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +37,7 @@ import androidx.fragment.app.Fragment
 import com.example.gonow.tfg.R
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Urinario
+import com.google.android.gms.common.api.ResolvableApiException
 
 // API de ubicación de Google
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -36,7 +45,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.google.android.gms.location.LocationRequest.Builder
 
 //  API de Google Maps
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -52,6 +63,12 @@ import com.google.firebase.firestore.GeoPoint
 
 
 class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
+
+    // para el mensaje de la ubicacion
+    private lateinit var locationSettingsRequest: LocationSettingsRequest
+    private val settingsClient by lazy { LocationServices.getSettingsClient(requireContext()) }
+    private lateinit var locationResolutionLauncher: ActivityResultLauncher<IntentSenderRequest>
+
 
     private val db = FirestoreSingleton.db
     private lateinit var filtro: ImageView
@@ -113,6 +130,19 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     // para los filtros
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // maneja la respuesta del usuario para ser un pesado
+        locationResolutionLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // El usuario aceptó, ubicación de alta precisión activada
+                Toast.makeText(requireContext(), getString(R.string.location_dialog_title), Toast.LENGTH_SHORT).show()
+            } else {
+                // El usuario rechazó, volver a llamar al método
+                comprobarUbicacionAltaPrecision()
+            }
+        }
 
         requireActivity().supportFragmentManager.setFragmentResultListener("filtros", this) { _, bundle ->
             val tipoUbiSeleccionado = bundle.getString("tipo_ubicacion")
@@ -243,6 +273,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     }
 
     override fun onMapReady(map: GoogleMap) {
+        comprobarUbicacionAltaPrecision()
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = false
         googleMap?.uiSettings?.isMyLocationButtonEnabled = false
@@ -485,6 +516,34 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         return true
     }
+
+    private fun comprobarUbicacionAltaPrecision() {
+        locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            10_000
+        ).build()
+
+        locationSettingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+            .build()
+
+        settingsClient.checkLocationSettings(locationSettingsRequest)
+            .addOnFailureListener { exception ->
+                if (exception is ResolvableApiException) {
+                    try {
+                        val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                        locationResolutionLauncher.launch(intentSenderRequest)
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        sendEx.printStackTrace()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.location_dialog_message), Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+
 
 
 

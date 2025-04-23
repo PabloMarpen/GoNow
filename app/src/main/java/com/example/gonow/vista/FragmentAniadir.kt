@@ -2,7 +2,9 @@ package com.example.gonow.vista
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,6 +24,7 @@ import com.example.gonow.modelo.Urinario
 import java.util.Locale
 import android.location.Geocoder
 import android.location.Location
+import com.google.android.gms.location.LocationRequest
 import android.net.Uri
 import android.os.Environment
 import android.util.Base64
@@ -29,6 +32,8 @@ import android.util.Log
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -38,12 +43,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
+
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationSettingsRequest: LocationSettingsRequest
+    private val settingsClient by lazy { LocationServices.getSettingsClient(requireContext()) }
+    private lateinit var locationResolutionLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private lateinit var botonPublicar: Button
     private lateinit var botonTipoUbicacion: Button
@@ -160,6 +173,19 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         // desactivando una función útil de Android (guardar y restaurar el estado al rotar o al cerrar/reabrir).
         super.onCreate(null)
 
+        locationResolutionLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // El usuario aceptó, ubicación de alta precisión activada
+                Toast.makeText(requireContext(), getString(R.string.location_dialog_title), Toast.LENGTH_SHORT).show()
+            } else {
+                // El usuario rechazó, volver a llamar al método
+                comprobarUbicacionAltaPrecision()
+            }
+        }
+
+
         arguments?.let {
             nombreDato = it.getString(KEY_NOMBRE)
             esEditar = it.getBoolean(KEY_ES_EDITAR)
@@ -222,11 +248,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchCambiar = view.findViewById(R.id.switchCambiar)
         ubicacionActual = LatLng(0.0, 0.0)
 
-        // Manejo de carga con un limite de 10 segundos
-        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
-            textoNombre.setText(getString(R.string.banio))
-            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
-        }
+        comprobarUbicacionAltaPrecision()
+
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             mostrarConfirmacionDeSalida()
@@ -319,31 +342,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         }else{
             ratingBar.rating = 5f
-            manejoCarga.mostrarCarga(getString(R.string.cargandoNombreCalle))
             //Obtener la ubicación actual con Geolocalización por nombre de la calle
-            posicion.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    ubicacionActual = LatLng(it.latitude, it.longitude)
-
-                    val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
-                    val calle = direccion["calle"] ?: ""
-                    val numero = direccion["numero"] ?: ""
-                    val ciudad = direccion["ciudad"] ?: ""
-
-                    val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
-                    textoNombre.setText(nombre.trim())
-
-                    manejoCarga.ocultarCarga()
-                } ?: run {
-                    manejoCarga.ocultarCarga()
-                    textoNombre.setText(getString(R.string.banio))
-                    Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
-                }
-            }.addOnFailureListener { e ->
-                manejoCarga.ocultarCarga()
-                textoNombre.setText(getString(R.string.banio))
-                Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
-            }
+            actualizarNombreDesdeUbicacion()
         }
 
 
@@ -668,6 +668,79 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         }
         popup.show(parentFragmentManager, "popUp")
     }
+
+    private fun actualizarNombreDesdeUbicacion() {
+        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
+            textoNombre.setText(getString(R.string.banio))
+            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            return
+        }
+        manejoCarga.mostrarCarga(getString(R.string.cargandoNombreCalle))
+        posicion.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                ubicacionActual = LatLng(it.latitude, it.longitude)
+
+                val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
+                val calle = direccion["calle"] ?: ""
+                val numero = direccion["numero"] ?: ""
+                val ciudad = direccion["ciudad"] ?: ""
+
+                val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
+                textoNombre.setText(nombre.trim())
+
+                manejoCarga.ocultarCarga()
+            } ?: run {
+                manejoCarga.ocultarCarga()
+                textoNombre.setText(getString(R.string.banio))
+                Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            manejoCarga.ocultarCarga()
+            textoNombre.setText(getString(R.string.banio))
+            Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun comprobarUbicacionAltaPrecision() {
+        locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            10_000
+        ).build()
+
+        locationSettingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+            .setAlwaysShow(true)
+            .build()
+
+        settingsClient.checkLocationSettings(locationSettingsRequest)
+            .addOnSuccessListener {
+
+            }
+            .addOnFailureListener { exception ->
+                if (exception is ResolvableApiException) {
+                    try {
+                        val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                        locationResolutionLauncher.launch(intentSenderRequest)
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        sendEx.printStackTrace()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.location_dialog_message), Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
 
 
 
