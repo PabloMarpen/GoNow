@@ -96,8 +96,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private val handler = Handler(Looper.getMainLooper())
     private var runnable: Runnable? = null
 
-
-    private var locationRequest = LocationRequest.Builder(
+// para la actualización de ubicación
+    private var locationRequest = Builder(
         Priority.PRIORITY_HIGH_ACCURACY,
         2000L // Cada 2 segundos
     )

@@ -581,10 +581,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Toast.makeText(context, getString(R.string.error_falta_tipo_ubicacion), Toast.LENGTH_SHORT).show()
                 false
             }
-            ubicacionActual.latitude == 0.0 && ubicacionActual.longitude == 0.0 -> {
-                Toast.makeText(context, getString(R.string.error_ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
-                false
+
+            ubicacionActual.latitude == 0.0 && ubicacionActual.longitude == 0.0 && !esEditar -> {
+                    Toast.makeText(context, getString(R.string.error_ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+                    false
             }
+
+
 
 
             else -> true
