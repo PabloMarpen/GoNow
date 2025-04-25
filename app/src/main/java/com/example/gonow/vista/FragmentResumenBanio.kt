@@ -216,7 +216,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                     isClickable = false
                     isCheckable = false
 
-                    // Códigos "positivos" -> primarios (01–06)
+                    // Códigos "positivos" primarios (01–06)
                     if (etiqueta in listOf("01", "02", "03", "04", "05", "06")) {
                         chipBackgroundColor = ColorStateList.valueOf(
                             ContextCompat.getColor(
@@ -231,7 +231,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                         chipBackgroundColor = ColorStateList.valueOf(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.secondary
+                                R.color.primary
                             )
                         )
                         setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
@@ -262,7 +262,7 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 chipBackgroundColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.secondary
+                        R.color.primary
                     )
                 )
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.oscuro))
