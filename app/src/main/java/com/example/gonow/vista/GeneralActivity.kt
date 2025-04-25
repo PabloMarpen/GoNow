@@ -68,10 +68,8 @@ class GeneralActivity : AppCompatActivity() {
                 if (currentUser != null) {
 
                     val aniadirFragmento = FragmentAniadir.newInstance(
-                        nombre = "",
+                        nombre = null,
                         esEditar = false,
-                        puntuacionOriginal = null,
-                        descripcion = null
                     )
                     cambiarFragmentoConConfirmacion(aniadirFragmento)  // Llamamos al método de confirmación
                 } else {
