@@ -36,6 +36,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         val botonBorrarCuenta = view.findViewById<Button>(R.id.buttonBorrarCuenta)
         val botonCerrarSesion = view.findViewById<Button>(R.id.buttonCerrarSesion)
         val botonCambiarContrasena = view.findViewById<Button>(R.id.buttonCambiarContraseña)
+        val botonMisBanios = view.findViewById<Button>(R.id.buttonMisBanios)
         val botonAyuda = view.findViewById<Button>(R.id.buttonAyuda)
         val correoUsuario = view.findViewById<TextView>(R.id.textViewNombre)
         val textViewTotalBaños = view.findViewById<TextView>(R.id.textViewTotalBaños)
@@ -184,6 +185,13 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         botonAyuda.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pablommp.myvnc.com/gonow.html"))
             startActivity(browserIntent)
+        }
+
+        botonMisBanios.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame, FragmetMisBanios())
+                .addToBackStack(null)
+                .commit()
         }
 
 

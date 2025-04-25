@@ -105,14 +105,15 @@
         app:layout_constraintStart_toStartOf="@+id/textViewTotalBaños"
         app:layout_constraintTop_toBottomOf="@+id/textViewTotalBaños" />
 
+
     <Button
-        android:id="@+id/buttonCambiarContraseña"
+        android:id="@+id/buttonMisBanios"
         style="@style/PrimaryButton"
         android:layout_width="268dp"
         android:layout_height="68dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppinsregular"
-        android:text="@string/cambiar_contrase_a"
+        android:text="@string/mis_banios"
         android:textColor="@color/oscuro"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,18 +121,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
+    <Button
+        android:id="@+id/buttonCambiarContraseña"
+        style="@style/PrimaryButton"
+        android:layout_width="268dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/poppinsregular"
+        android:text="@string/cambiar_contrase_a"
+        android:textColor="@color/oscuro"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonMisBanios" />
 
     <Button
         android:id="@+id/buttonAyuda"
         style="@style/PrimaryButton"
         android:layout_width="268dp"
         android:layout_height="68dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppinsregular"
         android:text="@string/ayuda"
         android:textColor="@color/oscuro"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonCambiarContraseña" />
 

@@ -46,6 +46,7 @@
     <string name="otro">Otro</string>
     <string name="puntuaci_n">Puntuación</string>
     <string name="banio">Baño</string>
+    <string name="mis_banios">Mis baños</string>
 
     <!-- Google 673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com-->
     <string name="default_web_client_id">673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com</string>
@@ -131,6 +132,9 @@
     <string name="location_dialog_message">La ubicación está desactivada</string>
     <string name="location_dialog_ok">Aceptar</string>
     <string name="location_dialog_cancel">Cancelar</string>
+    <string name="titulo_contribucion">Contribuye a nuestra comunidad</string>
+    <string name="comentario_contribucion">¡Contribuye creando baños para la comunidad!\nAyuda a otros a encontrar lugares limpios y accesibles cerca de ti.</string>
+
 
     <!-- errores -->
     <string name="erropuntuacionbanios">Error al cargar puntuación del baño</string>

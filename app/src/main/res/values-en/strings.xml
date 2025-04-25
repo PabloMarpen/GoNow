@@ -160,6 +160,9 @@
     <string name="location_dialog_ok">OK</string>
     <string name="location_dialog_cancel">Cancel</string>
     <string name="error_ubicacion_no_obtenida">Error getting location</string>
+    <string name="mis_banios">My bathrooms</string>
+    <string name="titulo_contribucion">Contribute to our community</string>
+    <string name="comentario_contribucion">Help the community by adding new bathrooms!\nMake it easier for everyone to find clean and accessible places near them.</string>
 
 
     <!-- Tags -->
