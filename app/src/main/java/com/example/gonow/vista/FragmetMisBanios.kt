@@ -3,6 +3,7 @@ package com.example.gonow.vista
 import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -94,9 +95,9 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
     }
 
     private fun cargarUrinarios() {
-
         FirestoreSingleton.db.collection("urinarios")
             .whereEqualTo("creador", idUsuario)
+            .orderBy("nombre")
             .get()
             .addOnSuccessListener { result ->
                 urinariosList.clear()
@@ -107,17 +108,19 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
                 }
                 urinarioAdapter.notifyDataSetChanged()
 
-                if(urinariosList.isEmpty()){
+                if (urinariosList.isEmpty()) {
                     PopUpContenidoGeneral.newInstance(FragmetnPopUpCreaBanios()).show(parentFragmentManager, "popUp")
                     manejoCarga.ocultarCarga()
-                }else{
+                } else {
                     manejoCarga.ocultarCarga()
                 }
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 manejoCarga.ocultarCarga()
                 Toast.makeText(requireContext(), getString(R.string.error_cargar_banios), Toast.LENGTH_SHORT).show()
+                Log.e("logcarga", e.toString())
             }
     }
+
 
 }
