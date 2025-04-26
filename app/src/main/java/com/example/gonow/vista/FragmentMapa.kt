@@ -32,11 +32,13 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 
 //  Recursos del proyecto
 import com.example.gonow.tfg.R
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Urinario
+import com.example.gonow.viewModel.UbicacionViewModel
 import com.google.android.gms.common.api.ResolvableApiException
 
 // API de ubicación de Google
@@ -77,6 +79,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private lateinit var rastrear: ImageView
     private lateinit var localizar: ImageView
     private lateinit var ubicacionActual: LatLng
+    private lateinit var ubicacionViewModel: UbicacionViewModel
     private lateinit var manejoCarga: ManejoDeCarga
     private lateinit var buscador: EditText
     private var googleMap: GoogleMap? = null
@@ -117,10 +120,9 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-            val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
-            if (fineLocationGranted || coarseLocationGranted) {
-                obtenerUbicacionActual()
+            if (fineLocationGranted) {
+                ubicacionViewModel.obtenerUbicacionActual(requireContext())
                 iniciarActualizacionesUbicacion()
             } else {
                 PopUpContenidoGeneral.newInstance(FragmentPopUpPermisos()).show(parentFragmentManager, "popUp")
@@ -130,6 +132,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     // para los filtros
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ubicacionViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))[UbicacionViewModel::class.java]
 
         // maneja la respuesta del usuario para ser un pesado
         locationResolutionLauncher = registerForActivityResult(
@@ -195,6 +199,34 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         mapView.onResume()
         mapView.getMapAsync(this)
 
+        // Solicitar permisos si no están concedidos
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+
+            // Si no se tienen los permisos de ubicación, se piden
+            requestPermissionLauncher.launch(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            )
+        } else {
+            // Si los permisos ya están concedidos, obtener la ubicación
+            ubicacionViewModel.obtenerUbicacionActual(requireContext())
+            iniciarActualizacionesUbicacion()
+        }
+
+        // Observas los cambios de ubicación
+        ubicacionViewModel.ubicacionActual.observe(viewLifecycleOwner) { latLng ->
+            ubicacionActual = latLng
+            if (esCamaraEnMovimiento || !ubicacionActualMostrada) {
+                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                ubicacionActualMostrada = true
+            }
+        }
+
+        // Pedir la ubicación inicial
+        ubicacionViewModel.obtenerUbicacionActual(requireContext())
+
         //manejo de la carga
         manejoCarga = ManejoDeCarga(
             parentFragmentManager,
@@ -228,8 +260,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
-
-
         buscador.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -249,8 +279,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-
-
         //boton de localizacion
         rastrear.visibility = View.GONE
         localizar.visibility = View.VISIBLE
@@ -260,13 +288,13 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 localizar.visibility = View.VISIBLE
                 esCamaraEnMovimiento = false
                 Toast.makeText(requireContext(), getString(R.string.modo_libre), Toast.LENGTH_SHORT).show()
-                obtenerUbicacionActual()
+                ubicacionViewModel.obtenerUbicacionActual(requireContext())
             }else{
                 rastrear.visibility = View.VISIBLE
                 localizar.visibility = View.GONE
                 esCamaraEnMovimiento = true
                 Toast.makeText(requireContext(), getString(R.string.siguiendo_usuario), Toast.LENGTH_SHORT).show()
-                obtenerUbicacionActual()
+                ubicacionViewModel.obtenerUbicacionActual(requireContext())
             }
         }
 
@@ -295,9 +323,8 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
         }
 
-        ubicacionActual = LatLng(0.0, 0.0)
         manejoCarga.mostrarCarga(getString(R.string.cargandobanios))
-        obtenerUbicacionActual() // para la ubicación actual
+        ubicacionViewModel.obtenerUbicacionActual(requireContext()) // para la ubicación actual
         obtenerYMostrarBanios() // para los baños
         iniciarActualizacionesUbicacion()// para la ubicación actual
     }
@@ -380,6 +407,19 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
             }
     }
 
+    // Esta función agrega un marcador al mapa para representar la ubicación de un baño.
+    // 1. Obtiene las coordenadas (latitud y longitud) del baño desde su objeto `localizacion`.
+    // 2. Si las coordenadas son válidas (no nulas), convierte estas coordenadas en un objeto `LatLng`.
+    // 3. Carga diferentes imágenes de marcador según el tipo de baño:
+    //    - Se usa un bitmap original (`ubicacionpoint`), un bitmap con una imagen de bar (`ubicafe`), o un bitmap con una imagen predeterminada (`idkubi`).
+    //    - Redimensiona las imágenes a un tamaño específico (190x190 píxeles).
+    // 4. Según el tipo de baño (`tipoUbi`), selecciona el icono adecuado para el marcador:
+    //    - "02" usa el icono de `ubicafe`.
+    //    - "06" usa el icono de `idkubi`.
+    //    - En caso contrario, usa el icono original (`ubicacionpoint`).
+    // 5. Agrega el marcador al mapa con la posición de la ubicación y la descripción del baño.
+    // 6. Si la ubicación no es válida (nula), no hace nada.
+
     private fun agregarMarcadorAlMapa(banio: Urinario) {
         val location = banio.localizacion
         location?.let { geoPoint ->
@@ -409,37 +449,6 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
-    // Esta función intenta obtener la ubicación actual del usuario:
-    // 1. Comprueba si se tienen los permisos necesarios (ubicación fina y aproximada).
-    //    Si no los tiene, solicita los permisos y termina la función.
-    // 2. Si los permisos están concedidos, solicita la última ubicación conocida del dispositivo.
-    // 3. Si se obtiene una ubicación válida, guarda sus coordenadas en `ubicacionActual`
-    //    y mueve la cámara del mapa a esa posición con un zoom de nivel 15.
-    // 4. Si ocurre un error al obtener la ubicación, muestra un mensaje de error al usuario.
-
-    private fun obtenerUbicacionActual() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-            return
-        }
-
-        posicion.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                ubicacionActual = LatLng(it.latitude, it.longitude)  // Inicialización correcta de la propiedad
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
-            }
-        }.addOnFailureListener {
-            Toast.makeText(context, getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
-        }
-    }
-
     // Esta función inicia las actualizaciones en tiempo real de la ubicación del usuario:
     // 1. Comprueba si se tienen los permisos de ubicación necesarios. Si no, termina sin hacer nada.
     // 2. Activa el botón de "mi ubicación" en el mapa (`isMyLocationEnabled = true`).
@@ -450,38 +459,55 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
     // 4. Solicita actualizaciones de ubicación usando `requestLocationUpdates` con el `locationRequest` y el `locationCallback` definido.
 
     private fun iniciarActualizacionesUbicacion() {
+        // Verificar si los permisos de ubicación están concedidos
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            return
+            return // Si no se tienen permisos, no continuar
         }
 
+        // Habilitar la ubicación en el mapa
         googleMap?.isMyLocationEnabled = true
 
+        // Crear un LocationCallback para recibir actualizaciones de ubicación
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val location = locationResult.lastLocation ?: return
                 ubicacionActual = LatLng(location.latitude, location.longitude)
 
-                // Mueve la cámara solo si es necesario
+                // Mueve la cámara solo si es necesario (si la cámara está en movimiento o si la ubicación aún no ha sido mostrada)
                 if (esCamaraEnMovimiento || !ubicacionActualMostrada) {
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 15f))
                     ubicacionActualMostrada = true
                 }
 
+                // Si hay una animación de carga activa, ocultarla
                 if (manejoCarga.estaCargando()) {
                     manejoCarga.ocultarCarga()
                 }
             }
         }
 
+        // Solicitar actualizaciones de ubicación utilizando el ViewModel
+        ubicacionViewModel.obtenerUbicacionActual(requireContext()) // Obtener la ubicación actual
+        ubicacionViewModel.ubicacionActual.observe(viewLifecycleOwner) { nuevaUbicacion ->
+            nuevaUbicacion?.let {
+                // Actualizar la ubicación mostrada en el mapa
+                ubicacionActual = it
+                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
+            }
+        }
+
+        // Iniciar la solicitud de actualizaciones de ubicación
         posicion.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -492,7 +518,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
         }
     }
 
-// para evitar que se quede pillada la carga
+    // para evitar que se quede pillada la carga
     override fun onStart() {
         super.onStart()
         if(baniosCargados){
@@ -516,6 +542,14 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
 
         return true
     }
+
+    // Esta función asegura que la configuración de ubicación del dispositivo esté configurada para obtener una alta precisión:
+    // 1. Crea una solicitud de ubicación con la alta precisión como prioridad (Priority.PRIORITY_HIGH_ACCURACY) y un intervalo de actualización de 10 segundos.
+    // 2. Configura una solicitud de ajustes de ubicación que garantiza que el usuario tenga la configuración de ubicación necesaria para alta precisión.
+    // 3. Realiza una verificación de los ajustes de ubicación mediante `settingsClient.checkLocationSettings`:
+    //    - Si los ajustes de ubicación no están configurados correctamente, se muestra un cuadro de diálogo para que el usuario pueda corregirlos.
+    //    - Si la excepción que se produce es una `ResolvableApiException`, se intenta resolver la configuración de ubicación mostrando un cuadro de diálogo.
+    //    - Si la excepción es otro tipo de error, se muestra un mensaje de advertencia con un `Toast` indicando que la ubicación no está correctamente configurada.
 
     private fun comprobarUbicacionAltaPrecision() {
         locationRequest = LocationRequest.Builder(
@@ -542,10 +576,5 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 }
             }
     }
-
-
-
-
-
 
 }

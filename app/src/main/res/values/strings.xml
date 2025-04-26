@@ -115,7 +115,7 @@
     <string name="boton_borrar">BORRAR</string>
     <string name="boton_cancelar">CANCELAR</string>
     <string name="dar_permisos">Dar permisos</string>
-    <string name="textopermisos">Para ayudarte a encontrar baños cercanos 🚻📍\nnecesitamos tu ubicación.\n\n¡Es rápido, seguro y mejora tu experiencia al máximo! 😉</string>
+    <string name="textopermisos">Para ayudarte a encontrar baños cercanos 🚻📍\nnecesitamos tu ubicación precisa.\n\n¡Es rápido, seguro y mejora tu experiencia al máximo! 😉</string>
     <string name="permisos_porfavor">Permisos porfavor</string>
     <string name="actualizadobien">Se ha actualizado</string>
     <string name="confirmar_borrar_banio">¿Seguro que quieres borrar este baño?</string>">

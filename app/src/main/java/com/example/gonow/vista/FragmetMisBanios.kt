@@ -24,7 +24,7 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
 
     val auth = AuthSingleton.auth
     val idUsuario = auth.currentUser?.uid
-
+    private lateinit var manejoCarga: ManejoDeCarga
     private lateinit var recyclerView: RecyclerView
     private lateinit var urinarioAdapter: UrinarioAdapter
     private val urinariosList = mutableListOf<Urinario>()
@@ -36,12 +36,20 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
     }
 
 
+
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = view.findViewById(R.id.listaBanios)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        //manejo de la carga
+        manejoCarga = ManejoDeCarga(
+            parentFragmentManager,
+            timeoutMillis = 20000L
+        ){
+            Toast.makeText(requireContext(), getString(R.string.error_muchotiempo), Toast.LENGTH_SHORT).show()
+        }
 
         posicion.lastLocation.addOnSuccessListener { location: Location? ->
             location?.let {
@@ -80,7 +88,7 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
         }
 
         recyclerView.adapter = urinarioAdapter
-
+        manejoCarga.mostrarCarga(getString(R.string.cargandobanios))
         cargarUrinarios()
 
     }
@@ -101,9 +109,13 @@ class FragmetMisBanios : Fragment(R.layout.fragment_mis_banios) {
 
                 if(urinariosList.isEmpty()){
                     PopUpContenidoGeneral.newInstance(FragmetnPopUpCreaBanios()).show(parentFragmentManager, "popUp")
+                    manejoCarga.ocultarCarga()
+                }else{
+                    manejoCarga.ocultarCarga()
                 }
             }
             .addOnFailureListener {
+                manejoCarga.ocultarCarga()
                 Toast.makeText(requireContext(), getString(R.string.error_cargar_banios), Toast.LENGTH_SHORT).show()
             }
     }

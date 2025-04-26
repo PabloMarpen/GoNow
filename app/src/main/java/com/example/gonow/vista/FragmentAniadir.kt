@@ -41,8 +41,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModelProvider
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
+import com.example.gonow.viewModel.UbicacionViewModel
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
@@ -79,8 +81,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     //imagen
     private lateinit var photoUri: Uri
     private var photoFile: File? = null
-    private lateinit var encodedImage : String
     lateinit var ubicacionActual : LatLng
+    private lateinit var ubicacionViewModel: UbicacionViewModel
     var horaApertura : String? = null
     var horaCierre : String? = null
     var abiertoSiempre : Boolean = true
@@ -89,9 +91,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var tipoUbiSeleccionado : String? = null
     private lateinit var manejoCarga: ManejoDeCarga
 
-    private val posicion: FusedLocationProviderClient by lazy {
-        LocationServices.getFusedLocationProviderClient(requireActivity())
-    }
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             // Mostrar imagen en el ImageView
@@ -180,6 +179,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             if (result.resultCode == Activity.RESULT_OK) {
                 // El usuario aceptó, ubicación de alta precisión activada
                 Toast.makeText(requireContext(), getString(R.string.location_dialog_title), Toast.LENGTH_SHORT).show()
+                // si se activa te devulve a la pantalla de mapa
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.frame, FragmentAniadir())
+                    .addToBackStack(null)
+                    .commit()
             } else {
                 // El usuario rechazó, volver a llamar al método
                 comprobarUbicacionAltaPrecision()
@@ -247,11 +251,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchPapel = view.findViewById(R.id.switchPapel)
         switchGratis = view.findViewById(R.id.switchGratis)
         switchCambiar = view.findViewById(R.id.switchCambiar)
-        ubicacionActual = LatLng(0.0, 0.0)
+        ubicacionViewModel = ViewModelProvider(this)[UbicacionViewModel::class.java]
 
         comprobarUbicacionAltaPrecision()
 
-        val manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
+        manejoCarga = ManejoDeCarga(parentFragmentManager, 10000L) {
             textoNombre.setText(getString(R.string.banio))
             Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
         }
@@ -260,18 +264,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             mostrarConfirmacionDeSalida()
         }
 
-        // Obtener la ubicación actual
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            return
-        }
 
         // para que se marque el campo cuando se toca y que se mueva la pantalla
         textoDescripcion.setOnFocusChangeListener { _, hasFocus ->
@@ -503,36 +495,42 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 }
                         }
                     }else{
-                        val banio = Urinario(
-                            nombre = textoNombre.text.toString(),
-                            sinhorario = sinhorario,
-                            creador = AuthSingleton.auth.currentUser?.uid ?: "",
-                            descripcion = textoDescripcion.text.toString(),
-                            etiquetas = etiquetas,
-                            foto = encodedImage,
-                            horario = horario,
-                            localizacion = GeoPoint(ubicacionActual.latitude, ubicacionActual.longitude),
-                            tipoUbi = tipoUbiSeleccionado,
-                            puntuacion = ratingBar.rating.toDouble(),
-                        )
+                        ubicacionViewModel.ubicacionActual.value?.let { latLng ->
+                            val banio = Urinario(
+                                nombre = textoNombre.text.toString(),
+                                sinhorario = sinhorario,
+                                creador = AuthSingleton.auth.currentUser?.uid ?: "",
+                                descripcion = textoDescripcion.text.toString(),
+                                etiquetas = etiquetas,
+                                foto = encodedImage,
+                                horario = horario,
+                                localizacion = GeoPoint(latLng.latitude, latLng.longitude),
+                                tipoUbi = tipoUbiSeleccionado,
+                                puntuacion = ratingBar.rating.toDouble(),
+                            )
+
+                            // Guardar en Firestore con el UID del usuario como ID
+                            FirestoreSingleton.db.collection("urinarios")
+                                .add(banio)
+                                .addOnSuccessListener { documentReference ->
+                                    manejoCarga.ocultarCarga()
+                                    Toast.makeText(requireContext(), getString(R.string.publicacion_exitosa), Toast.LENGTH_SHORT).show()
+                                    requireActivity().supportFragmentManager.beginTransaction()
+                                        .replace(R.id.frame, FragmentMapa())
+                                        .addToBackStack(null)
+                                        .commit()
+                                }
+                                .addOnFailureListener { e ->
+                                    manejoCarga.ocultarCarga()
+                                    Toast.makeText(requireContext(), getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
+                                    Log.e("Firestore", "Error al publicar", e)
+                                }
+                        } ?: run {
+                            Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
+                        }
 
 
-                        // Guardar en Firestore con el UID del usuario como ID
-                        FirestoreSingleton.db.collection("urinarios")
-                            .add(banio)
-                            .addOnSuccessListener { documentReference ->
-                                manejoCarga.ocultarCarga()
-                                Toast.makeText(requireContext(), getString(R.string.publicacion_exitosa), Toast.LENGTH_SHORT).show()
-                                requireActivity().supportFragmentManager.beginTransaction()
-                                    .replace(R.id.frame, FragmentMapa())
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
-                            .addOnFailureListener { e ->
-                                manejoCarga.ocultarCarga()
-                                Toast.makeText(requireContext(), getString(R.string.error_al_publicar), Toast.LENGTH_SHORT).show()
-                                Log.e("Firestore", "Error al publicar", e)
-                            }
+
                     }
 
 
@@ -581,14 +579,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Toast.makeText(context, getString(R.string.error_falta_tipo_ubicacion), Toast.LENGTH_SHORT).show()
                 false
             }
-
-            ubicacionActual.latitude == 0.0 && ubicacionActual.longitude == 0.0 && !esEditar -> {
-                    Toast.makeText(context, getString(R.string.error_ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
-                    false
-            }
-
-
-
 
             else -> true
         }
@@ -682,8 +672,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
     private fun actualizarNombreDesdeUbicacion(manejoCarga: ManejoDeCarga) {
-
-
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -692,32 +680,27 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
             return
         }
-        manejoCarga.mostrarCarga(getString(R.string.cargandoNombreCalle))
-        posicion.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                ubicacionActual = LatLng(it.latitude, it.longitude)
 
-                val direccion = getFullAddress(requireContext(), ubicacionActual.latitude, ubicacionActual.longitude)
+        manejoCarga.mostrarCarga(getString(R.string.cargandoNombreCalle))
+
+        ubicacionViewModel.obtenerUbicacionActual(requireContext())
+
+        ubicacionViewModel.ubicacionActual.observe(viewLifecycleOwner) { latLng ->
+            if (latLng != null) {
+                val direccion = getFullAddress(requireContext(), latLng.latitude, latLng.longitude)
                 val calle = direccion["calle"] ?: ""
                 val numero = direccion["numero"] ?: ""
                 val ciudad = direccion["ciudad"] ?: ""
 
                 val nombre = getString(R.string.banio) + " " + calle + " " + numero + " " + ciudad
                 textoNombre.setText(nombre.trim())
-
-                manejoCarga.ocultarCarga()
-            } ?: run {
-                manejoCarga.ocultarCarga()
+            } else {
                 textoNombre.setText(getString(R.string.banio))
                 Toast.makeText(requireContext(), getString(R.string.ubicacion_no_obtenida), Toast.LENGTH_SHORT).show()
             }
-        }.addOnFailureListener { e ->
             manejoCarga.ocultarCarga()
-            textoNombre.setText(getString(R.string.banio))
-            Toast.makeText(requireContext(), getString(R.string.error_obtener_ubicacion), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -749,8 +732,5 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 }
             }
     }
-
-
-
 
 }
