@@ -13,8 +13,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import com.example.gonow.tfg.R
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import java.util.Locale
 
 class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 
@@ -29,14 +31,14 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
     companion object {
         // Constantes para las claves (mejora el mantenimiento)
         private const val KEY_SWITCH_ABIERTO = "switchAbiertoDato"
-        private const val KEY_SWITCH_CERRADO = "switchCerradoDato"
+        private const val KEY_SWITCH_NOSEELHORARIO = "switchCerradoDato"
         private const val KEY_SWITCH_TIENE_HORARIO = "switchTieneHorarioDato"
         private const val KEY_HORA_APERTURA = "horaAperturaDato"
         private const val KEY_HORA_CIERRE = "horaCierreDato"
 
         fun nuevaInstancia(
             switchAbierto: Boolean,
-            switchCerrado: Boolean,
+            noSeElHorario: Boolean,
             switchTieneHorario: Boolean,
             horaApertura: String?,
             horaCierre: String?
@@ -44,7 +46,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
             return FragmentPopUpHorario().apply {
                 arguments = Bundle().apply {
                     putBoolean(KEY_SWITCH_ABIERTO, switchAbierto)
-                    putBoolean(KEY_SWITCH_CERRADO, switchCerrado)
+                    putBoolean(KEY_SWITCH_NOSEELHORARIO, noSeElHorario)
                     putBoolean(KEY_SWITCH_TIENE_HORARIO, switchTieneHorario)
                     putString(KEY_HORA_APERTURA, horaApertura)
                     putString(KEY_HORA_CIERRE, horaCierre)
@@ -57,7 +59,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         super.onCreate(savedInstanceState)
         arguments?.let {
             switchAbiertoDato = it.getBoolean(KEY_SWITCH_ABIERTO, false)
-            switchCerradoDato = it.getBoolean(KEY_SWITCH_CERRADO, false)
+            switchCerradoDato = it.getBoolean(KEY_SWITCH_NOSEELHORARIO, false)
             switchTieneHorarioDato = it.getBoolean(KEY_SWITCH_TIENE_HORARIO, false)
             horaAperturaDato = it.getString(KEY_HORA_APERTURA)
             horaCierreDato = it.getString(KEY_HORA_CIERRE)
@@ -75,13 +77,13 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         val botonHorarioAbrir = view.findViewById<Button>(R.id.botonHorarioAbrir)
         val botonHorarioCerrar = view.findViewById<Button>(R.id.botonHorarioCerrar)
         val switchAbierto = view.findViewById<Switch>(R.id.switchAbierto)
-        val switchCerrado = view.findViewById<Switch>(R.id.switchCerrado)
+        val switchNoSeElHorario = view.findViewById<Switch>(R.id.switchCerrado)
         val switchTieneHorario = view.findViewById<Switch>(R.id.switchTieneHorario)
 
         botonHorarioAbrir.text = horaAperturaDato
         botonHorarioCerrar.text = horaCierreDato
         switchAbierto.isChecked = switchAbiertoDato ?: false
-        switchCerrado.isChecked = switchCerradoDato ?: false
+        switchNoSeElHorario.isChecked = switchCerradoDato ?: false
         switchTieneHorario.isChecked = switchTieneHorarioDato ?: false
 
 
@@ -90,13 +92,13 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 
 
         switchAbierto.setOnClickListener{
-            switchCerrado.isChecked = false
+            switchNoSeElHorario.isChecked = false
             switchTieneHorario.isChecked = false
             cambiarEstadoBotones(botonHorarioAbrir, switchTieneHorario)
             cambiarEstadoBotones(botonHorarioCerrar, switchTieneHorario)
 
         }
-        switchCerrado.setOnClickListener{
+        switchNoSeElHorario.setOnClickListener{
             switchAbierto.isChecked = false
             switchTieneHorario.isChecked = false
             cambiarEstadoBotones(botonHorarioAbrir, switchTieneHorario)
@@ -104,7 +106,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         }
         switchTieneHorario.setOnClickListener{
             switchAbierto.isChecked = false
-            switchCerrado.isChecked = false
+            switchNoSeElHorario.isChecked = false
             cambiarEstadoBotones(botonHorarioAbrir, switchTieneHorario)
             cambiarEstadoBotones(botonHorarioCerrar, switchTieneHorario)
         }
@@ -126,7 +128,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
         }
 
         buttonGuardar.setOnClickListener {
-            if(!switchAbierto.isChecked && !switchCerrado.isChecked && !switchTieneHorario.isChecked){
+            if(!switchAbierto.isChecked && !switchNoSeElHorario.isChecked && !switchTieneHorario.isChecked){
                 Toast.makeText(requireContext(), getString(R.string.seleccionaunaalmenos), Toast.LENGTH_SHORT).show()
             }else {
                 // enviar el horario para manejar los datos en el otro fragment
@@ -142,7 +144,7 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 
 
                     putBoolean("abiertoSiempre", switchAbierto.isChecked)
-                    putBoolean("cerradoSiempre", switchCerrado.isChecked)
+                    putBoolean("noSeElHorario", switchNoSeElHorario.isChecked)
                     putBoolean("tieneHorario", switchTieneHorario.isChecked)
                 }
 
@@ -155,29 +157,71 @@ class FragmentPopUpHorario : Fragment(R.layout.fragment_pop_up_horario){
 
         botonHorarioAbrir.setOnClickListener {
             val cal = Calendar.getInstance()
-            val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
-                cal.set(Calendar.HOUR_OF_DAY, hour)
-                cal.set(Calendar.MINUTE, minute)
 
-                botonHorarioAbrir.text = SimpleDateFormat("HH:mm").format(cal.time)
-
-
+            if (botonHorarioAbrir.text.isNotEmpty()) {
+                try {
+                    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val date = sdf.parse(botonHorarioAbrir.text.toString())
+                    cal.time = date!!
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-            TimePickerDialog(requireContext(), timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
 
+            val picker = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(cal.get(Calendar.HOUR_OF_DAY))
+                .setMinute(cal.get(Calendar.MINUTE))
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .build()
+
+            picker.show(parentFragmentManager, "timePicker")
+
+            picker.addOnPositiveButtonClickListener {
+                val hour = picker.hour
+                val minute = picker.minute
+
+                val calResult = Calendar.getInstance()
+                calResult.set(Calendar.HOUR_OF_DAY, hour)
+                calResult.set(Calendar.MINUTE, minute)
+
+                botonHorarioAbrir.text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calResult.time)
+            }
         }
+
+
         botonHorarioCerrar.setOnClickListener {
             val cal = Calendar.getInstance()
-            val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
-                cal.set(Calendar.HOUR_OF_DAY, hour)
-                cal.set(Calendar.MINUTE, minute)
 
-
-                botonHorarioCerrar.text = SimpleDateFormat("HH:mm").format(cal.time)
-
+            if (botonHorarioCerrar.text.isNotEmpty()) {
+                try {
+                    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val date = sdf.parse(botonHorarioCerrar.text.toString())
+                    cal.time = date!!
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-            TimePickerDialog(requireContext(), timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
 
+            val picker = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(cal.get(Calendar.HOUR_OF_DAY))
+                .setMinute(cal.get(Calendar.MINUTE))
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .build()
+
+            picker.show(parentFragmentManager, "timePicker")
+
+            picker.addOnPositiveButtonClickListener {
+                val hour = picker.hour
+                val minute = picker.minute
+
+                val calResult = Calendar.getInstance()
+                calResult.set(Calendar.HOUR_OF_DAY, hour)
+                calResult.set(Calendar.MINUTE, minute)
+
+                botonHorarioCerrar.text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calResult.time)
+            }
         }
 
     }

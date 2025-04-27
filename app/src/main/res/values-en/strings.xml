@@ -71,7 +71,7 @@
     <string name="discapacitados">Accessible</string>
     <string name="borrar_filtros">Clear filters</string>
     <string name="abierto_24_7">Open 24/7</string>
-    <string name="cerrado">Closed</string>
+    <string name="notienehorario">It doesn\'t have a schedule</string>
     <string name="tiene_horario">Has opening hours</string>
     <string name="comentarioHoras">Approximate hours when the bathroom is open.</string>
     <string name="reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos">
@@ -191,10 +191,8 @@
 
     <!-- HORARIO -->
     <string name="abiertosiempre">Open 24/7</string>
-    <string name="cerradosiempre">Closed</string>
+    <string name="noSeElHorario">No defined schedule</string>
     <string name="verificar_correo">Verify email</string>
-
-
 
 
 </resources>

@@ -23,7 +23,6 @@ import com.example.gonow.tfg.R
 import com.example.gonow.modelo.Urinario
 import java.util.Locale
 import android.location.Geocoder
-import android.location.Location
 import com.google.android.gms.location.LocationRequest
 import android.net.Uri
 import android.os.Environment
@@ -35,7 +34,6 @@ import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
@@ -86,7 +84,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var horaApertura : String? = null
     var horaCierre : String? = null
     var abiertoSiempre : Boolean = true
-    var cerradoSiempre : Boolean = false
+    var noSeElHorario : Boolean = false
     var tieneHorario : Boolean = false
     var tipoUbiSeleccionado : String? = null
     private lateinit var manejoCarga: ManejoDeCarga
@@ -212,13 +210,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             val horaApertura = bundle.getString("hora_apertura")
             val horaCierre = bundle.getString("hora_cierre")
             val abiertoSiempre = bundle.getBoolean("abiertoSiempre")
-            val cerradoSiempre = bundle.getBoolean("cerradoSiempre")
+            val noSeElHorario = bundle.getBoolean("noSeElHorario")
             val tieneHorario = bundle.getBoolean("tieneHorario")
 
             this.horaApertura = horaApertura.toString()
             this.horaCierre = horaCierre.toString()
             this.abiertoSiempre = abiertoSiempre
-            this.cerradoSiempre = cerradoSiempre
+            this.noSeElHorario = noSeElHorario
             this.tieneHorario = tieneHorario
         }
         requireActivity().supportFragmentManager.setFragmentResultListener("ubicacion", this) { _, bundle ->
@@ -293,13 +291,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             if(horaApertura == "null" || horaCierre == "null" || sinhorario != "null"){
                 if(sinhorario == getString(R.string.abiertosiempre)){
                    abiertoSiempre = true
-                    cerradoSiempre = false
+                    noSeElHorario = false
                     tieneHorario = false
                     horaApertura = "null"
                     horaCierre = "null"
                 }
-                if(sinhorario == getString(R.string.cerradosiempre)){
-                    cerradoSiempre = true
+                if(sinhorario == getString(R.string.noSeElHorario)){
+                    noSeElHorario = true
                     abiertoSiempre = false
                     tieneHorario = false
                     horaApertura = "null"
@@ -308,7 +306,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }else{
                 tieneHorario = true
                 abiertoSiempre = false
-                cerradoSiempre = false
+                noSeElHorario = false
                 horaApertura = horaapeturadatoeditar
                 horaCierre = horacierredatoeditar
             }
@@ -408,7 +406,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             // le pasamos los datos al fragment del horario si ya se habian guardado previamente
             val horarioFragment = FragmentPopUpHorario.nuevaInstancia(
                 switchAbierto = abiertoSiempre,
-                switchCerrado = cerradoSiempre,
+                noSeElHorario = noSeElHorario,
                 switchTieneHorario = tieneHorario,
                 horaApertura = horaApertura,
                 horaCierre = horaCierre
@@ -440,7 +438,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     val sinhorario = if (horaApertura != null && horaCierre != null) {
                         when {
                             abiertoSiempre -> getString(R.string.abiertosiempre)
-                            cerradoSiempre -> getString(R.string.cerradosiempre)
+                            noSeElHorario -> getString(R.string.noSeElHorario)
                             else -> "null"
                         }
                     } else {

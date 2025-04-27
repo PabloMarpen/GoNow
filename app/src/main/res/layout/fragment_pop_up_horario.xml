@@ -30,7 +30,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppinsregular"
-        android:text="@string/cerrado"
+        android:text="@string/notienehorario"
         android:textColor="@color/secondary"
         android:textSize="16sp" />
 
