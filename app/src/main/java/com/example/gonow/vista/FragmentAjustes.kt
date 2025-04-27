@@ -54,6 +54,7 @@ class FragmentAjustes : Fragment(R.layout.fragment_ajustes) {
         // para saber si es de google el usuario o no
         var esGoogle = false
 
+        // Verificar si el usuario está autenticado con Google
         user?.providerData?.forEach { profile ->
             if (profile.providerId == "google.com") {
                 esGoogle = true

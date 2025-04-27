@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser
 
 class userViewModel : ViewModel() {
 
+    // estado de autenticación
     private val _authenticationState = MutableLiveData<AuthenticationState>()
     val authenticationState: LiveData<AuthenticationState> get() = _authenticationState
 

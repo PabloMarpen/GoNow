@@ -8,6 +8,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonow.tfg.R
 
+/*
+* Este es un adaptador para un RecyclerView que muestra una lista de objetos 'Urinario'.
+* El adaptador utiliza un ViewHolder para almacenar las vistas de cada item de la lista.
+* En el método 'onCreateViewHolder', se infla el layout para cada item de la lista.
+* En 'onBindViewHolder', se asignan los valores correspondientes del 'Urinario' a las vistas, como el nombre y la puntuación.
+* Si la puntuación media es 0.0, se utiliza la puntuación individual, de lo contrario, se muestra la puntuación media.
+* Se asigna un listener al hacer clic en el item, que ejecuta el callback 'onItemClick' con el 'Urinario' correspondiente.
+* Finalmente, 'getItemCount' devuelve el número de elementos en la lista 'urinarios'.
+*/
+
+
 class UrinarioAdapter(
     private val urinarios: List<Urinario>,
     private val onItemClick: (Urinario) -> Unit
