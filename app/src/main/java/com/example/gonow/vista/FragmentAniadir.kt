@@ -26,7 +26,6 @@ import android.location.Geocoder
 import com.google.android.gms.location.LocationRequest
 import android.net.Uri
 import android.os.Environment
-import android.util.Base64
 import android.util.Log
 import android.widget.ScrollView
 import android.widget.TextView
@@ -40,9 +39,11 @@ import com.google.firebase.firestore.GeoPoint
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.viewModel.UbicacionViewModel
+
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
@@ -50,6 +51,13 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
+import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.JSch
+import kotlinx.coroutines.CoroutineScope
+import java.io.FileInputStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
@@ -75,6 +83,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     private lateinit var switchPapel: Switch
     private lateinit var switchGratis: Switch
     private lateinit var switchCambiar: Switch
+    private lateinit var imagenAccesibilidad: ImageView
+    private lateinit var imagenJabon: ImageView
+    private lateinit var imagenPapel: ImageView
+    private lateinit var imagenCambiar: ImageView
 
     //imagen
     private lateinit var photoUri: Uri
@@ -249,6 +261,30 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         switchPapel = view.findViewById(R.id.switchPapel)
         switchGratis = view.findViewById(R.id.switchGratis)
         switchCambiar = view.findViewById(R.id.switchCambiar)
+
+        imagenAccesibilidad = view.findViewById(R.id.imageViewAcesibilidad)
+        imagenJabon = view.findViewById(R.id.imageViewUnisex)
+        imagenPapel = view.findViewById(R.id.imageViewPapel)
+        imagenCambiar = view.findViewById(R.id.imageViewCambiar)
+
+        imagenAccesibilidad.setOnClickListener {
+            Toast.makeText(requireContext(), getString(R.string.toast_accesibilidad), Toast.LENGTH_SHORT).show()
+        }
+
+        imagenJabon.setOnClickListener {
+            Toast.makeText(requireContext(), getString(R.string.toast_jabon), Toast.LENGTH_SHORT).show()
+        }
+
+        imagenPapel.setOnClickListener {
+            Toast.makeText(requireContext(), getString(R.string.toast_papel), Toast.LENGTH_SHORT).show()
+        }
+
+        imagenCambiar.setOnClickListener {
+            Toast.makeText(requireContext(), getString(R.string.toast_bebe), Toast.LENGTH_SHORT).show()
+        }
+
+
+
         ubicacionViewModel = ViewModelProvider(this)[UbicacionViewModel::class.java]
 
         comprobarUbicacionAltaPrecision()
@@ -324,15 +360,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
                 }
             }
-            val base64Image = arguments?.getString(KEY_FOTO)
-            if (!base64Image.isNullOrEmpty()) {
-                try {
-                    val decodedBitmap = decodeBase64ToBitmap(base64Image)
-                    botonAñadirImagen.setImageBitmap(decodedBitmap)
-                } catch (e: IllegalArgumentException) {
 
-                    botonAñadirImagen.setImageResource(R.drawable.noimage)
-                }
+            // mostrar la imagen si no es null o vacio
+            val urlImagen = arguments?.getString(KEY_FOTO)
+            if (!urlImagen.isNullOrEmpty()) {
+                Glide.with(requireContext())
+                    .load("https://pablommp.myvnc.com/gonowfotos/${urlImagen}")
+                    .into(botonAñadirImagen)
             }
 
         }else{
@@ -444,18 +478,27 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     } else {
                         "null"  // Si horaApertura o horaCierre son nulos
                     }
+                    val compressedFile = compressAndResizeImageToFile(photoFile!!, 1024 * 500) // 500 KB
+                    if (compressedFile != null) {
 
-                    // Crear el objeto banio
+                        val rutaRemota = "/var/www/html/gonowfotos/${photoFile!!.name}"
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val exito = subirFotoASftp(
+                                servidor = "pablommp.myvnc.com",
+                                usuario = "pablo",
+                                contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                rutaRemota = rutaRemota,
+                                archivoLocal = compressedFile
+                            )
 
-                    val encodedImage = if (photoFile != null) {
-                        compressAndEncodeImageToBase64(photoFile!!, 1048487)
-                    } else {
-                        if(esEditar){
-                            arguments?.getString(KEY_FOTO)
-                        }else{
-                            ""
+                            if (!exito) {
+                                Log.e("SFTP", "Error al subir la imagen al SFTP")
+                            } else {
+                                Log.d("SFTP", "Imagen subida exitosamente a $rutaRemota")
+                            }
                         }
                     }
+
 
 
                     // si estamos editando hacemos una actualizacion a la base de datos de lo contrario creamos uno nuevo
@@ -467,7 +510,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                             "sinhorario" to sinhorario,
                             "descripcion" to textoDescripcion.text.toString(),
                             "etiquetas" to etiquetas,
-                            "foto" to encodedImage,
+                            "foto" to photoFile!!.name,
                             "horario" to horario,
                             "puntuacion" to ratingBar.rating.toDouble(),
                             "tipoUbi" to tipoUbiSeleccionado
@@ -479,6 +522,18 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 .document(it1)  // Usamos el ID del baño existente para actualizarlo
                                 .update(banioActualizado)  // Solo actualizamos los datos modificados
                                 .addOnSuccessListener {
+                                    val rutaImagenRemota = "/var/www/html/gonowfotos/${arguments?.getString(KEY_FOTO)}"
+                                    if (rutaImagenRemota.isNotEmpty()) {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            borrarArchivoSftp(
+                                                servidor = "pablommp.myvnc.com",
+                                                usuario = "pablo",
+                                                contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                                rutaRemota = rutaImagenRemota
+                                            )
+
+                                        }
+                                    }
                                     manejoCarga.ocultarCarga()
                                     Toast.makeText(requireContext(), getString(R.string.actualizadobien), Toast.LENGTH_SHORT).show()
                                     requireActivity().supportFragmentManager.beginTransaction()
@@ -500,7 +555,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 creador = AuthSingleton.auth.currentUser?.uid ?: "",
                                 descripcion = textoDescripcion.text.toString(),
                                 etiquetas = etiquetas,
-                                foto = encodedImage,
+                                foto = photoFile!!.name,
                                 horario = horario,
                                 localizacion = GeoPoint(latLng.latitude, latLng.longitude),
                                 tipoUbi = tipoUbiSeleccionado,
@@ -540,7 +595,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
     }
 
-    fun getFullAddress(context: Context, lat: Double, lng: Double): Map<String, String> {
+    private fun getFullAddress(context: Context, lat: Double, lng: Double): Map<String, String> {
         // Geocodificación inversa para obtener la dirección
         return try {
             val geocoder = Geocoder(context, Locale.getDefault())
@@ -608,14 +663,14 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     }
 
 
-    fun compressAndEncodeImageToBase64(file: File, maxSize: Int): String {
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath) ?: return ""
-        // Redimensionar la imagen si es demasiado grande (a un tamaño más pequeño)
+    private fun compressAndResizeImageToFile(originalFile: File, maxSize: Int): File? {
+        val bitmap = BitmapFactory.decodeFile(originalFile.absolutePath) ?: return null
+
         val width = bitmap.width
         val height = bitmap.height
         val ratio = width.toFloat() / height.toFloat()
 
-        var newWidth = 600 // Ancho máximo más pequeño
+        var newWidth = 600
         var newHeight = (newWidth / ratio).toInt()
 
         if (width > height) {
@@ -623,36 +678,29 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         } else {
             newWidth = (newHeight * ratio).toInt()
         }
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
-        // Comprimir la imagen con calidad baja
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        var quality = 70 // Comenzamos con calidad baja
 
-        // Usamos el formato WEBP para una mejor compresión
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        var quality = 70
+
         resizedBitmap.compress(Bitmap.CompressFormat.WEBP, quality, byteArrayOutputStream)
 
-        // Si el tamaño sigue siendo grande, seguir reduciendo la calidad
-        while (byteArrayOutputStream.size() > maxSize) {
-            byteArrayOutputStream.reset() // Limpiar el flujo de bytes
-            quality -= 5 // Reducir la calidad en pasos más pequeños
+        while (byteArrayOutputStream.size() > maxSize && quality > 10) {
+            byteArrayOutputStream.reset()
+            quality -= 5
             resizedBitmap.compress(Bitmap.CompressFormat.WEBP, quality, byteArrayOutputStream)
-
-            // Si ya no se puede reducir más, salimos del bucle
-            if (quality <= 10) {
-                break
-            }
         }
 
-        // Convertir a Base64
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        // Crear un nuevo archivo temporal para guardar la imagen comprimida
+        val compressedFile = File(originalFile.parent, "compressed_${originalFile.name}")
+        compressedFile.outputStream().use {
+            it.write(byteArrayOutputStream.toByteArray())
+        }
+
+        return compressedFile
     }
 
-// decodificar la imagen de base64 a bitmap
-    fun decodeBase64ToBitmap(base64String: String): Bitmap {
-        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-    }
 
     // popup para evitar que se borren los datos de añadir cuando cambias de fragment
     private fun mostrarConfirmacionDeSalida() {
@@ -730,5 +778,80 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 }
             }
     }
+
+    private fun borrarArchivoSftp(
+        servidor: String,
+        puerto: Int = 8022,
+        usuario: String,
+        contrasena: String,
+        rutaRemota: String
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    Log.d("SFTP", "Iniciando conexión con el servidor SFTP: $servidor en el puerto $puerto")
+                    val jsch = JSch()
+                    val session = jsch.getSession(usuario, servidor, puerto)
+                    session.setPassword(contrasena)
+                    session.setConfig("StrictHostKeyChecking", "no")
+                    session.connect()
+
+                    Log.d("SFTP", "Conexión establecida con éxito")
+
+                    val channel = session.openChannel("sftp") as ChannelSftp
+                    channel.connect()
+
+                    Log.d("SFTP", "Canal SFTP abierto con éxito")
+
+                    // Intentamos borrar el archivo
+                    channel.rm(rutaRemota)  // ⬅️ Aquí se borra el archivo
+                    Log.d("SFTP", "Archivo borrado con éxito: $rutaRemota")
+
+                    channel.disconnect()
+                    session.disconnect()
+                    Log.d("SFTP", "Conexión y canal desconectados")
+                } catch (e: Exception) {
+                    Log.e("SFTP", "Error al borrar el archivo: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    suspend fun subirFotoASftp(
+        servidor: String,
+        puerto: Int = 8022,
+        usuario: String,
+        contrasena: String,
+        rutaRemota: String,
+        archivoLocal: File?
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val jsch = JSch()
+                val session = jsch.getSession(usuario, servidor, puerto)
+                session.setPassword(contrasena)
+
+                session.setConfig("StrictHostKeyChecking", "no")
+                session.connect()
+
+                val channel = session.openChannel("sftp") as ChannelSftp
+                channel.connect()
+
+                val inputStream = FileInputStream(archivoLocal)
+                channel.put(inputStream, rutaRemota)
+                inputStream.close()
+
+                channel.disconnect()
+                session.disconnect()
+
+                return@withContext true
+            } catch (e: Exception) {
+                Log.e("SFTP", "Error al subir archivo: ${e.message}", e)
+                return@withContext false
+            }
+        }
+    }
+
 
 }

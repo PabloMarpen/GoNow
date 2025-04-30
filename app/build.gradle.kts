@@ -67,6 +67,11 @@ dependencies {
     // para recargar la pagina
     implementation (libs.androidx.swiperefreshlayout)
 
+    // ftp
+    implementation(libs.jsch)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.glide)
+
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.firebase.database.ktx)

@@ -184,6 +184,11 @@
     <string name="etiqueta_06">Con zona bebé</string>
     <string name="etiqueta_60">Sin zona bebé</string>
 
+    <string name="toast_accesibilidad">Baño para discapacitados</string>
+    <string name="toast_jabon">Baño con jabón</string>
+    <string name="toast_papel">Baño con papel</string>
+    <string name="toast_bebe">Baño con zona de bebé</string>
+
     <!-- Tipos de baño -->
     <string name="tipo_01">Baño público</string>
     <string name="tipo_02">Bar</string>

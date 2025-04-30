@@ -179,6 +179,11 @@
         <string name="etiqueta_06">Baby-changing area</string>
         <string name="etiqueta_60">No baby area</string>
 
+    <string name="toast_accesibilidad">Accessible bathroom</string>
+    <string name="toast_jabon">Bathroom with soap</string>
+    <string name="toast_papel">Bathroom with toilet paper</string>
+    <string name="toast_bebe">Bathroom with baby changing area</string>
+
         <!-- Bathroom types -->
         <string name="tipo_01">Public restroom</string>
         <string name="tipo_02">Bar</string>

@@ -31,7 +31,15 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
-
+import com.bumptech.glide.Glide
+import com.jcraft.jsch.ChannelSftp
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.Session
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
@@ -153,15 +161,11 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
 
         // mostrar la imagen si no es null o vacio
-        val base64Image = arguments?.getString(ARG_IMAGEN)
-        if (!base64Image.isNullOrEmpty()) {
-            try {
-                val decodedBitmap = decodeBase64ToBitmap(base64Image)
-                imageView.setImageBitmap(decodedBitmap)
-            } catch (e: IllegalArgumentException) {
-
-                imageView.setImageResource(R.drawable.noimage)
-            }
+        val urlImagen = arguments?.getString(ARG_IMAGEN)
+        if (!urlImagen.isNullOrEmpty()) {
+            Glide.with(requireContext())
+                .load("https://pablommp.myvnc.com/gonowfotos/${urlImagen}")
+                .into(imageView)
         }
 
         // mostrar el nombre
@@ -325,7 +329,21 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                 val mensaje = getString(R.string.confirmar_borrar_banio)
                 val popup = PopUp.newInstance(mensaje)
                 popup.setOnAcceptListener { isConfirmed ->
+
                     if (isConfirmed) {
+                        // borrar la imagen de mi servidor
+                        val rutaImagenRemota = "/var/www/html/gonowfotos/${arguments?.getString(ARG_IMAGEN)}"
+                        if (rutaImagenRemota.isNotEmpty()) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                borrarArchivoSftp(
+                                    servidor = "pablommp.myvnc.com",
+                                    usuario = "pablo",
+                                    contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                    rutaRemota = rutaImagenRemota
+                                )
+
+                            }
+                        }
                         val db = FirestoreSingleton.db
 
                         // Primero, borrar las reseñas asociadas
@@ -478,11 +496,48 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
     }
 
-    // Funciones para decodificar la imagen base64
-    fun decodeBase64ToBitmap(base64String: String): Bitmap {
-        val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+
+    private fun borrarArchivoSftp(
+        servidor: String,
+        puerto: Int = 8022,
+        usuario: String,
+        contrasena: String,
+        rutaRemota: String
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    Log.d("SFTP", "Iniciando conexión con el servidor SFTP: $servidor en el puerto $puerto")
+                    val jsch = JSch()
+                    val session = jsch.getSession(usuario, servidor, puerto)
+                    session.setPassword(contrasena)
+                    session.setConfig("StrictHostKeyChecking", "no")
+                    session.connect()
+
+                    Log.d("SFTP", "Conexión establecida con éxito")
+
+                    val channel = session.openChannel("sftp") as ChannelSftp
+                    channel.connect()
+
+                    Log.d("SFTP", "Canal SFTP abierto con éxito")
+
+                    // Intentamos borrar el archivo
+                    channel.rm(rutaRemota)  // ⬅️ Aquí se borra el archivo
+                    Log.d("SFTP", "Archivo borrado con éxito: $rutaRemota")
+
+                    channel.disconnect()
+                    session.disconnect()
+                    Log.d("SFTP", "Conexión y canal desconectados")
+                } catch (e: Exception) {
+                    Log.e("SFTP", "Error al borrar el archivo: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        }
     }
+
+
+
 
 
     override fun onDestroyView() {

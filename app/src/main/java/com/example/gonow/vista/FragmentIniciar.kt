@@ -136,9 +136,11 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
      *   Si la autenticación es correcta, se inicia la actividad del mapa; si falla, muestra un mensaje de error.
      */
 
-    private fun signInGoogle(){
-        val signInIntent = googleSignInClient.signInIntent
-        launcher.launch(signInIntent)
+    private fun signInGoogle() {
+        googleSignInClient.signOut().addOnCompleteListener {
+            val signInIntent = googleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+        }
     }
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){

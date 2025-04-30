@@ -72,6 +72,9 @@
             android:textColorHint="@color/supportVariant"
             android:maxLength="50"
             android:textSize="16sp"
+            android:paddingTop="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             app:layout_constraintEnd_toEndOf="@+id/ratingBar"
             app:layout_constraintStart_toStartOf="@+id/ratingBar"
             app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
@@ -91,6 +94,9 @@
             android:gravity="top|start"
             android:scrollbars="vertical"
             android:maxLength="150"
+            android:paddingTop="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             app:layout_constraintEnd_toEndOf="@+id/EditTextNombre"
             app:layout_constraintStart_toStartOf="@+id/EditTextNombre"
             app:layout_constraintTop_toBottomOf="@+id/EditTextNombre" />
@@ -134,9 +140,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewCambiar2"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewPapel"
             app:layout_constraintHorizontal_bias="0.534"
-            app:layout_constraintStart_toEndOf="@+id/imageViewAcesibilidad2"
+            app:layout_constraintStart_toEndOf="@+id/imageViewUnisex"
             app:layout_constraintTop_toBottomOf="@+id/switchAcesibilidad"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -152,7 +158,7 @@
             app:srcCompat="@drawable/accessible" />
 
         <ImageView
-            android:id="@+id/imageViewAcesibilidad2"
+            android:id="@+id/imageViewUnisex"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginTop="20dp"
@@ -174,7 +180,7 @@
             app:srcCompat="@drawable/baby" />
 
         <ImageView
-            android:id="@+id/imageViewCambiar2"
+            android:id="@+id/imageViewPapel"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginTop="20dp"
@@ -228,10 +234,10 @@
             android:text="@string/unisex"
             android:textSize="16sp"
             android:textColor="@color/secondary"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewAcesibilidad2"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewUnisex"
             app:layout_constraintHorizontal_bias="0.55"
-            app:layout_constraintStart_toStartOf="@+id/imageViewAcesibilidad2"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewAcesibilidad2" />
+            app:layout_constraintStart_toStartOf="@+id/imageViewUnisex"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewUnisex" />
 
         <TextView
             android:id="@+id/textViewGratis"
@@ -242,10 +248,10 @@
             android:text="@string/gratis"
             android:textColor="@color/secondary"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewCambiar2"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewPapel"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/imageViewCambiar2"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewCambiar2" />
+            app:layout_constraintStart_toStartOf="@+id/imageViewPapel"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewPapel" />
 
         <Button
             android:id="@+id/botonUbicacion"
