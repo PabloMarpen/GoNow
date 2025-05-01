@@ -11,13 +11,15 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.gonow.tfg.R
 
-class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFragment() {
+class PopUpContenidoGeneral() : DialogFragment() {
 
-    // Este popup abre un fragment donde por defecto solo tiene un cruz para cerrar
+    private lateinit var fragmentoInterno: Fragment
 
     companion object {
         fun newInstance(fragmento: Fragment): PopUpContenidoGeneral {
-            return PopUpContenidoGeneral(fragmento)
+            val popup = PopUpContenidoGeneral()
+            popup.fragmentoInterno = fragmento
+            return popup
         }
     }
 
@@ -28,13 +30,13 @@ class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFrag
     ): View? {
         val view = inflater.inflate(R.layout.dialog_pop_up_contenido_general, container, false)
 
-        childFragmentManager.beginTransaction()
-            .replace(R.id.contenedor_fragmento, fragmentoInterno)
-            .commit()
+        if (::fragmentoInterno.isInitialized) {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.contenedor_fragmento, fragmentoInterno)
+                .commit()
+        }
 
-        // cruz para cerrar
-        val botonCerrar = view.findViewById<ImageButton>(R.id.botonCerrar)
-        botonCerrar.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.botonCerrar).setOnClickListener {
             dismiss()
         }
 
@@ -44,7 +46,7 @@ class PopUpContenidoGeneral(private val fragmentoInterno: Fragment) : DialogFrag
     override fun onStart() {
         super.onStart()
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
     }
 }
+
 

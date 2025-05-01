@@ -44,6 +44,7 @@ import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.viewModel.UbicacionViewModel
 
+
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
@@ -101,12 +102,23 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
     var tipoUbiSeleccionado : String? = null
     private lateinit var manejoCarga: ManejoDeCarga
 
+
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
-            // Mostrar imagen en el ImageView
+            // El usuario tomó la foto
+            foto = photoFile?.name
             botonAñadirImagen.setImageURI(photoUri)
+            Log.d("FOTO", "Foto tomada: $foto")
+        } else {
+            // El usuario canceló
+            photoFile?.delete()
+            photoFile = null
+            foto = null
+            botonAñadirImagen.setImageResource(R.drawable.aniadirimagen)
+            Log.d("FOTO", "El usuario canceló la cámara")
         }
     }
+
 
     // para editar un baño
     private var idBanio: String? = null
@@ -362,10 +374,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }
 
             // mostrar la imagen si no es null o vacio
-            val urlImagen = arguments?.getString(KEY_FOTO)
-            if (!urlImagen.isNullOrEmpty()) {
+
+
+            if (!foto.isNullOrEmpty()) {
                 Glide.with(requireContext())
-                    .load("https://pablommp.myvnc.com/gonowfotos/${urlImagen}")
+                    .load("https://pablommp.myvnc.com/gonowfotos/${foto}")
                     .into(botonAñadirImagen)
             }
 
@@ -416,12 +429,12 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                 MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.primaryVariant
+                        R.color.secondaryVariant
                     )
                 )
 
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.primary)
+                    ContextCompat.getColor(requireContext(), R.color.secondary)
                 )
             }
             false
@@ -478,7 +491,13 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                     } else {
                         "null"  // Si horaApertura o horaCierre son nulos
                     }
-                    val compressedFile = compressAndResizeImageToFile(photoFile!!, 1024 * 500) // 500 KB
+
+                    val compressedFile = if (photoFile != null) {
+                        compressAndResizeImageToFile(photoFile!!, 1024 * 500) // 500 KB
+                    } else {
+                        null
+                    }
+
                     if (compressedFile != null) {
 
                         val rutaRemota = "/var/www/html/gonowfotos/${photoFile!!.name}"
@@ -503,14 +522,14 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
                     // si estamos editando hacemos una actualizacion a la base de datos de lo contrario creamos uno nuevo
                     if(esEditar){
-
+                        val nombreFoto = photoFile?.name
                         // Crear el objeto con los datos editados
                         val banioActualizado = mapOf(
                             "nombre" to textoNombre.text.toString(),
                             "sinhorario" to sinhorario,
                             "descripcion" to textoDescripcion.text.toString(),
                             "etiquetas" to etiquetas,
-                            "foto" to photoFile!!.name,
+                            "foto" to nombreFoto,
                             "horario" to horario,
                             "puntuacion" to ratingBar.rating.toDouble(),
                             "tipoUbi" to tipoUbiSeleccionado
@@ -548,6 +567,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 }
                         }
                     }else{
+                        val nombreFoto = photoFile?.name
                         ubicacionViewModel.ubicacionActual.value?.let { latLng ->
                             val banio = Urinario(
                                 nombre = textoNombre.text.toString(),
@@ -555,7 +575,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 creador = AuthSingleton.auth.currentUser?.uid ?: "",
                                 descripcion = textoDescripcion.text.toString(),
                                 etiquetas = etiquetas,
-                                foto = photoFile!!.name,
+                                foto = nombreFoto,
                                 horario = horario,
                                 localizacion = GeoPoint(latLng.latitude, latLng.longitude),
                                 tipoUbi = tipoUbiSeleccionado,
@@ -653,6 +673,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
         )
         cameraLauncher.launch(photoUri)
     }
+
+
 
     override fun onDestroyView() {
         // para evitar que al cambiar de tema oscuro crashe

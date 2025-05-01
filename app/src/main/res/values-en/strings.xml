@@ -50,7 +50,7 @@
     <!-- Google -->
     <string name="default_web_client_id">673531485692-m71iguu4orj4geh0u6rvtob8mph0iqok.apps.googleusercontent.com</string>
     <string name="distancia">Distance:</string>
-    <string name="horario">Opening hours</string>
+    <string name="horario">Approximate schedule</string>
     <string name="puntuar_ba_o">Rate bathroom</string>
     <string name="reg_strate">Sign up</string>
     <string name="quiere_tener_acceso_completo">Want full access?</string>
