@@ -1,14 +1,9 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -34,12 +29,10 @@ import kotlin.math.sqrt
 import com.bumptech.glide.Glide
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
-import com.jcraft.jsch.Session
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
@@ -55,12 +48,12 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         private const val ARG_PUNTUACION = "puntuacion"
         private const val ARG_SINHORARIO = "sinhorario"
         private const val ARG_ETIQUETAS = "etiquetas"
-        private const val ARG_CORDENADAS = "cordenadasbanio"
+        const val ARG_CORDENADAS = "cordenadasbanio"
         private const val ARG_UBICACION_USUARIO = "ubicacionUsuario"
         private const val ARG_IMAGEN = "imagen"
         private const val ARG_CREADOR = "creador"
         private const val ARG_ID_DOCUMENTO = "idDocumento"
-        private const val ARG_ID_TIPO = "tipo"
+        const val ARG_ID_TIPO = "tipo"
         private const val ARG_MEDIAPUNTUACION = "mediaPuntuacion"
         private const val ARG_TOTAL_PUNTUACIONES = "totalPuntuaciones"
 
@@ -442,20 +435,17 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
         }
 
         botonLlegar.setOnClickListener {
-            val coordenadas = arguments?.getParcelable<LatLng>(ARG_CORDENADAS)
-            val latitud = coordenadas?.latitude ?: 0.0
-            val longitud = coordenadas?.longitude ?: 0.0
-            val gmmIntentUri = Uri.parse("geo:$latitud,$longitud?q=$latitud,$longitud")
-            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-            mapIntent.setPackage("com.google.android.apps.maps")
 
-            if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
-                startActivity(mapIntent)
-            } else {
-                Toast.makeText(context, getString(R.string.googlenoinstalado), Toast.LENGTH_SHORT)
-                    .show()
+            val fragmentLlegar = FragmentComoLlegar.newInstance(
+                tipo = arguments?.getString(ARG_ID_TIPO) ?: "",
+                cordenadasbanio = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+            )
 
-            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame, fragmentLlegar)
+                .addToBackStack(null)
+                .commit()
+
         }
 
 
