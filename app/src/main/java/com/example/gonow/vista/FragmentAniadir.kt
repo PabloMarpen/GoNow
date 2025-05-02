@@ -376,7 +376,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
             // mostrar la imagen si no es null o vacio
 
-
+            Toast.makeText(requireContext(), foto, Toast.LENGTH_SHORT).show()
             if (!foto.isNullOrEmpty()) {
                 Glide.with(requireContext())
                     .load("https://pablommp.myvnc.com/gonowfotos/${foto}")
@@ -523,7 +523,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
                     // si estamos editando hacemos una actualizacion a la base de datos de lo contrario creamos uno nuevo
                     if(esEditar){
-                        val nombreFoto = photoFile?.name
+                        var nombreFoto = photoFile?.name
+                        if (nombreFoto == null && foto != null) {
+                            nombreFoto = foto
+                        }
                         // Crear el objeto con los datos editados
                         val banioActualizado = mapOf(
                             "nombre" to textoNombre.text.toString(),
