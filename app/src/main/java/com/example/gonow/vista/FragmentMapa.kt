@@ -396,7 +396,7 @@ class FragmentMapa : Fragment(R.layout.fragment_mapa), OnMapReadyCallback {
                 }
 
                 if (!seHanEncontradoBanios) {
-                    Toast.makeText(context, "No se han encontrado baños", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.no_hay_banios), Toast.LENGTH_SHORT).show()
                 }
                 baniosCargados = true
                 manejoCarga.ocultarCarga()

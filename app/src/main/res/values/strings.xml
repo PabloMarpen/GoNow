@@ -134,6 +134,7 @@
     <string name="titulo_contribucion">Contribuye a nuestra comunidad</string>
     <string name="comentario_contribucion">¡Contribuye creando baños para la comunidad!\nAyuda a otros a encontrar lugares limpios y accesibles cerca de ti.</string>
     <string name="ruta_sistema_opcion">¿Quieres usar el sistema de rutas nativo de GoNow o Google Maps?</string>
+    <string name="no_hay_banios">No se han encontrado baños</string>
 
 
     <!-- errores -->

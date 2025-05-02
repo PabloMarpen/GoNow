@@ -145,7 +145,6 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             }
     }
 
-
     private fun cargarCalificacionDeCreador(idBanio: String, idUsuario: String, estrellas: RatingBar) {
         val docRef = FirestoreSingleton.db.collection("urinarios").document(idBanio)
 
@@ -170,8 +169,6 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
             }
     }
 
-
-
     private fun cargarCalificacionExistente(idBanio: String, idUsuario: String, estrellas: RatingBar) {
         FirestoreSingleton.db.collection("calificaciones")
             .whereEqualTo("idBanio", idBanio)
@@ -195,7 +192,6 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                 Log.e("Firestore", "Error al verificar calificación", e)
             }
     }
-
 
     private fun guardarOActualizarCalificacionDeCreador(
         idBanio: String,
@@ -222,8 +218,6 @@ class FragmentPopUpCalificar : Fragment(R.layout.fragment_pop_up_calificar){
                 Log.e("Firestore", "Error al actualizar puntuación del urinario", e)
             }
     }
-
-
 
     private fun guardarOActualizarCalificacion(
         idBanio: String,
