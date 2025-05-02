@@ -23,6 +23,7 @@ import com.example.gonow.tfg.R
 import com.example.gonow.modelo.Urinario
 import java.util.Locale
 import android.location.Geocoder
+import android.media.ExifInterface
 import com.google.android.gms.location.LocationRequest
 import android.net.Uri
 import android.os.Environment
@@ -43,7 +44,7 @@ import com.bumptech.glide.Glide
 import com.example.gonow.data.AuthSingleton
 import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.viewModel.UbicacionViewModel
-
+import android.graphics.Matrix
 
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationSettingsRequest
@@ -687,9 +688,11 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
     private fun compressAndResizeImageToFile(originalFile: File, maxSize: Int): File? {
         val bitmap = BitmapFactory.decodeFile(originalFile.absolutePath) ?: return null
+        // Rotar la imagen si es necesario
+        val rotatedBitmap = rotateImageIfRequired(originalFile, bitmap)
 
-        val width = bitmap.width
-        val height = bitmap.height
+        val width = rotatedBitmap.width
+        val height = rotatedBitmap.height
         val ratio = width.toFloat() / height.toFloat()
 
         var newWidth = 600
@@ -701,7 +704,7 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             newWidth = (newHeight * ratio).toInt()
         }
 
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+        val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, newWidth, newHeight, true)
 
         val byteArrayOutputStream = ByteArrayOutputStream()
         var quality = 70
@@ -722,6 +725,23 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
         return compressedFile
     }
+
+
+    // para rotar la imagen si es necesario
+    private fun rotateImageIfRequired(file: File, bitmap: Bitmap): Bitmap {
+        val exif = ExifInterface(file.absolutePath)
+        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
 
 
     // popup para evitar que se borren los datos de añadir cuando cambias de fragment
