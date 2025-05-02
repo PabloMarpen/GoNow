@@ -55,25 +55,15 @@ class PopUp : DialogFragment() {
             btnAceptar.text = getString(R.string.boton_borrar)
             btnNop.text = getString(R.string.boton_cancelar)
             btnAceptar.setBackgroundColor(Color.parseColor("#ff4c4c"))
+        }else if (message == "llegar") {
+            texto.text = getString(R.string.ruta_sistema_opcion)
+            btnAceptar.text = "GoNow"
+            btnNop.text = "Google Maps"
+            btnNop.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary))
         }else{
             texto.text = message
         }
 
-        btnAceptar.setOnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> v.setBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.primaryVariant
-                    )
-                )
-
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.primary)
-                )
-            }
-            false
-        }
 
         btnAceptar.setOnClickListener {
             listener?.invoke(true)

@@ -1,6 +1,8 @@
 package com.example.gonow.viewModel
 
+import android.content.Context
 import android.graphics.Color
+import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.example.gonow.tfg.R
@@ -33,10 +35,10 @@ object RutaDrawer {
                 val puntosRuta = decodePolylineFromJson(result)
 
                 withContext(Dispatchers.Main) {
-                    // Si ya existe una polilínea, elimínala
-                    polyline?.remove()
-
+                    // Solo eliminar la polilínea si hay una nueva ruta
                     if (puntosRuta.isNotEmpty()) {
+                        // Si ya existe una polilínea, elimínala
+                        polyline?.remove()
                         val polylineOptions = PolylineOptions()
                             .addAll(puntosRuta)
                             .color(Color.parseColor("#10BDC0"))
@@ -49,6 +51,7 @@ object RutaDrawer {
             }
         }
     }
+
 
     // Construye la URL para hacer la solicitud a la API Directions de Google Maps
     private fun buildUrl(origen: LatLng, destino: LatLng, apiKey: String, modo: String): String {

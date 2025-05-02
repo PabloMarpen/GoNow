@@ -163,7 +163,8 @@
     <string name="mis_banios">My bathrooms</string>
     <string name="titulo_contribucion">Contribute to our community</string>
     <string name="comentario_contribucion">Help the community by adding new bathrooms!\nMake it easier for everyone to find clean and accessible places near them.</string>
-
+    <string name="ruta_sistema_opcion">Do you want to use GoNow\'s native route system or Google Maps?</string>
+    <string name="google_maps_no_instalado">Google Maps is not installed.</string>
 
     <!-- Tags -->
         <string name="etiqueta_01">Accessible</string>

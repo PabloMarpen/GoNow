@@ -23,22 +23,22 @@
     <string name="enviar">Enviar</string>
     <string name="volver">Volver</string>
     <string name="buscar">Buscar...</string>
-    <string name="a_adir_un_ba_o">Añadir un baño</string>
+
     <string name="nombre">Nombre</string>
-    <string name="descripci_n">Descripción</string>
+
     <string name="unisex">Unisex</string>
     <string name="gratis">Gratis</string>
-    <string name="elegir_tipo_de_ubicaci_n">Elegir ubicación</string>
+
     <string name="a_adir_horario">Añadir horario</string>
     <string name="mi_perfil">Mi perfil</string>
     <string name="total_de_ba_os_puntuados">Total de baños puntuados:</string>
-    <string name="cambiar_contrase_a">Cambiar contraseña</string>
+
     <string name="cambiar_correo">Cambiar correo</string>
     <string name="ayuda">Ayuda</string>
     <string name="borrar_cuenta">Borrar cuenta</string>
     <string name="cerrar_sesi_n">Cerrar sesión</string>
     <string name="elige_el_tipo_de_ubicaci_n">Elige el tipo de ubicación</string>
-    <string name="ba_o_publico">Baño publico</string>
+
     <string name="bar">Bar</string>
     <string name="tienda">Tienda</string>
     <string name="restaurante">Restaurante</string>
@@ -75,8 +75,7 @@
     <string name="notienehorario">No tiene horario</string>
     <string name="tiene_horario">Tiene horario</string>
     <string name="comentarioHoras">Horas aproximadas en las que esta abierto el baño.</string>
-    <string name="reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos">Regístrate en segundos para:\n✅ Añadir nuevos baños 🏛️\n✅ Calificar y dejar reseñas ⭐\n\n¡Únete y mejora la experiencia para todos! 🙌</string>
-    <string name="actualizarbanio">Actualizar baño</string>
+
     <string name="actualizar">Actualizar</string>
 
 
@@ -108,7 +107,7 @@
     <string name="contraseñaactualizada">Contraseña actualizada correctamente.</string>
     <string name="error_revisar_contrasena">Error, revisa la contraseña</string>
     <string name="error_contrasena_corta">La contraseña debe tener al menos 6 caracteres.</string>
-    <string name="seleccionaunaalmenos">Selecciona al menos una opción"</string>
+
     <string name="mensaje_restablecer_contrasena">Se enviará un correo para restablecer la contraseña a %1$s</string>
     <string name="mensaje_por_defecto">Mensaje por defecto</string>
     <string name="confirmar_borrado">¿Seguro que quieres borrar tu cuenta?</string>
@@ -119,7 +118,7 @@
     <string name="permisos_porfavor">Permisos porfavor</string>
     <string name="actualizadobien">Se ha actualizado</string>
     <string name="confirmar_borrar_banio">¿Seguro que quieres borrar este baño?</string>">
-    <string name="banio_borrado">Baño y reseñas borrados</string>
+
     <string name="error_borrar_banio">Error al borrar el baño</string>
     <string name="error_borrar_resenas">Error al borrar las reseñas</string>
     <string name="error_buscar_resenas">Error al buscar reseñas</string>
@@ -134,6 +133,7 @@
     <string name="location_dialog_cancel">Cancelar</string>
     <string name="titulo_contribucion">Contribuye a nuestra comunidad</string>
     <string name="comentario_contribucion">¡Contribuye creando baños para la comunidad!\nAyuda a otros a encontrar lugares limpios y accesibles cerca de ti.</string>
+    <string name="ruta_sistema_opcion">¿Quieres usar el sistema de rutas nativo de GoNow o Google Maps?</string>
 
 
     <!-- errores -->
@@ -152,10 +152,10 @@
     <string name="error_obtener_urinarios_creados">Error al obtener los urinarios creados</string>
     <string name="error_obtener_califi">Error al obtener las calificaciones</string>
     <string name="error_actualizarbanio">Error al actualizar</string>
-    <string name="error_muchotiempo">Porfavor revise su conexión a internet</string>
+
     <string name="error_correo_no_registrado">Error correo no registrado</string>
     <string name="error_enviar_correo">Error al enviar el correo</string>
-    <string name="error_verificar_correo">Error al verificar el correo</string>
+
     <string name="error_correo_existe">Error el correo ya existe o la contraseña no cumple con los requisitos</string>
     <string name="error_ubicacion_no_obtenida">Error al obtener la ubicación</string>
 
@@ -203,6 +203,18 @@
     <string name="abiertosiempre">abierto 24/7</string>
     <string name="noSeElHorario">Sin horario definido</string>
     <string name="verificar_correo">Verificar correo</string>
+    <string name="descripci_n">Descripción</string>  <!-- Corregido a "Descripción" -->
+    <string name="elegir_tipo_de_ubicaci_n">Elegir ubicación</string>  <!-- Corregido a "ubicación" -->
+    <string name="a_adir_un_ba_o">Añadir un baño</string>  <!-- Corregido a "Añadir un baño" -->
+    <string name="cambiar_contrase_a">Cambiar contraseña</string>  <!-- Corregido a "Contraseña" -->
+    <string name="ba_o_publico">Baño público</string>  <!-- Corregido a "Baño público" -->
+    <string name="reg_strate_en_segundos_para_n_a_adir_nuevos_ba_os_n_calificar_y_dejar_rese_as_n_n_nete_y_mejora_la_experiencia_para_todos">Regístrate en segundos para:\n✅ Añadir nuevos baños 🏛️\n✅ Calificar y dejar reseñas ⭐\n\n¡Únete y mejora la experiencia para todos! 🙌</string>  <!-- Corregido "Añadir nuevos baños" y "calificar y dejar reseñas" -->
+    <string name="actualizarbanio">Actualizar baño</string>  <!-- Corregido a "Actualizar baño" -->
+    <string name="banio_borrado">Baño y reseñas borrados</string>  <!-- Corregido a "Baño" -->
+    <string name="error_muchotiempo">Por favor, revise su conexión a internet</string>  <!-- Corregido "Porfavor" a "Por favor" -->
+    <string name="seleccionaunaalmenos">Selecciona al menos una opción</string>  <!-- Corregido a "Selecciona al menos una opción" -->
+    <string name="google_maps_no_instalado">Google Maps no está instalado.</string>  <!-- Corregido a "Google Maps no está instalado." -->
+    <string name="error_verificar_correo">Error al verificar el correo</string>  <!-- Corregido a "verificar el correo" -->
 
 
 </resources>

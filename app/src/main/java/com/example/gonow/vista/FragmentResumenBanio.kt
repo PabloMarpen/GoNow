@@ -1,8 +1,10 @@
 package com.example.gonow.vista
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -27,6 +29,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
 import kotlinx.coroutines.CoroutineScope
@@ -436,15 +439,39 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
 
         botonLlegar.setOnClickListener {
 
-            val fragmentLlegar = FragmentComoLlegar.newInstance(
-                tipo = arguments?.getString(ARG_ID_TIPO) ?: "",
-                cordenadasbanio = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
-            )
+                val mensaje = "llegar"
+                val popup = PopUp.newInstance(mensaje)
+                popup.setOnAcceptListener { isConfirmed ->
+                    if (isConfirmed) {
+                        val fragmentLlegar = FragmentComoLlegar.newInstance(
+                            tipo = arguments?.getString(ARG_ID_TIPO) ?: "",
+                            cordenadasbanio = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+                        )
 
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.frame, fragmentLlegar)
-                .addToBackStack(null)
-                .commit()
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.frame, fragmentLlegar)
+                            .addToBackStack(null)
+                            .commit()
+                    }else{
+                        val destino = arguments?.getParcelable<LatLng>(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)
+
+                        // Crear la URL para Google Maps con la coordenada de destino en modo caminar
+                        val uri = Uri.parse("google.navigation:q=${destino.latitude},${destino.longitude}&mode=w")
+
+                        // Crear un Intent para abrir Google Maps con la URL
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.putExtra(Intent.EXTRA_REFERRER, Uri.parse("android-app://com.google.android.apps.maps"))
+
+                        // Verificar si Google Maps está instalado
+                        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+                            startActivity(intent)
+                        } else {
+                            // Si no está instalado, mostrar un mensaje o redirigir a la Play Store
+                            Toast.makeText(requireContext(), getString(R.string.google_maps_no_instalado), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            popup.show(parentFragmentManager, "PopUp")
 
         }
 
