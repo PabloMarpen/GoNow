@@ -61,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
     private lateinit var locationRequest: LocationRequest
@@ -375,8 +376,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
             }
 
             // mostrar la imagen si no es null o vacio
-
-            Toast.makeText(requireContext(), foto, Toast.LENGTH_SHORT).show()
             if (!foto.isNullOrEmpty()) {
                 Glide.with(requireContext())
                     .load("https://pablommp.myvnc.com/gonowfotos/${foto}")
@@ -663,9 +662,10 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
 
 // creamos la imagen temporalmente en memoria
     private fun createImageFile(): File {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_$timestamp", ".jpg", storageDir)
+    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date()) // incluye milisegundos
+    val uniqueID = com.android.identity.util.UUID.randomUUID().toString().take(8)
+    val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    return File.createTempFile("IMG_${timestamp}_$uniqueID", ".jpg", storageDir)
     }
 
     private fun lanzarCamara() {
