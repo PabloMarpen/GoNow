@@ -72,12 +72,17 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
                         } else {
                             PopUpContenidoGeneral.newInstance(FragmentPopUpVerificate()).show(parentFragmentManager, "popUp")
                         }
+                        userViewModel.resetAuthenticationState()
                     }
 
 
                 }
                 is AuthenticationState.Error -> {
                     Toast.makeText(requireContext(), getString(R.string.error_credenciales), Toast.LENGTH_SHORT).show()
+                    userViewModel.resetAuthenticationState()
+                }
+                is AuthenticationState.Idle -> {
+                    // No hacer nada, estado neutral
                 }
             }
         })

@@ -56,11 +56,17 @@ class userViewModel : ViewModel() {
                 }
             }
     }
+
+    // para reiniciar el estado AuthenticationState
+    fun resetAuthenticationState() {
+        _authenticationState.value = AuthenticationState.Idle
+    }
 }
 
 
 // Define el estado de autenticación
 sealed class AuthenticationState {
+    object Idle : AuthenticationState()
     object Loading : AuthenticationState()
     data class Success(val user: FirebaseUser?) : AuthenticationState()
     data class Error(val errorMessage: String?) : AuthenticationState()
