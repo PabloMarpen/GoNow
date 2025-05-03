@@ -486,7 +486,11 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
             val minutos = tiempoMinutos % 60
             return "$horas h $minutos min"
         }else if ( tiempoMinutos == 0){
-            return getString(com.example.gonow.tfg.R.string.ha_llegado)
+            return if (isAdded) {
+                getString(com.example.gonow.tfg.R.string.ha_llegado)
+            }else{
+                ""
+            }
         }else{
             return "$tiempoMinutos min"
         }
