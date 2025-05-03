@@ -15,6 +15,7 @@ import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -54,7 +55,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.GeoPoint
-
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCallback {
@@ -67,6 +73,7 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
     private val db = FirestoreSingleton.db
     private lateinit var filtro: ImageView
+    private lateinit var textViewTiempo: TextView
     private lateinit var botonUbiEstado: ImageView
     private lateinit var mapView: MapView
     private lateinit var rastrear: ImageView
@@ -126,7 +133,9 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
             val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
 
             if (fineLocationGranted) {
-                ubicacionViewModel.obtenerUbicacionActual(requireContext())
+                context?.let { context ->
+                    ubicacionViewModel.obtenerUbicacionActual(context)
+                }
                 iniciarActualizacionesUbicacion()
             } else {
                 PopUpContenidoGeneral.newInstance(FragmentPopUpPermisos()).show(parentFragmentManager, "popUp")
@@ -164,6 +173,7 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         localizar = view.findViewById(R.id.imageViewUbi)
         buscador = view.findViewById(R.id.editTextBuscador)
         cerrar = view.findViewById(R.id.imageViewSalir)
+        textViewTiempo = view.findViewById(R.id.textViewTiempo)
 
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
@@ -182,7 +192,9 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
             )
         } else {
             // Si los permisos ya están concedidos, obtener la ubicación
-            ubicacionViewModel.obtenerUbicacionActual(requireContext())
+            context?.let { context ->
+                ubicacionViewModel.obtenerUbicacionActual(context)
+            }
             iniciarActualizacionesUbicacion()
         }
 
@@ -194,7 +206,9 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         }
 
         // Pedir la ubicación inicial
-        ubicacionViewModel.obtenerUbicacionActual(requireContext())
+        context?.let { context ->
+            ubicacionViewModel.obtenerUbicacionActual(context)
+        }
 
 
         cerrar.setOnClickListener{
@@ -233,7 +247,9 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         )
 
 
-        ubicacionViewModel.obtenerUbicacionActual(requireContext()) // para la ubicación actual
+        context?.let { context ->
+            ubicacionViewModel.obtenerUbicacionActual(context)
+        } // para la ubicación actual
         agregarMarcadorAlMapa(urinario)// para los baños
         iniciarActualizacionesUbicacion()// para la ubicación actual
 
@@ -327,13 +343,17 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                     apiKey = apiKey,
                     modo = "walking"
                 )
+                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
+
 
 
             }
         }
 
         // Solicitar actualizaciones de ubicación utilizando el ViewModel
-        ubicacionViewModel.obtenerUbicacionActual(requireContext()) // Obtener la ubicación actual
+        context?.let { context ->
+            ubicacionViewModel.obtenerUbicacionActual(context)
+        }// Obtener la ubicación actual
         ubicacionViewModel.ubicacionActual.observe(viewLifecycleOwner) { nuevaUbicacion ->
             nuevaUbicacion?.let {
                 // Actualizar la ubicación mostrada en el mapa
@@ -347,6 +367,8 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                     apiKey = apiKey,
                     modo = "walking"
                 )
+                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
+
             }
         }
 
@@ -404,6 +426,34 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                     Toast.makeText(requireContext(), getString(R.string.location_dialog_message), Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun calcularTiempoEntreDosPuntos(ubicacionActual: LatLng, ubicacionDestino: LatLng): String {
+        val R = 6371.0 // Radio de la Tierra en km
+        val lat1 = Math.toRadians(ubicacionActual.latitude)
+        val lon1 = Math.toRadians(ubicacionActual.longitude)
+        val lat2 = Math.toRadians(ubicacionDestino.latitude)
+        val lon2 = Math.toRadians(ubicacionDestino.longitude)
+
+        val dLat = lat2 - lat1
+        val dLon = lon2 - lon1
+
+        val a = sin(dLat / 2).pow(2) + cos(lat1) * cos(lat2) * sin(dLon / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distancia = R * c
+        val tiempo = distancia / 5 // Velocidad media de 5 km/h
+        val tiempoMinutos = (tiempo * 60).roundToInt()
+        if(tiempoMinutos > 60){
+            val horas = tiempoMinutos / 60
+            val minutos = tiempoMinutos % 60
+            return "$horas h $minutos min"
+        }else if ( tiempoMinutos == 0){
+            return getString(com.example.gonow.tfg.R.string.ha_llegado)
+        }else{
+            return "$tiempoMinutos min"
+        }
+
+
     }
 
 }

@@ -21,6 +21,30 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="54dp" />
 
+    <LinearLayout
+        android:layout_width="239dp"
+        android:layout_height="57dp"
+        android:background="@drawable/forma_campos_editar"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/imageView5"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView5">
+
+        <TextView
+            android:id="@+id/textViewTiempo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppinsmedium"
+            android:text=""
+            android:textColor="@color/secondary"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="63dp"
