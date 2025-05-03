@@ -544,8 +544,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                 .document(it1)  // Usamos el ID del baño existente para actualizarlo
                                 .update(banioActualizado)  // Solo actualizamos los datos modificados
                                 .addOnSuccessListener {
-                                    val rutaImagenRemota = "/var/www/html/gonowfotos/${arguments?.getString(KEY_FOTO)}"
-                                    if (rutaImagenRemota.isNotEmpty()) {
+                                    if (photoFile != null && arguments?.getString(KEY_FOTO) != null) {
+                                        val rutaImagenRemota = "/var/www/html/gonowfotos/${arguments?.getString(KEY_FOTO)}"
                                         CoroutineScope(Dispatchers.Main).launch {
                                             borrarArchivoSftp(
                                                 servidor = "pablommp.myvnc.com",
@@ -553,7 +553,6 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                                 contrasena = "YWzWDneybJmxN5Waz4heP7",
                                                 rutaRemota = rutaImagenRemota
                                             )
-
                                         }
                                     }
                                     manejoCarga.ocultarCarga()
