@@ -153,7 +153,14 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // El usuario aceptó, ubicación de alta precisión activada
-                Toast.makeText(requireContext(), getString(R.string.location_dialog_title), Toast.LENGTH_SHORT).show()
+
+                if (isAdded) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.location_dialog_title),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 // El usuario rechazó, volver a llamar al método
                 comprobarUbicacionAltaPrecision()
@@ -180,21 +187,27 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
 
         // Solicitar permisos si no están concedidos
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+        if (isAdded) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
 
-            // Si no se tienen los permisos de ubicación, se piden
-            requestPermissionLauncher.launch(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            )
-        } else {
-            // Si los permisos ya están concedidos, obtener la ubicación
-            context?.let { context ->
-                ubicacionViewModel.obtenerUbicacionActual(context)
+                // Si no se tienen los permisos de ubicación, se piden
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            } else {
+                // Si los permisos ya están concedidos, obtener la ubicación
+                context?.let { context ->
+                    ubicacionViewModel.obtenerUbicacionActual(context)
+                }
+                iniciarActualizacionesUbicacion()
             }
-            iniciarActualizacionesUbicacion()
         }
 
         // Observas los cambios de ubicación
@@ -226,13 +239,34 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
         when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {
-                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_night));
+                if (isAdded) {
+                    map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            requireContext(),
+                            R.raw.mapstyle_night
+                        )
+                    );
+                }
             }
             Configuration.UI_MODE_NIGHT_NO -> {
-                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_white));
+                if (isAdded) {
+                    map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            requireContext(),
+                            R.raw.mapstyle_white
+                        )
+                    );
+                }
             }
             Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.mapstyle_white));
+                if (isAdded) {
+                    map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            requireContext(),
+                            R.raw.mapstyle_white
+                        )
+                    );
+                }
             }
         }
 
@@ -311,16 +345,18 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
     private fun iniciarActualizacionesUbicacion() {
         // Verificar si los permisos de ubicación están concedidos
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return // Si no se tienen permisos, no continuar
+        if (isAdded) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return // Si no se tienen permisos, no continuar
+            }
         }
 
         // Habilitar la ubicación en el mapa
@@ -423,7 +459,9 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                         sendEx.printStackTrace()
                     }
                 } else {
+                    if (isAdded) {
                     Toast.makeText(requireContext(), getString(R.string.location_dialog_message), Toast.LENGTH_SHORT).show()
+                        }
                 }
             }
     }
