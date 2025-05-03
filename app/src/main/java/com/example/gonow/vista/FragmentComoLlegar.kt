@@ -32,7 +32,6 @@ import com.example.gonow.data.FirestoreSingleton
 import com.example.gonow.modelo.Urinario
 import com.example.gonow.viewModel.RutaDrawer
 import com.example.gonow.viewModel.UbicacionViewModel
-import com.example.gonow.vista.FragmentResumenBanio.Companion
 import com.google.android.gms.common.api.ResolvableApiException
 
 // API de ubicación de Google
@@ -237,9 +236,10 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
             }
         }
 
-        val latLng = arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0)
+        val latLng = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)
         val geoPoint = GeoPoint(latLng.latitude, latLng.longitude)
-        val tipoUbi = arguments?.getString(FragmentResumenBanio.ARG_ID_TIPO) ?: ""
+        val tipoUbi = arguments?.getString(ARG_ID_TIPO) ?: ""
+
 
         val urinario = Urinario(
             localizacion = geoPoint,
@@ -339,11 +339,11 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                 RutaDrawer.dibujarRuta(
                     map = googleMap!!,
                     origen = ubicacionActual,
-                    destino = arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+                    destino = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
                     apiKey = apiKey,
                     modo = "walking"
                 )
-                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
+                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
 
 
 
@@ -363,11 +363,11 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                 RutaDrawer.dibujarRuta(
                     map = googleMap!!,
                     origen = ubicacionActual,
-                    destino = arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+                    destino = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
                     apiKey = apiKey,
                     modo = "walking"
                 )
-                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(FragmentResumenBanio.ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
+                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
 
             }
         }

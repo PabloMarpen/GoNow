@@ -1,11 +1,6 @@
 package com.example.gonow.viewModel
 
-import android.content.Context
 import android.graphics.Color
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import com.example.gonow.tfg.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
@@ -19,6 +14,8 @@ object RutaDrawer {
 
     // Variable para almacenar la referencia de la polilínea actual
     private var polyline: Polyline? = null
+    private var origenAnterior: LatLng? = null
+    private var destinoAnterior: LatLng? = null
 
     // Función principal para dibujar la ruta en el mapa entre dos puntos
     fun dibujarRuta(
@@ -28,6 +25,13 @@ object RutaDrawer {
         apiKey: String,
         modo: String
     ) {
+        // Si el origen y destino no han cambiado, no redibujamos
+        if (origen == origenAnterior && destino == destinoAnterior) return
+
+        // Actualizamos las variables
+        origenAnterior = origen
+        destinoAnterior = destino
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = buildUrl(origen, destino, apiKey, modo)
@@ -35,15 +39,13 @@ object RutaDrawer {
                 val puntosRuta = decodePolylineFromJson(result)
 
                 withContext(Dispatchers.Main) {
-                    // Solo eliminar la polilínea si hay una nueva ruta
                     if (puntosRuta.isNotEmpty()) {
-                        // Si ya existe una polilínea, elimínala
                         polyline?.remove()
                         val polylineOptions = PolylineOptions()
                             .addAll(puntosRuta)
                             .color(Color.parseColor("#10BDC0"))
                             .width(17f)
-                        polyline = map.addPolyline(polylineOptions) // Guardamos la polilínea
+                        polyline = map.addPolyline(polylineOptions)
                     }
                 }
             } catch (e: Exception) {
@@ -51,6 +53,7 @@ object RutaDrawer {
             }
         }
     }
+
 
 
     // Construye la URL para hacer la solicitud a la API Directions de Google Maps
