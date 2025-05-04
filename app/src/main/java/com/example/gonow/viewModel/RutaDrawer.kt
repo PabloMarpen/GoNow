@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.URL
+import kotlin.math.abs
 
 // Object que maneja la lógica para dibujar rutas en el mapa utilizando la Directions API de Google Maps
 object RutaDrawer {
@@ -26,7 +27,12 @@ object RutaDrawer {
         modo: String
     ) {
         // Si el origen y destino no han cambiado, no redibujamos
-        if (origen == origenAnterior && destino == destinoAnterior) return
+        if (origen.latitude == 0.0 && origen.longitude == 0.0) return
+        if (destino.latitude == 0.0 && destino.longitude == 0.0) return
+        if (origenAnterior != null && destinoAnterior != null &&
+            ubicacionesSonCasiIguales(origen, origenAnterior!!) &&
+            ubicacionesSonCasiIguales(destino, destinoAnterior!!)
+        ) return
 
         // Actualizamos las variables
         origenAnterior = origen
@@ -56,6 +62,7 @@ object RutaDrawer {
 
 
 
+
     // Construye la URL para hacer la solicitud a la API Directions de Google Maps
     private fun buildUrl(origen: LatLng, destino: LatLng, apiKey: String, modo: String): String {
         return "https://maps.googleapis.com/maps/api/directions/json?" +
@@ -82,6 +89,11 @@ object RutaDrawer {
         puntos.addAll(decodePolyline(overviewPolyline))
         return puntos
     }
+
+    private fun ubicacionesSonCasiIguales(a: LatLng, b: LatLng, tolerancia: Double = 0.0001): Boolean {
+        return abs(a.latitude - b.latitude) < tolerancia && abs(a.longitude - b.longitude) < tolerancia
+    }
+
 
     // Decodifica una polilínea codificada en formato de cadena
     private fun decodePolyline(encoded: String): List<LatLng> {

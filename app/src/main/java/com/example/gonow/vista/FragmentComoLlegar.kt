@@ -74,6 +74,7 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
     private lateinit var filtro: ImageView
     private lateinit var textViewTiempo: TextView
     private lateinit var botonUbiEstado: ImageView
+    private lateinit var botonRecarga: ImageView
     private lateinit var mapView: MapView
     private lateinit var rastrear: ImageView
     private lateinit var localizar: ImageView
@@ -83,7 +84,7 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
     private var googleMap: GoogleMap? = null
     private var ubicacionActualMostrada = false
     private lateinit var locationCallback: LocationCallback
-    private var esCamaraEnMovimiento = false
+    private var esCamaraEnMovimiento = true
     private val apiKey = "AIzaSyD_-gB0Qn9fkv5kTLA8dKkvq4zvJSe4B90"
     private lateinit var cerrar : ImageView
 
@@ -174,9 +175,10 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
         filtro = view.findViewById(R.id.imageViewFiltro)
         mapView = view.findViewById(R.id.mapView)
-        botonUbiEstado = view.findViewById(R.id.imageViewBotonUbi)
-        rastrear = view.findViewById(R.id.imageViewUbiOn)
-        localizar = view.findViewById(R.id.imageViewUbi)
+        botonUbiEstado = view.findViewById(R.id.imageViewUbiEncendida)
+        botonRecarga = view.findViewById(R.id.imageViewRecarga)
+        rastrear = view.findViewById(R.id.imageViewUbiOnLLegar)
+        localizar = view.findViewById(R.id.imageViewUbiLLegar)
         buscador = view.findViewById(R.id.editTextBuscador)
         cerrar = view.findViewById(R.id.imageViewSalir)
         textViewTiempo = view.findViewById(R.id.textViewTiempo)
@@ -213,7 +215,10 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         // Observas los cambios de ubicación
         ubicacionViewModel.ubicacionActual.observe(viewLifecycleOwner) { latLng ->
             ubicacionActual = latLng
+            if (esCamaraEnMovimiento || !ubicacionActualMostrada) {
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+                ubicacionActualMostrada = true
+            }
 
         }
 
@@ -225,6 +230,55 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
 
         cerrar.setOnClickListener{
             parentFragmentManager.popBackStack()
+        }
+
+        rastrear.visibility = View.VISIBLE
+        localizar.visibility = View.GONE
+        botonUbiEstado.setOnClickListener {
+            if(esCamaraEnMovimiento){
+                rastrear.visibility = View.GONE
+                localizar.visibility = View.VISIBLE
+                esCamaraEnMovimiento = false
+                if (isAdded) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.modo_libre),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    ubicacionViewModel.obtenerUbicacionActual(requireContext())
+                }
+
+            }else{
+                rastrear.visibility = View.VISIBLE
+                localizar.visibility = View.GONE
+                esCamaraEnMovimiento = true
+                if (isAdded) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.siguiendo_usuario),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    ubicacionViewModel.obtenerUbicacionActual(requireContext())
+                }
+
+            }
+        }
+
+        botonRecarga.setOnClickListener {
+            RutaDrawer.dibujarRuta(
+                map = googleMap!!,
+                origen = ubicacionActual,
+                destino = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
+                apiKey = apiKey,
+                modo = "walking"
+            )
+            if (isAdded) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.recalculando_ruta),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
 
@@ -369,16 +423,10 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                 ubicacionActual = LatLng(location.latitude, location.longitude)
 
                 // Mueve la cámara solo si es necesario (si la cámara está en movimiento o si la ubicación aún no ha sido mostrada)
-
-                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 17f))
-                ubicacionActualMostrada = true
-                RutaDrawer.dibujarRuta(
-                    map = googleMap!!,
-                    origen = ubicacionActual,
-                    destino = arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0),
-                    apiKey = apiKey,
-                    modo = "walking"
-                )
+                if (esCamaraEnMovimiento || !ubicacionActualMostrada) {
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual, 17f))
+                    ubicacionActualMostrada = true
+                }
                 textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
 
 
@@ -395,7 +443,7 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                 // Actualizar la ubicación mostrada en el mapa
                 ubicacionActual = it
                 googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 17f))
-                // para que se dibuje nada mas entrar
+                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
                 RutaDrawer.dibujarRuta(
                     map = googleMap!!,
                     origen = ubicacionActual,
@@ -403,8 +451,6 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
                     apiKey = apiKey,
                     modo = "walking"
                 )
-                textViewTiempo.text = calcularTiempoEntreDosPuntos(ubicacionActual, arguments?.getParcelable(ARG_CORDENADAS) ?: LatLng(0.0, 0.0)).toString()
-
             }
         }
 
@@ -423,7 +469,6 @@ class FragmentComoLlegar : Fragment(R.layout.fragment_mapa_llegar), OnMapReadyCa
         }
     }
 
-    // para evitar que se quede pillada la carga
     override fun onStart() {
         super.onStart()
 
