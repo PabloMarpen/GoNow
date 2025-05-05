@@ -504,8 +504,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                         CoroutineScope(Dispatchers.Main).launch {
                             val exito = subirFotoASftp(
                                 servidor = "pablommp.myvnc.com",
-                                usuario = "pablo",
-                                contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                usuario = "gonow",
+                                contrasena = "bgieAtueyGOLjVN3jzH6O6XcmieO1",
                                 rutaRemota = rutaRemota,
                                 archivoLocal = compressedFile
                             )
@@ -549,8 +549,8 @@ class FragmentAniadir : Fragment(R.layout.fragment_aniadir){
                                         CoroutineScope(Dispatchers.Main).launch {
                                             borrarArchivoSftp(
                                                 servidor = "pablommp.myvnc.com",
-                                                usuario = "pablo",
-                                                contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                                usuario = "gonow",
+                                                contrasena = "bgieAtueyGOLjVN3jzH6O6XcmieO1",
                                                 rutaRemota = rutaImagenRemota
                                             )
                                         }

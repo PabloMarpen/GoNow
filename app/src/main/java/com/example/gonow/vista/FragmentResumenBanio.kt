@@ -333,8 +333,8 @@ class FragmentResumenBanio : Fragment(R.layout.fragment_resumen_banio) {
                             CoroutineScope(Dispatchers.Main).launch {
                                 borrarArchivoSftp(
                                     servidor = "pablommp.myvnc.com",
-                                    usuario = "pablo",
-                                    contrasena = "YWzWDneybJmxN5Waz4heP7",
+                                    usuario = "gonow",
+                                    contrasena = "bgieAtueyGOLjVN3jzH6O6XcmieO1",
                                     rutaRemota = rutaImagenRemota
                                 )
 
