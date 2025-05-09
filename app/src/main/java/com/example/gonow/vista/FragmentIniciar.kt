@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 
 class FragmentIniciar : Fragment(R.layout.fragment_login) {
 
@@ -70,7 +71,15 @@ class FragmentIniciar : Fragment(R.layout.fragment_login) {
                             ).show()
                             iniciarMapa()
                         } else {
-                            PopUpContenidoGeneral.newInstance(FragmentPopUpVerificate()).show(parentFragmentManager, "popUp")
+
+                            FirebaseAuth.getInstance().signOut()
+
+                            FirebaseDatabase.getInstance().goOffline()
+
+                            val intent = Intent(requireContext(), MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            Toast.makeText(requireContext(), getString(R.string.verifique_correo), Toast.LENGTH_SHORT).show()
                         }
                         userViewModel.resetAuthenticationState()
                     }

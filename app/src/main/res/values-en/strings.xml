@@ -168,6 +168,10 @@
     <string name="no_hay_banios">No restrooms found</string>
     <string name="ha_llegado">You have arrived.</string>
     <string name="recalculando_ruta">Recalculating route</string>
+    <string name="dominio_no_permitido">Email domain not allowed</string>
+    <string name="contrasenas_no_coinciden">Passwords do not match</string>
+    <string name="verifique_correo">Please verify your email</string>
+
 
     <!-- Tags -->
         <string name="etiqueta_01">Accessible</string>

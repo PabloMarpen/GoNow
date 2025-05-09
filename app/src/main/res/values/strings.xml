@@ -161,6 +161,10 @@
 
     <string name="error_correo_existe">Error el correo ya existe o la contraseña no cumple con los requisitos</string>
     <string name="error_ubicacion_no_obtenida">Error al obtener la ubicación</string>
+    <string name="dominio_no_permitido">Dominio de correo no permitido</string>
+    <string name="contrasenas_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="verifique_correo">Verifique su correo por favor</string>
+
 
     <!-- mensajes de carga -->
     <string name="cargando">Cargando...</string>

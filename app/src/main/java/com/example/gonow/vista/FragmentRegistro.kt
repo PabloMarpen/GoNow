@@ -49,6 +49,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         val contraseña = view.findViewById<EditText>(R.id.Contraseña)
         val contraseña2 = view.findViewById<EditText>(R.id.contraseña)
         val googleIdButton = view.findViewById<Button>(R.id.buttonGoogle)
+
         firebaseAuth = AuthSingleton.auth
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -104,14 +105,29 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
         }
 
         botonRegistrar.setOnClickListener {
-            if (correo.text.isNotEmpty() && contraseña.text.isNotEmpty() && contraseña2.text.isNotEmpty() && contraseña2.text.toString() == contraseña.text.toString()) {
-                userViewModel.createUserWithEmailAndPassword(correo.text.toString(), contraseña.text.toString())
-            } else if (!correo.text.toString().isValidEmail()) {
-                Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
-            }else {
+            val email = correo.text.toString().trim()
+            val pass = contraseña.text.toString()
+            val pass2 = contraseña2.text.toString()
+
+            val dominiosPermitidos = listOf(
+                "gmail.com", "hotmail.com", "outlook.com", "yahoo.com", "icloud.com",
+                "protonmail.com", "gmx.com", "aol.com", "zoho.com", "mail.com",
+                "live.com", "msn.com", "yandex.com", "me.com", "pm.me"
+            )
+
+            if (email.isEmpty() || pass.isEmpty() || pass2.isEmpty()) {
                 Toast.makeText(requireContext(), getString(R.string.completar_campos), Toast.LENGTH_SHORT).show()
+            } else if (!email.isValidEmail()) {
+                Toast.makeText(requireContext(), getString(R.string.correo_no_valido), Toast.LENGTH_SHORT).show()
+            } else if (dominiosPermitidos.none { email.endsWith("@$it") }) {
+                Toast.makeText(requireContext(), getString(R.string.dominio_no_permitido), Toast.LENGTH_SHORT).show()
+            } else if (pass != pass2) {
+                Toast.makeText(requireContext(), getString(R.string.contrasenas_no_coinciden), Toast.LENGTH_SHORT).show()
+            } else {
+                userViewModel.createUserWithEmailAndPassword(email, pass)
             }
         }
+
         textoIniciarSesion.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.frame, FragmentIniciar())

@@ -5,11 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.gonow.tfg.R
 import com.example.gonow.data.AuthSingleton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -78,12 +81,20 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
 
             val currentUser = auth.currentUser
-            if (currentUser != null) {
 
+        if (currentUser != null) {
+            if (currentUser.isEmailVerified) {
+                // Usuario autenticado y verificado
                 val intent = Intent(this, GeneralActivity::class.java)
                 intent.putExtra("abrirMapa", true)
                 startActivity(intent)
+            }else{
+                FirebaseAuth.getInstance().signOut()
+
+                FirebaseDatabase.getInstance().goOffline()
             }
+        }
+
 
     }
 
