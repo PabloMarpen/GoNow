@@ -111,8 +111,7 @@ class FragmentRegistro : Fragment(R.layout.fragment_registro){
 
             val dominiosPermitidos = listOf(
                 "gmail.com", "hotmail.com", "outlook.com", "yahoo.com", "icloud.com",
-                "protonmail.com", "gmx.com", "aol.com", "zoho.com", "mail.com",
-                "live.com", "msn.com", "yandex.com", "me.com", "pm.me"
+                "protonmail.com", "iesjulianmarias.es", "educa.jcyl.es"
             )
 
             if (email.isEmpty() || pass.isEmpty() || pass2.isEmpty()) {
